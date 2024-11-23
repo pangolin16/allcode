@@ -1,0 +1,10 @@
+.icontainer{display: flex;flex-direction:column;}
+#top{display:flex;}
+#vstupy{display:flex;height: 60px;}
+#s1,#s2,#s3,#s4{border:solid 5px;border-radius:5%;outline:blue;text-align: center;margin-inline:1px;height: 50px;width: 90%;font-size: 20px;}
+#s4{border: dotted 5px gray;}
+table{font-size:20px;height: 50px;}
+#output1,#output2,#output3,#output4{text-align: center;border:dashed 7px #ff0000;}
+#output1{ width:25%;max-width:25%;}
+#output2{ width:25%;max-width:25%;}
+#output3{ width:25%;max-width:25%;}

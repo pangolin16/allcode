@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+    
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="filter.css">
+
+    <link rel="stylesheet" href="page.css" />
+    <link rel="shortcut icon" href="images/panlog.jpg" type="image/x-icon" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">
+          <a href="page.html">
+            <img src="images/panlogo.svg" alt="logo" />
+          </a>
+        </div>
+
+          <div class="main-menu">
+          <ul>
+            <li>
+              <a href="page.html">Home</a>
+            </li>
+            <li>
+              <a href="calc.html">Calc</a>
+            </li>
+            <li hidden>
+              <a href="types.html">Box types</a>
+            </li>
+            <li>
+              <a href="orders.html">Orders</a>
+           </li>
+           <li hidden>
+              <a href="gallery.html">Gallery</a>
+            </li>
+            <!-- <li>
+              <a class="btn" href="#"> <i class="fas fa-user"></i> Log In </a>
+            </li> -->
+          </ul>
+        </div>
+        <!-- Hamburger Button -->
+        <button class="hamburger-button">
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+        </button>
+        <div class="mobile-menu">
+          <ul>
+            <li>
+              <a href="page.html">Home</a>
+            </li>
+            <li>
+              <a href="calc.html">Calc</a>
+            </li>
+            <li hidden>
+              <a href="types.html">Box types</a>
+            </li>
+            <li>
+              <a href="orders.html">Orders</a>
+            </li>
+            <li hidden>
+              <a href="gallery.html">Gallery</a>
+            </li>
+            <!-- <li>
+              <a class="btn" href="#"> <i class="fas fa-user"></i> Log In </a>
+            </li> -->
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-heading text-xxl">
+            Orders
+          </h1>
+
+
+          <div id="btns">
+          <p class="hero-text"></p>
+          <a href="https://search.app.goo.gl/?ofl=https%3A%2F%2Flens.google&al=googleapp%3A%2F%2Flens%3Flens_data%3DKBE&apn=com.google.android.googlequicksearchbox&amv=301204913&isi=284815942&ius=googleapp&ibi=com.google.GoogleMobile&link=https%3A%2F%2Fgoo.gl%2Fiosgoogleapp%2Fdefault%3Furl%3Dgoogleapp%253A%252F%252Flens%253Fmin-version%253D180%2526lens_data%253DKBE&ifl=https%3A%2F%2Fapps.apple.com%2Fus%2Fapp%2Fgoogle%2Fid284815942%3Fppid%3D1ac8cc35-d99c-4a1d-b909-321c8968cc74%26pt%3D9008%26mt%3D8%26ct%3D4815459-oo-lens-isb-bar-lens-cam%26UTM_campaign%3Dgoogle_search_mweb&efr=1&ct=4815459-oo-lens-isb-bar-lens-cam&utm_campaign=4815459-oo-lens-isb-bar-lens-cam&utm_source=google_search_mweb&utm_medium=owned&pt=9008&mt=8">
+            <button class="btn">L</button>
+        </a>
+          <input type="text" id="inpKey">
+          <input type="text"  id="myInput" hidden>
+          <button class="btn" id="btnSubmit" >Submit</button>
+          <input id="out0" hidden>
+          <button class="btn" onclick="r0()">Remove</button>
+          <button class="btn"  onclick="colour()">Colour</button>
+        </div>
+          <div id="outputs"></div>
+          <div id="outputs2"></div>
+          <div id="outputs3"></div>
+        
+
+
+
+        </div>
+      </div>
+    </section>
+  
+
+    <script src="page.js"></script>
+    <script src="filter.js"></script>
+</html>
