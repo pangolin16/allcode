@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    <script type="module">
+        import './im.js';
+  
+        const keyInput = document.querySelector('#keyInput');
+  
+        const writeInput = document.querySelector('#writeInput');
+  
+        const writeButton = document.querySelector('#writeButton');
+        writeButton.addEventListener('click', () => {
+          localStorage.setItem(keyInput.value, writeInput.value);
+        });
+  
+        const readInput = document.querySelector('#readInput');
+        readInput.value = '';
+  
+        const readButton = document.querySelector('#readButton');
+        readButton.addEventListener('click', () => {
+          readInput.value = localStorage.getItem(keyInput.value);
+        });
+  
+        const deleteButton = document.querySelector('#deleteButton');
+        deleteButton.addEventListener('click', () => {
+          localStorage.removeItem(keyInput.value);
+        });
+      </script>
+</body>
+</html>
