@@ -443,7 +443,7 @@ function getEvents() {
   if (localStorage.getItem("events") === null) {
     return;
   }
-  eventsArr.push(...JSON.parse(localStorage.getItem("events")));
+  eventsArr.push(...JSON.parse(localStorage.getItem("targetKey")));
 }
 
 function convertTime(time) {
@@ -460,3 +460,28 @@ function convertTime(time) {
 
 
 
+   // Function to transfer data between localStorage keys
+   function transferLocalStorageData(sourceKey, targetKey) {
+    // Check if the sourceKey exists in localStorage
+    if (localStorage.getItem(sourceKey) !== null) {
+        // Retrieve the data from sourceKey
+        const data = localStorage.getItem(sourceKey);
+        
+        // Store the data in targetKey
+        localStorage.setItem(targetKey, data);
+        
+        // Optionally, you can remove the data from the sourceKey
+        // localStorage.removeItem(sourceKey);
+        
+        console.log(`Data transferred from ${sourceKey} to ${targetKey}`);
+    } else {
+        console.log(`No data found in ${sourceKey}`);
+    }
+}
+
+// Step 2: Transfer data
+transferLocalStorageData("events", "targetKey");
+
+// Step 3: Verify the transfer
+const transferredData = localStorage.getItem("targetKey");
+console.log("Transferred Data:", JSON.parse(transferredData)); 

@@ -1,34 +1,50 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <title>title</title>
-</head>
-<body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages localStorage</title>
+  </head>
+  <body>
+    <fieldset>
+      <legend>Demo</legend>
+      <p>Specify the key you want to test with:</p>
+      <input id="keyInput" placeholder="Key" value="test" />
+      <p>Write any value to the key:</p>
+      <input id="writeInput" placeholder="Value" />
+      <button id="writeButton">Write</button>
+      <p>Read the value of the key:</p>
+      <button id="readButton">Read</button>
+      <input id="readInput" readonly />
+      <p>Deleting is also taken care of:</p>
+      <button id="deleteButton">Delete</button>
+    </fieldset>
     <script type="module">
-        import './im.js';
-  
-        const keyInput = document.querySelector('#keyInput');
-  
-        const writeInput = document.querySelector('#writeInput');
-  
-        const writeButton = document.querySelector('#writeButton');
-        writeButton.addEventListener('click', () => {
-          localStorage.setItem(keyInput.value, writeInput.value);
-        });
-  
-        const readInput = document.querySelector('#readInput');
-        readInput.value = '';
-  
-        const readButton = document.querySelector('#readButton');
-        readButton.addEventListener('click', () => {
-          readInput.value = localStorage.getItem(keyInput.value);
-        });
-  
-        const deleteButton = document.querySelector('#deleteButton');
-        deleteButton.addEventListener('click', () => {
-          localStorage.removeItem(keyInput.value);
-        });
-      </script>
-</body>
+      import './im.js';
+
+      const keyInput = document.querySelector('#keyInput');
+
+      const writeInput = document.querySelector('#writeInput');
+      writeInput.value = Math.random();
+
+      const writeButton = document.querySelector('#writeButton');
+      writeButton.addEventListener('click', () => {
+        localStorage.setItem(keyInput.value, writeInput.value);
+      });
+
+      const readInput = document.querySelector('#readInput');
+      readInput.value = '';
+
+      const readButton = document.querySelector('#readButton');
+      readButton.addEventListener('click', () => {
+        readInput.value = localStorage.getItem(keyInput.value);
+      });
+
+      const deleteButton = document.querySelector('#deleteButton');
+      deleteButton.addEventListener('click', () => {
+        localStorage.removeItem(keyInput.value);
+      });
+    </script>
+      </body>
 </html>
