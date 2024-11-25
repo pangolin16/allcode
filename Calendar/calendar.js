@@ -443,7 +443,7 @@ function getEvents() {
   if (localStorage.getItem("events") === null) {
     return;
   }
-  eventsArr.push(...JSON.parse(localStorage.getItem("targetKey")));
+  eventsArr.push(...JSON.parse(localStorage.getItem("/allcode/Calendar/im.html:test")));
 }
 
 function convertTime(time) {
@@ -480,8 +480,8 @@ function convertTime(time) {
 }
 
 // Step 2: Transfer data
-transferLocalStorageData("events", "targetKey");
+transferLocalStorageData("events","/allcode/Calendar/im.html:test");
 
 // Step 3: Verify the transfer
-const transferredData = localStorage.getItem("targetKey");
+const transferredData = localStorage.getItem("/allcode/Calendar/im.html:test");
 console.log("Transferred Data:", JSON.parse(transferredData)); 
