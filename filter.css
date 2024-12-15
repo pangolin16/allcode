@@ -8,7 +8,7 @@ td {
 }
 
 #outputs,
-#outputs2 {
+#outputs2,#outputs3 {
   display: inline-block;
   margin-inline: 20px;
 }
