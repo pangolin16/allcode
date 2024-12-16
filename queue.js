@@ -93,7 +93,7 @@ const filtered3 = seznam2.filter(function(value) {
 
          var html = "<table id=tab2>";
          for (var i = 0; i < filtered2.length; i++) {
-             html += "<tr><td>" + filtered2[i] + "</td></tr>";
+             html += "<tr><td>" + filtered2[i] + "</td><td id=editableText contenteditable=true></td></tr>";
          }
          html += "</table>";
 
@@ -102,6 +102,8 @@ const filtered3 = seznam2.filter(function(value) {
          html = document.getElementById("outputs").innerHTML = html;
 
 
+
+         
 
      
           var html2 = "<table id=tab1>";
@@ -161,7 +163,7 @@ const filtered3 = seznam2.filter(function(value) {
        
          var html3 = "<table id=tab1>";
          for (var i = 0; i < filtered3.length; i++) {
-             html3 += "<tr><td>" + filtered3[i] + "</td></tr><div></div>";
+             html3 += "<tr><td>" + filtered3[i] + "</td></tr>";
          }
          html3 += "</table>";
          html3 = document.getElementById("outputs3").innerHTML = html3;
@@ -170,14 +172,14 @@ const filtered3 = seznam2.filter(function(value) {
 
 
 
-         let btns = document.querySelectorAll('td');
+        //  let btns = document.querySelectorAll('td');zvyraznovac
          
-         for (i of btns) {
-            i.addEventListener('click', function() {
+        //  for (i of btns) {
+        //     i.addEventListener('click', function() {
     
-              if(this.style.background=="white"){this.style.background="yellow";}
-           else{this.style.background="white";}
-                });}
+        //       if(this.style.background=="white"){this.style.background="yellow";}
+        //    else{this.style.background="white";}
+        //         });}
 
 
                  const findDuplicates = filtered2 => filtered2.map((item, index) => {
@@ -284,3 +286,6 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // window.onload = function fc9(){
   // const f3= seznam3.filter(num => typeof num === 'number')
   // console.log(f3)}
+
+
+  

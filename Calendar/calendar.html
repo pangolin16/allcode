@@ -2,10 +2,12 @@
 <html>
     <head>
       <meta charset="UTF-8">
-      <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
       
-      
+<script type="module">
+  // Import the necessary Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";</script>    
       
       <link rel="stylesheet" href="calendar.css">
       <link
@@ -28,7 +30,8 @@
 
     </head>
 <body>
-    
+  <button id="exportButton">Export to Firebase</button>
+  <button id="importButton">Import from Firebase</button>   
 <div class="container">
     <div class="left">
       <div class="calendar">
@@ -102,11 +105,77 @@
 
 
   </div>
-  <script src="calendar.js"></script>
 
-  <script type="module" src="config.js">
-   
-  </script>
 
+  <script>
+
+
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+      apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+      authDomain: "pangolin-f37fa.firebaseapp.com",
+      projectId: "pangolin-f37fa",
+      storageBucket: "pangolin-f37fa.appspot.com",
+      messagingSenderId: "880099895366",
+      appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+      measurementId: "G-M31Q6C45FX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+
+function exportToFirebase() {
+const localStorageData = {};
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  localStorageData[key] = value;
+}
+
+// Push data to Firebase
+database.ref('localStorageData').set(localStorageData)
+  .then(() => {
+      console.log('Data exported to Firebase successfully.');
+  })
+  .catch((error) => {
+      console.error('Error exporting data to Firebase:', error);
+  });
+}
+
+// Function to import data from Firebase to local storage
+function importFromFirebase() {
+database.ref('localStorageData').once('value')
+  .then((snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+          for (const key in data) {
+              localStorage.setItem(key, data[key]);
+          }
+          console.log('Data imported from Firebase successfully.');
+      } else {
+          console.log('No data found in Firebase.');
+      }
+  })
+  .catch((error) => {
+      console.error('Error importing data from Firebase:', error);
+  });
+}
+
+// Event listeners for the buttons
+document.getElementById('exportButton').addEventListener('click', exportToFirebase);
+document.getElementById('importButton').addEventListener('click', importFromFirebase);
+
+
+
+
+
+
+
+  
+</script>
+<script src="calendar.js"></script>
   </body>
 </html>

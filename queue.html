@@ -1,6 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script type="module">
+      // Import the necessary Firebase SDKs
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+      import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+      // Your Firebase configuration
+      const firebaseConfig = {
+          apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+          authDomain: "pangolin-f37fa.firebaseapp.com",
+          projectId: "pangolin-f37fa",
+          storageBucket: "pangolin-f37fa.appspot.com",
+          messagingSenderId: "880099895366",
+          appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+          measurementId: "G-M31Q6C45FX"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const editableText = document.getElementById("editableText");
+      const saveButton = document.getElementById("saveButton");
+    
+      // Load existing text from Firestore
+      const docRef = doc(db, "editableText", "content");
+      onSnapshot(docRef, (doc) => {
+          if (doc.exists()) {
+              editableText.innerText = doc.data().text;
+          }
+      });
+
+      // Save changes to Firestore
+      saveButton.addEventListener("click", () => {
+          const text = editableText.innerText;
+          setDoc(docRef, { text: text })
+              .then(() => {
+                  console.log("Text saved successfully!");
+              })
+              .catch((error) => {
+                  console.error("Error saving text: ", error);
+              });
+      });
+
+      
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>page</title>
@@ -121,7 +181,7 @@
           <button class="btn" id="btnSubmit" >Submit</button>
           <input id="out0" hidden>
           <button class="btn"  onclick="colour()">Colour</button>
-          <button class="btn"  id="addCommentBtn">+</button>
+          <button class="btn"  id="saveButton">+</button>
         </div>
           <div id="outputs"></div>
           <div id="outputs2"></div>
@@ -134,7 +194,14 @@
       </div>
     </section>
   
+<style>   /* CSS to set the width of the table cells */
+  #tab2 td {
+      width: 40px; /* Set your desired width here */
+      text-align: center; /* Optional: center-align text */}
 
+#editableText{color: rgb(162, 0, 255);}
+
+  </style>
     <script src="page.js"></script>
     <script src="queue.js"></script>
 </html>
