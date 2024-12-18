@@ -86,7 +86,7 @@ const filtered2=result2.filter(function(value){return typeof value==="string" &&
 
          var html = "<table id=tab2>";
          for (var i = 0; i < filtered2.length; i++) {
-             html += "<tr><td>" + filtered2[i] + "</td></tr>";
+             html += "<tr><td>" + filtered2[i] + "</td><td contenteditable=true></td></tr>";
          }
          html += "</table>";
 
@@ -110,8 +110,7 @@ const filtered2=result2.filter(function(value){return typeof value==="string" &&
 
 
 
-         let btns = document.querySelectorAll('td');
-         
+         let btns = document.querySelectorAll("tr td:not(:nth-child(2))");         
          for (i of btns) {
             i.addEventListener('click', function() {
     
@@ -224,3 +223,5 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // window.onload = function fc9(){
   // const f3= seznam3.filter(num => typeof num === 'number')
   // console.log(f3)}
+
+ 

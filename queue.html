@@ -21,30 +21,45 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      const editableText = document.getElementById("editableText");
-      const saveButton = document.getElementById("saveButton");
-    
-      // Load existing text from Firestore
-      const docRef = doc(db, "editableText", "content");
-      onSnapshot(docRef, (doc) => {
-          if (doc.exists()) {
-              editableText.innerText = doc.data().text;
-          }
-      });
+ // Function to create the table and set up event listeners
+ function setupTable() {
+            const saveButton = document.getElementById("saveButton");
+            const table = document.getElementById("tab2");
 
-      // Save changes to Firestore
-      saveButton.addEventListener("click", () => {
-          const text = editableText.innerText;
-          setDoc(docRef, { text: text })
-              .then(() => {
-                  console.log("Text saved successfully!");
-              })
-              .catch((error) => {
-                  console.error("Error saving text: ", error);
-              });
-      });
+            // Save changes to Firestore
+            saveButton.addEventListener("click", () => {
+                const dataToSave = {};
+                const cells = table.querySelectorAll("td[contenteditable='true']");
+                cells.forEach((cell, index) => {
+                    dataToSave[`cell${index}`] = cell.innerText;
+                });
 
-      
+                setDoc(docRef, dataToSave)
+                    .then(() => {
+                        console.log("Text saved successfully!");
+                    })
+                    .catch((error) => {
+                        console.error("Error saving text: ", error);
+                    });
+            });
+
+            // Load existing data from Firestore
+            onSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    // Populate the table with existing data
+                    const rows = Object.keys(data).length;
+                    for (let i = 0; i < rows; i++) {
+                        const cell = document.getElementById(`cell${i}`);
+                        if (cell) {
+                            cell.innerText = data[`cell${i}`] || '';
+                        }
+                    }
+                }
+            });
+        }
+
+  
   </script>
 
 
@@ -83,6 +98,38 @@
 
     <link rel="stylesheet" href="page.css" />
     <link rel="shortcut icon" href="images/panlog.jpg" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </head>
   <body>
     <nav class="navbar">
@@ -193,7 +240,9 @@
         </div>
       </div>
     </section>
-  
+
+    
+  </body>
 <style>   /* CSS to set the width of the table cells */
   #tab2 td {
       width: 40px; /* Set your desired width here */

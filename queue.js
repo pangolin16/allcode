@@ -89,20 +89,27 @@ const filtered3 = seznam2.filter(function(value) {
   return isString && isDate;
 });
 
-    window.onload = function fc(){
+window.onload = function fc() {
+  // var html = "<table id='tab2'>";
+  // for (var i = 0; i < filtered2.length; i++) {
+  //     html += "<tr><td>" + filtered2[i] + "</td><td contenteditable='true' id='cell" + i + "'></td></tr>";
+  // }
+  // html += "</table>";
 
-         var html = "<table id=tab2>";
-         for (var i = 0; i < filtered2.length; i++) {
-             html += "<tr><td>" + filtered2[i] + "</td><td id=editableText contenteditable=true></td></tr>";
-         }
-         html += "</table>";
-
-
-             
-         html = document.getElementById("outputs").innerHTML = html;
+  // document.getElementById("outputs").innerHTML = html;
 
 
+  var html = "<table id='tab2'>";
+  for (var i = 0; i < filtered2.length; i++) {
+      html += `<tr><td>${filtered2[i]}</td><td contenteditable='true' id='cell${i}'></td></tr>`;
+  }
+  html += "</table>";
 
+  document.getElementById("outputs").innerHTML = html;
+
+  // Call the setup function to add event listeners
+  setupTable();
+        
          
 
      
@@ -172,14 +179,14 @@ const filtered3 = seznam2.filter(function(value) {
 
 
 
-        //  let btns = document.querySelectorAll('td');zvyraznovac
+          let btns = document.querySelectorAll('td');
          
-        //  for (i of btns) {
-        //     i.addEventListener('click', function() {
+          for (i of btns) {
+             i.addEventListener('click', function() {
     
-        //       if(this.style.background=="white"){this.style.background="yellow";}
-        //    else{this.style.background="white";}
-        //         });}
+              if(this.style.background=="white"){this.style.background="yellow";}
+            else{this.style.background="white";}
+                });}
 
 
                  const findDuplicates = filtered2 => filtered2.map((item, index) => {

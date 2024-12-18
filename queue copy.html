@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="filter.css">
+    <link rel="stylesheet" href="page.css" />
+    <link rel="shortcut icon" href="images/panlog.jpg" type="image/x-icon" />
+    
+    <script type="module">
+        // Import the necessary Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+            authDomain: "pangolin-f37fa.firebaseapp.com",
+            projectId: "pangolin-f37fa",
+            storageBucket: "pangolin-f37fa.appspot.com",
+            messagingSenderId: "880099895366",
+            appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+            measurementId: "G-M31Q6C45FX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docRef = doc(db, "editableText", "content");
+
+        // Function to create the table and set up event listeners
+        function setupTable() {
+            const saveButton = document.getElementById("saveButton");
+            const table = document.getElementById("tab2");
+
+            // Save changes to Firestore
+            saveButton.addEventListener("click", () => {
+                const dataToSave = {};
+                const cells = table.querySelectorAll("td[contenteditable='true']");
+                cells.forEach((cell, index) => {
+                    dataToSave[`cell${index}`] = cell.innerText;
+                });
+
+                setDoc(docRef, dataToSave)
+                    .then(() => {
+                        console.log("Text saved successfully!");
+                    })
+                    .catch((error) => {
+                        console.error("Error saving text: ", error);
+                    });
+            });
+
+            // Load existing data from Firestore
+            onSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    // Populate the table with existing data
+                    const rows = Object.keys(data).length;
+                    for (let i = 0; i < rows; i++) {
+                        const cell = document.getElementById(`cell${i}`);
+                        if (cell) {
+                            cell.innerText = data[`cell${i}`] || '';
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/panlogo.svg" alt="logo" />
+                </a>
+            </div>
+            <div class="main-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="calc.html">Calc</a></li>
+                    <li hidden><a href="types.html">Box types</a></li>
+                    <li><a href="orders.html">Orders</a></li>
+                    <li hidden><a href="gallery.html">Gallery</a></li>
+                    <li><a href="queue.html">Queue</a></li>
+                    <li><a href="Calendar/calendar.html">Calendar</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-heading text-xxl">Orders</h1>
+            <div id="btns">
+                <button class="btn" id="saveButton">Save Changes</button>
+            </div>
+            <div id="outputs"></div>
+        </div>
+    </section>
+</body>
+<style>
+    /* CSS to set the width of the table cells */
+    #tab2 td {
+        width: 40px; /* Set your desired width here */
+        text-align: center; /* Optional: center-align text */
+    }
+    #editableText {
+        color: rgb(162, 0, 255);
+    }
+</style>
+</html>
