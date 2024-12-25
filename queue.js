@@ -170,9 +170,39 @@ removeBorders();
           for (i of btns) {
              i.addEventListener('click', function() {
     
-              if(this.style.background=="white"){this.style.background="yellow";}
-            else{this.style.background="white";}
-                });}
+ // Check if the element's ID matches 'cell' followed by a number
+ const cellId = this.id;
+ const regex = /^cell\d+$/; // Regex to match 'cell' followed by any number
+
+ // If the ID matches the pattern, do nothing
+ if (regex.test(cellId)) {
+     return; // Exit the function
+ }
+
+ // Toggle background color if the ID does not match
+ if (this.style.background === "white") {
+     this.style.background = "yellow";
+ } else {
+     this.style.background = "white";
+ }
+});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
 
 
                  const findDuplicates = filtered2 => filtered2.map((item, index) => {
@@ -274,7 +304,7 @@ function colour()  {const table = document.querySelectorAll('table')[1];
       }
   }
   };
-  
+ 
 
   // window.onload = function fc9(){
   // const f3= seznam3.filter(num => typeof num === 'number')
