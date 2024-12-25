@@ -75,29 +75,34 @@ const seznam3=[...result]
 const filtered=seznam3.filter(function(value){return typeof value==="string" && value.startsWith("M10");});
 
 const filtered2=result2.filter(function(value){return typeof value==="string" && value.startsWith("6240");});
-const filtered3 = seznam2.filter(function(value) {
-  // Check if the value is a string
-  const isString = typeof value === "string";
-  
-  // Regular expression for DD.MM. format
-  const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.$/;
+const filtered3 = seznam2
+  .filter(function(value) {
+    // Check if the value is a string
+    const isString = typeof value === "string";
 
-  // Check if the value matches the date format
-  const isDate = datePattern.test(value);
+    // Regular expression for DD.MM.YY format
+    const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(\d{2})$/;
 
-  // Return true if both conditions are met
-  return isString && isDate;
-});
+    // Check if the value matches the date format
+    const isDate = datePattern.test(value);
+
+    // Return true if both conditions are met
+    return isString && isDate;
+  })
+  .map(function(value) {
+    // Remove the last two characters from each date string
+    return value.slice(0, -2);
+  });
 
 window.onload = function fc() {
 
   var html = "<table id='tab2' class='tab2'>";
-  for (var i = 0; i < filtered2.length; i++) {
-      html += `<tr><td>${filtered2[i]}</td><td contenteditable='true' id='cell${i}'></td></tr>`;
+  for (var i = 0; i < filtered.length; i++) {
+      html += `<tr><td>${filtered[i]}</td><td contenteditable='true' id='cell${i}'></td></tr>`;
   }
   html += "</table>";
 
-  document.getElementById("outputs").innerHTML = html;
+  document.getElementById("outputs2").innerHTML = html;
 
 
   
@@ -134,11 +139,11 @@ removeBorders();
 
      
           var html2 = "<table id='tab1'>";
-        for (var i = 0; i < filtered.length; i++) {
-            html2 += "<tr><td>" + filtered[i] + "</td></tr>";
+        for (var i = 0; i < filtered2.length; i++) {
+            html2 += "<tr><td>" + filtered2[i] + "</td></tr>";
         }
         html2 += "</table>";
-        html2 = document.getElementById("outputs2").innerHTML = html2;
+        html2 = document.getElementById("outputs").innerHTML = html2;
 
 
 
@@ -154,7 +159,7 @@ removeBorders();
 
         
        
-         var html3 = "<table id='tab1'>";
+         var html3 = "<table id='tab3'>";
          for (var i = 0; i < filtered3.length; i++) {
              html3 += "<tr><td>" + filtered3[i] + "</td></tr>";
          }

@@ -10,7 +10,7 @@ td {
 #outputs,
 #outputs2,#outputs3 {
   display: inline-block;
-  margin-inline: 20px;
+  margin-inline: 0px;
 }
 
 #outputs {
