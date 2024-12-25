@@ -168,7 +168,7 @@
           <button class="btn" id="btnSubmit" >Submit</button>
           <input id="out0" hidden>
           <button class="btn"  onclick="colour()">Colour</button>
-          <button class="btn"  id="saveButton">+</button>
+          <button class="btn"  id="saveButton" >+</button>
         </div>
           <div id="outputs"></div>
           <div id="outputs2"></div>
@@ -176,7 +176,7 @@
         
 
 
-
+  
         </div>
       </div>
     </section>
@@ -186,7 +186,6 @@
           width: 40px; /* Set your desired width here */
           text-align: center; /* Optional: center-align text */}
     
-    #editableText{color: rgb(162, 0, 255);}
     #cell0{color: aqua;}
     #cell2{color: rgb(42, 34, 114);}
       </style>
@@ -215,42 +214,24 @@
        const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             
-    document.addEventListener("DOMContentLoaded", () => {
-        const saveButton = document.getElementById("saveButton");
-        const tablex = document.getElementsByClassName("tab2");
+            
+  
 
-        // Load existing data from Firestore
-        const docRef = doc(db, "editableText", "content");
-        onSnapshot(docRef, (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                const rows = Object.keys(data).length;
-                for (let i = 0; i < rows; i++) {
-                    const cell = document.getElementById(`cell${i}`);
-                    if (cell) {
-                        cell.innerText = data[`cell${i}`] || '';
-                    }
-                }
-            }
+   
+    // Save changes to localStorage
+    saveButton.addEventListener("click", () => {
+      const saveButton = document.getElementById("saveButton");
+    const tablex = document.getElementsByClassName("tab2")[0]; // Get the first element with class "tab2"
+        const dataToSave = {};
+        const cells = tablex.querySelectorAll("td[contenteditable='true']");
+        cells.forEach((cell, index) => {
+            dataToSave[`cell${index}`] = cell.innerText;
         });
 
-        // Save changes to Firestore
-        saveButton.addEventListener("click", () => {
-            const dataToSave = {};
-            const cells = tablex.querySelectorAll("td[contenteditable='true']");
-            cells.forEach((cell, index) => {
-                dataToSave[`cell${index}`] = cell.innerText;
-            });
-
-            setDoc(docRef, dataToSave)
-                .then(() => {
-                    console.log("Text saved successfully!");
-                })
-                .catch((error) => {
-                    console.error("Error saving text: ", error);
-                });
-        });
+        localStorage.setItem("editableText", JSON.stringify(dataToSave));
+        console.log("Text saved successfully!");
     });
+
 </script>
 
       

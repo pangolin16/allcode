@@ -100,6 +100,38 @@ window.onload = function fc() {
   document.getElementById("outputs").innerHTML = html;
 
 
+  
+ // Load existing data from localStorage
+    
+ function loadfc(){
+  const savedData = JSON.parse(localStorage.getItem("editableText")) || {};
+  const rows = Object.keys(savedData).length;
+  for (let i = 0; i < rows; i++) {
+      const cell = document.getElementById(`cell${i}`);
+      if (cell) {
+          cell.innerText = savedData[`cell${i}`] || '';
+      }
+  }
+};
+
+loadfc();
+function removeBorders(){
+  // Select all table cells
+  const cells = document.querySelectorAll("td");
+
+  cells.forEach(cell => {
+      // Check if the cell is empty
+      if (cell.innerText.trim() === '') {
+          // Remove borders for empty cells
+          cell.style.border = 'none';
+      }
+  });
+};
+removeBorders();
+
+
+
+
      
           var html2 = "<table id='tab1'>";
         for (var i = 0; i < filtered.length; i++) {

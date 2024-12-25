@@ -206,6 +206,7 @@
 	margin-bottom: 20px;
 	color: var(--primary-clr);
   }
+  .calendar .goto-today i{color: #b38add;}
   .calendar .goto-today .goto {
 	display: flex;
 	align-items: center;
