@@ -90,16 +90,8 @@ const filtered3 = seznam2.filter(function(value) {
 });
 
 window.onload = function fc() {
-  // var html = "<table id='tab2'>";
-  // for (var i = 0; i < filtered2.length; i++) {
-  //     html += "<tr><td>" + filtered2[i] + "</td><td contenteditable='true' id='cell" + i + "'></td></tr>";
-  // }
-  // html += "</table>";
 
-  // document.getElementById("outputs").innerHTML = html;
-
-
-  var html = "<table id='tab2'>";
+  var html = "<table id='tab2' class='tab2'>";
   for (var i = 0; i < filtered2.length; i++) {
       html += `<tr><td>${filtered2[i]}</td><td contenteditable='true' id='cell${i}'></td></tr>`;
   }
@@ -107,13 +99,9 @@ window.onload = function fc() {
 
   document.getElementById("outputs").innerHTML = html;
 
-  // Call the setup function to add event listeners
-  setupTable();
-        
-         
 
      
-          var html2 = "<table id=tab1>";
+          var html2 = "<table id='tab1'>";
         for (var i = 0; i < filtered.length; i++) {
             html2 += "<tr><td>" + filtered[i] + "</td></tr>";
         }
@@ -122,40 +110,6 @@ window.onload = function fc() {
 
 
 
-
-
-//          function createTable() {
-//           let html2 = "<table id='tab1'>";
-//           html2 += "<tr><th>Item</th><th>Comment</th></tr>"; // Table headers
-  
-//           for (let i = 0; i < filtered.length; i++) {
-//               html2 += "<tr>";
-//               html2 += "<td>" + filtered[i] + "</td>";
-//               html2 += "<td onclick='addComment(this)'><span class='comment'>Click to add comment</span></td>";
-//               html2 += "</tr>";
-//           }
-  
-//           html2 += "</table>";
-//           document.getElementById("outputs2").innerhtml2 = html2;
-//       }
-//   // Add comment function
-//   function addComment(cell) {
-//     if (commentMode) {
-//         const comment = prompt("Enter your comment:");
-//         if (comment) {
-//             cell.querySelector('.comment').textContent = comment; // Update the comment
-//         }
-//         commentMode = false; // Exit comment mode after adding a comment
-//     }
-// }
-
-// // Button click event to enable comment mode
-// document.getElementById("addCommentBtn").onclick = function() {
-//     commentMode = true; // Set flag to true
-// };
-
-// // Create the table on page load
-// window.onload = createTable;
 
 
 
@@ -168,7 +122,7 @@ window.onload = function fc() {
 
         
        
-         var html3 = "<table id=tab1>";
+         var html3 = "<table id='tab1'>";
          for (var i = 0; i < filtered3.length; i++) {
              html3 += "<tr><td>" + filtered3[i] + "</td></tr>";
          }

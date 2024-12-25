@@ -1,181 +1,186 @@
 <!DOCTYPE html>
-<html>
-    <head>
-      <meta charset="UTF-8">
-
-      
-<script type="module">
-  // Import the necessary Firebase SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";</script>    
-      
-      <link rel="stylesheet" href="calendar.css">
-      <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="calendar.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-    
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-/>
-
-
-
-
-    </head>
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet"
+    />
+</head>
 <body>
-  <button id="exportButton">Export to Firebase</button>
-  <button id="importButton">Import from Firebase</button>   
+    
 <div class="container">
     <div class="left">
-      <div class="calendar">
-        <div class="month">
-          <i class="fas fa-angle-left prev"></i>
-          <div class="date">december 2015</div>
-          <i class="fas fa-angle-right next"></i>
+        <div class="calendar">
+            <div class="month">
+                <i class="fas fa-angle-left prev"></i>
+                <div class="date">December 2015</div>
+                <i class="fas fa-angle-right next"></i>
+            </div>
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="days"></div>
+            <div class="goto-today">
+                <div class="goto">
+                    <input type="text" placeholder="mm/yyyy" class="date-input" />
+                    <button class="goto-btn">Go</button>
+                </div>
+                <button class="today-btn">Today</button>
+            </div>
         </div>
-        <div class="weekdays">
-          <div>Sun</div>
-          <div>Mon</div>
-          <div>Tue</div>
-          <div>Wed</div>
-          <div>Thu</div>
-          <div>Fri</div>
-          <div>Sat</div>
-        </div>
-        <div class="days"></div>
-        <div class="goto-today">
-          <div class="goto">
-            <input type="text" placeholder="mm/yyyy" class="date-input" />
-            <button class="goto-btn">Go</button>
-          </div>
-          <button class="today-btn">Today</button>
-        </div>
-      </div>
     </div>
     <div class="right">
-      <div class="today-date">
-        <div class="event-day">wed</div>
-        <div class="event-date">12th december 2022</div>
-      </div>
-      <div class="events"></div>
-      <div class="add-event-wrapper">
-        <div class="add-event-header">
-          <div class="title">Add Event</div>
-          <i class="fas fa-times close"></i>
+        <div class="today-date">
+            <div class="event-day">Wed</div>
+            <div class="event-date">12th December 2022</div>
         </div>
-        <div class="add-event-body">
-          <div class="add-event-input">
-            <input type="text" placeholder="Event Name" class="event-name" />
-          </div>
-          <div class="add-event-input">
-            <input
-              type="text"
-              placeholder="Event Time From"
-              class="event-time-from"
-            />
-          </div>
-          <div class="add-event-input">
-            <input
-              type="text"
-              placeholder="Event Time To"
-              class="event-time-to"
-            />
-          </div>
+        <div class="events"></div>
+        <div class="add-event-wrapper">
+            <div class="add-event-header">
+                <div class="title">Add Event</div>
+                <i class="fas fa-times close"></i>
+            </div>
+            <div class="add-event-body">
+                <div class="add-event-input">
+                    <input type="text" placeholder="Event Name" class="event-name" />
+                </div>
+                <div class="add-event-input">
+                    <input
+                        type="text"
+                        placeholder="Event Time From"
+                        class="event-time-from"
+                    />
+                </div>
+                <div class="add-event-input">
+                    <input
+                        type="text"
+                        placeholder="Event Time To"
+                        class="event-time-to"
+                    />
+                </div>
+            </div>
+            <div class="add-event-footer">
+                <button class="add-event-btn">Add Event</button>
+            </div>
         </div>
-        <div class="add-event-footer">
-          <button class="add-event-btn">Add Event</button>
-        </div>
-      </div>
     </div>
     <button class="add-event">
-      <i class="fas fa-plus"></i>
+        <i class="fas fa-plus"></i>
     </button>
-  </div>
-
-  <div class="credits">
-  </div>
 </div>
 
+<div class="credits"></div>
 
-  </div>
+<button id="saveBtn" onclick="saveToFirestore()">Save</button>
+<button id="loadBtn" onclick="loadFromFirestore()">Load</button>
 
+<script type="module">
+       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+       import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+        authDomain: "pangolin-f37fa.firebaseapp.com",
+        projectId: "pangolin-f37fa",
+        storageBucket: "pangolin-f37fa.appspot.com",
+        messagingSenderId: "880099895366",
+        appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+        measurementId: "G-M31Q6C45FX"
+    };
 
-  <script>
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
+  // Function to save JSON data to Firestore
+  window.saveToFirestore = async function() {
+        const data0 = localStorage.getItem("events");
+        if (!data0) {
+            console.error("No events found in local storage.");
+            return;
+        }
 
+        // Parse the JSON string to an array
+        const eventsArray = JSON.parse(data0);
+        const eventsObject = {};
 
-  // Your Firebase configuration
-  const firebaseConfig = {
-      apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
-      authDomain: "pangolin-f37fa.firebaseapp.com",
-      projectId: "pangolin-f37fa",
-      storageBucket: "pangolin-f37fa.appspot.com",
-      messagingSenderId: "880099895366",
-      appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
-      measurementId: "G-M31Q6C45FX"
-  };
+        // Convert array to object and check for undefined values
+        eventsArray.forEach(item => {
+            if (item.year && item.month && item.day && item.events) {
+                const dateKey = `${item.year}-${String(item.month).padStart(2, '0')}-${String(item.day).padStart(2, '0')}`;
+                eventsObject[dateKey] = item.events;
+            } else {
+                console.warn("Skipping item due to missing fields:", item);
+            }
+        });
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+        console.log(eventsObject);
 
+        if (Object.keys(eventsObject).length === 0) {
+            console.error("No valid events to save.");
+            return;
+        }
 
-function exportToFirebase() {
-const localStorageData = {};
-for (let i = 0; i < localStorage.length; i++) {
-  const key = localStorage.key(i);
-  const value = localStorage.getItem(key);
-  localStorageData[key] = value;
-}
+        // Specify the document ID you want to overwrite
+        const docId = "calDec";  // Change this to your actual document ID
 
-// Push data to Firebase
-database.ref('localStorageData').set(localStorageData)
-  .then(() => {
-      console.log('Data exported to Firebase successfully.');
-  })
-  .catch((error) => {
-      console.error('Error exporting data to Firebase:', error);
-  });
-}
+        try {
+            // Use setDoc to overwrite the document
+            await setDoc(doc(db, "calendar0", docId), eventsObject);
+            console.log("Document written with ID: ", docId);
+        } catch (error) {
+            console.error("Error writing document: ", error);
+        }
+    };
+    // Function to load JSON data from Firestore and save it to localStorage
+window.loadFromFirestore = async function() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "calendar0"));
+        const eventsArray = [];
 
-// Function to import data from Firebase to local storage
-function importFromFirebase() {
-database.ref('localStorageData').once('value')
-  .then((snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-          for (const key in data) {
-              localStorage.setItem(key, data[key]);
-          }
-          console.log('Data imported from Firebase successfully.');
-      } else {
-          console.log('No data found in Firebase.');
-      }
-  })
-  .catch((error) => {
-      console.error('Error importing data from Firebase:', error);
-  });
-}
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            // Iterate over each date key in the document
+            for (const dateKey in data) {
+                // Assuming the dateKey is in 'YYYY-MM-DD' format
+                const [year, month, day] = dateKey.split('-').map(Number);
+                const events = data[dateKey];
+                
+                // Push the formatted event object to the eventsArray
+                eventsArray.push({
+                    day: day,
+                    month: month,
+                    year: year,
+                    events: events
+                });
+            }
+            console.log(`${doc.id} => ${JSON.stringify(data)}`);
+        });
 
-// Event listeners for the buttons
-document.getElementById('exportButton').addEventListener('click', exportToFirebase);
-document.getElementById('importButton').addEventListener('click', importFromFirebase);
+        // Save the array to localStorage
+        localStorage.setItem("events", JSON.stringify(eventsArray));
+        console.log("Data saved to localStorage.");
 
-
-
-
-
-
-
-  
+    } catch (error) {
+        console.error("Error loading documents: ", error);
+    }
+};
 </script>
 <script src="calendar.js"></script>
-  </body>
+</body>
 </html>

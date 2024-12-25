@@ -1,66 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script type="module">
-      // Import the necessary Firebase SDKs
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-      import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-      // Your Firebase configuration
-      const firebaseConfig = {
-          apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
-          authDomain: "pangolin-f37fa.firebaseapp.com",
-          projectId: "pangolin-f37fa",
-          storageBucket: "pangolin-f37fa.appspot.com",
-          messagingSenderId: "880099895366",
-          appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
-          measurementId: "G-M31Q6C45FX"
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
- // Function to create the table and set up event listeners
- function setupTable() {
-            const saveButton = document.getElementById("saveButton");
-            const table = document.getElementById("tab2");
-
-            // Save changes to Firestore
-            saveButton.addEventListener("click", () => {
-                const dataToSave = {};
-                const cells = table.querySelectorAll("td[contenteditable='true']");
-                cells.forEach((cell, index) => {
-                    dataToSave[`cell${index}`] = cell.innerText;
-                });
-
-                setDoc(docRef, dataToSave)
-                    .then(() => {
-                        console.log("Text saved successfully!");
-                    })
-                    .catch((error) => {
-                        console.error("Error saving text: ", error);
-                    });
-            });
-
-            // Load existing data from Firestore
-            onSnapshot(docRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    // Populate the table with existing data
-                    const rows = Object.keys(data).length;
-                    for (let i = 0; i < rows; i++) {
-                        const cell = document.getElementById(`cell${i}`);
-                        if (cell) {
-                            cell.innerText = data[`cell${i}`] || '';
-                        }
-                    }
-                }
-            });
-        }
-
-  
-  </script>
+    
 
 
 
@@ -101,8 +42,7 @@
 
 
 
-
-
+  
 
 
 
@@ -241,16 +181,80 @@
       </div>
     </section>
 
+    <style>   /* CSS to set the width of the table cells */
+      #tab2 td {
+          width: 40px; /* Set your desired width here */
+          text-align: center; /* Optional: center-align text */}
     
+    #editableText{color: rgb(162, 0, 255);}
+    #cell0{color: aqua;}
+    #cell2{color: rgb(42, 34, 114);}
+      </style>
+
+
+
+<script src="page.js"></script>
+<script src="queue.js"></script>     
+        <script type="module">
+          // Import the necessary Firebase SDKs
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+          import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    
+          // Your Firebase configuration
+          const firebaseConfig = {
+              apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+              authDomain: "pangolin-f37fa.firebaseapp.com",
+              projectId: "pangolin-f37fa",
+              storageBucket: "pangolin-f37fa.appspot.com",
+              messagingSenderId: "880099895366",
+              appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+              measurementId: "G-M31Q6C45FX"
+          };
+    
+       // Initialize Firebase
+       const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            
+    document.addEventListener("DOMContentLoaded", () => {
+        const saveButton = document.getElementById("saveButton");
+        const tablex = document.getElementsByClassName("tab2");
+
+        // Load existing data from Firestore
+        const docRef = doc(db, "editableText", "content");
+        onSnapshot(docRef, (doc) => {
+            if (doc.exists()) {
+                const data = doc.data();
+                const rows = Object.keys(data).length;
+                for (let i = 0; i < rows; i++) {
+                    const cell = document.getElementById(`cell${i}`);
+                    if (cell) {
+                        cell.innerText = data[`cell${i}`] || '';
+                    }
+                }
+            }
+        });
+
+        // Save changes to Firestore
+        saveButton.addEventListener("click", () => {
+            const dataToSave = {};
+            const cells = tablex.querySelectorAll("td[contenteditable='true']");
+            cells.forEach((cell, index) => {
+                dataToSave[`cell${index}`] = cell.innerText;
+            });
+
+            setDoc(docRef, dataToSave)
+                .then(() => {
+                    console.log("Text saved successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error saving text: ", error);
+                });
+        });
+    });
+</script>
+
+      
+   
   </body>
-<style>   /* CSS to set the width of the table cells */
-  #tab2 td {
-      width: 40px; /* Set your desired width here */
-      text-align: center; /* Optional: center-align text */}
 
-#editableText{color: rgb(162, 0, 255);}
-
-  </style>
-    <script src="page.js"></script>
-    <script src="queue.js"></script>
 </html>
