@@ -42,6 +42,9 @@
                     <button class="goto-btn">Go</button>
                 </div>
                 <button class="today-btn">Today</button>
+                <button id="saveBtn" onclick="saveToFirestore()">Save</button>
+<button id="loadBtn" onclick="loadFromFirestore()">Load</button><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
+
             </div>
         </div>
     </div>
@@ -87,8 +90,7 @@
 
 <div class="credits"></div>
 
-<button id="saveBtn" onclick="saveToFirestore()">Save</button>
-<button id="loadBtn" onclick="loadFromFirestore()">Load</button>
+
 
 <script type="module">
        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
