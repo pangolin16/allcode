@@ -43,7 +43,7 @@
                 </div>
                 <button class="today-btn">Today</button>
                 <button id="saveBtn" onclick="saveToFirestore()">Save</button>
-<button id="loadBtn" onclick="loadFromFirestore()">Load</button><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
+<a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
 
             </div>
         </div>
@@ -150,7 +150,7 @@
         }
     };
     // Function to load JSON data from Firestore and save it to localStorage
-window.loadFromFirestore = async function() {
+window.onload = async function() {
     try {
         const querySnapshot = await getDocs(collection(db, "calendar0"));
         const eventsArray = [];
