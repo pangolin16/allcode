@@ -54,7 +54,7 @@ const result = removeAdjacentStringsStartingWith(originalArray, letterList1, let
 
  function extractAndCleanSubstrings(array) {
    const result = array
-     .filter(str => str.includes("6240") || str.includes(".") || str.includes("-")|| str.includes(",")) // Step 1: Filter
+     .filter(str => str.includes("6240")|| str.includes("6250") || str.includes(".") || str.includes("-")|| str.includes(",")) // Step 1: Filter
       .map(str => str.replace(/[,.-]/g, '')); // Step 2: Remove . and - symbols
 
   return result;
@@ -74,7 +74,10 @@ const seznam3=[...result]
 
 const filtered=seznam3.filter(function(value){return typeof value==="string" && value.startsWith("M10");});
 
-const filtered2=result2.filter(function(value){return typeof value==="string" && value.startsWith("6240");});
+const filtered2 = result2.filter(function(value) {
+  return typeof value === "string" && (value.startsWith("6240") || value.startsWith("6250"));
+});
+
 const filtered3 = seznam2
   .filter(function(value) {
     // Check if the value is a string

@@ -182,6 +182,61 @@ window.onload = async function() {
         console.error("Error loading documents: ", error);
     }
 };
+
+
+
+
+const calendarEntries = localStorage.getItem("events")
+        // Function to check for calendar entries and trigger notifications
+        function checkCalendarEntries() {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+            if (calendarEntries[dateString]) {
+                showNotification(calendarEntries[dateString]);
+            }
+        }
+
+        // Function to show a notification
+        function showNotification(entry) {
+            if (Notification.permission === "granted") {
+                new Notification("Today's Entry", {
+                    body: entry,
+                    icon: 'your-icon-url.png' // Optional: Add an icon URL
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification("Today's Entry", {
+                            body: entry,
+                            icon: 'your-icon-url.png' // Optional: Add an icon URL
+                        });
+                    }
+                });
+            }
+        }
+
+        // Check for entries every day at midnight
+        function setDailyCheck() {
+            const now = new Date();
+            const nextCheck = new Date();
+            nextCheck.setHours(24, 0, 0, 0); // Set to the next midnight
+
+            const timeUntilNextCheck = nextCheck - now;
+            setTimeout(() => {
+                checkCalendarEntries();
+                setInterval(checkCalendarEntries, 24 * 60 * 60 * 1000); // Check every 24 hours
+            }, timeUntilNextCheck);
+        }
+
+        // Start the daily check
+        setDailyCheck();
+
+
+
+
+
+
 </script>
 <script src="calendar.js"></script>
 </body>
