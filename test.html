@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Rows from Tables</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="outputs"></div>
+<div id="outputs2"></div>
+<input type="text" id="myInput" />
+
+<script>
+    const filtered2 = ["Item 1", "Item 2", "Item 3"]; // Sample data for the first table (tab2)
+    const filtered = ["Item A", "Item B", "Item C"]; // Sample data for the second table (tab1)
+
+    window.onload = function fc() {
+        // Build the first table (tab2)
+        let html = "<table id='tab2'>";
+        for (var i = 0; i < filtered2.length; i++) {
+            html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td></tr>";
+        }
+        html += "</table>";
+        document.getElementById("outputs").innerHTML = html;
+
+        // Build the second table (tab1)
+        let html2 = "<table id='tab1'>";
+        for (var i = 0; i < filtered.length; i++) {
+            html2 += "<tr><td>" + filtered[i] + "</td></tr>";
+        }
+        html2 += "</table>";
+        document.getElementById("outputs2").innerHTML = html2;
+
+        // Add click event listener to the first table (tab2)
+        const firstTable = document.getElementById("tab2");
+        firstTable.addEventListener('click', function(event) {
+            const target = event.target;
+
+            // Check if the clicked cell is the first cell of a row
+            if (target.tagName === 'TD' && target.cellIndex === 0) {
+                // Get the parent row and its index
+                const row = target.parentNode;
+                const rowIndex = row.rowIndex;
+
+                // Remove the row from the first table (tab2)
+                firstTable.deleteRow(rowIndex);
+
+                // Remove the corresponding row from the second table (tab1)
+                const secondTable = document.getElementById("tab1");
+                secondTable.deleteRow(rowIndex);
+            }
+        });
+
+
+    };
+</script>
+
+</body>
+</html>

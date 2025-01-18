@@ -8,11 +8,8 @@ btnSubmit.onclick=function(){const key=inpKey;
     location.reload();};}
 
 
-
-
  const vystupek=localStorage.getItem("vstup")
  string0.value=vystupek;
-
 
 
 const string1=document.getElementById("out0").value;
@@ -91,7 +88,7 @@ const filtered2 = result2.filter(function(value) {
 
     window.onload = function fc(){
 
-         var html = "<table id=tab2>";
+         let html = "<table id=tab2>";
          for (var i = 0; i < filtered2.length; i++) {
              html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td></tr>";
          }
@@ -103,17 +100,19 @@ const filtered2 = result2.filter(function(value) {
 
 
 
+
+
      
-         var html2 = "<table id=tab1>";
+         let html2 = "<table id=tab1>";
          for (var i = 0; i < filtered.length; i++) {
              html2 += "<tr><td>" + filtered[i] + "</td></tr>";
          }
          html2 += "</table>";
          html2 = document.getElementById("outputs2").innerHTML = html2;
 
-        
-    
- 
+
+
+
 
 
          
@@ -231,5 +230,6 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // const f3= seznam3.filter(num => typeof num === 'number')
   // console.log(f3)}
 
+  
 
 
