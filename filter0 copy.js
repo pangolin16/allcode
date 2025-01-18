@@ -2,33 +2,29 @@
 
 const inpKey=document.getElementById("inpKey").value;
 const btnSubmit=document.getElementById("btnSubmit");
-const string0=document.getElementById("out0");
+const out0=document.getElementById("out0");
 btnSubmit.onclick=function(){const key=inpKey;
   if(key){localStorage.setItem("vstup",key);
-    location.reload();};}
 
 
 
 
+
+
+    location.reload();
+  };
+
+
+
+ ;}
  const vystupek=localStorage.getItem("vstup")
- string0.value=vystupek;
+ out0.value=vystupek;
 
 
 
-const string1=document.getElementById("out0").value;
-function replaceLetters(inputString) {
-  return inputString
-  .replace(/d/gi, '')   // Remove all 'd' letters
-      .replace(/l/gi, '')   // Remove all 'l' letters
-      .replace(/o/gi, '0')  // Replace 'o' with '0'
-      .replace(/i/gi, '1'); // Replace 'i' with '1'
-      
-}
+const seznama=document.getElementById("out0").value;
 
-
-
-const string2 = replaceLetters(string1);
-let seznam2 =string2.split(' ');
+let seznam2 =seznama.split(' ');
 
 
 const filteredArray = seznam2.filter(item => item.trim() !== "");
@@ -93,7 +89,7 @@ const filtered2 = result2.filter(function(value) {
 
          var html = "<table id=tab2>";
          for (var i = 0; i < filtered2.length; i++) {
-             html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td></tr>";
+             html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td><td contenteditable=true></td></tr>";
          }
          html += "</table>";
 
@@ -117,7 +113,7 @@ const filtered2 = result2.filter(function(value) {
 
 
          
-         let btns = document.querySelectorAll("tr td:not(:nth-child(1))");
+         let btns = document.querySelectorAll("tr td:not(:nth-child(1)):not(:nth-child(3))");
          for (i of btns) {
             i.addEventListener('click', function() {
     
@@ -231,5 +227,4 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // const f3= seznam3.filter(num => typeof num === 'number')
   // console.log(f3)}
 
-
-
+ 
