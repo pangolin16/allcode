@@ -2,37 +2,46 @@
 
 const inpKey=document.getElementById("inpKey").value;
 const btnSubmit=document.getElementById("btnSubmit");
-const out0=document.getElementById("out0");
+const string0=document.getElementById("out0");
 btnSubmit.onclick=function(){const key=inpKey;
   if(key){localStorage.setItem("vstup",key);
+    location.reload();};}
 
 
-
-
-
-
-    location.reload();
-  };
-
-
-
- ;}
  const vystupek=localStorage.getItem("vstup")
- out0.value=vystupek;
+ string0.value=vystupek;
+
+
+const string1=document.getElementById("out0").value;
+function replaceLetters(inputString) {
+  return inputString
+  .replace(/d/gi, '')   // Remove all 'd' letters
+     .replace(/l/gi, '')   // Remove all 'l' letters
+     .replace(/á/gi, '')   // Remove all 'á' letters
+     .replace(/o/gi, '0')  // Replace 'o' with '0'
+     .replace(/i/gi, '1') // Replace 'i' with '1'
+     .replace(/a/gi, '4'); // Replace 'a' with '4'
+}
 
 
 
-const seznama=document.getElementById("out0").value;
-
-let seznam2 =seznama.split(' ');
-
-
-const filteredArray = seznam2.filter(item => item.trim() !== "");
+const string2 = replaceLetters(string1);
+let array0 =string2.split(' ');
 
 
+function removeLettersIfConditionMet(inputString) {
+    // Check if the string contains either '6250' or '6240' and does not contain 'm'
+    if ((inputString.includes('6250') || inputString.includes('6240')) && !inputString.includes('m')) {
+        // Remove all letters from the string
+        return inputString.replace(/[a-zA-Z]/g, ''); // This regex matches all letters
+    }
+    return inputString; // Return the original string if conditions not met
+}
 
+// Process the array and remove letters based on the condition
+const array1 = array0.map(removeLettersIfConditionMet);
 
-
+const filteredArray = array1.filter(item => item.trim() !== "");
 
 function removeAdjacentStringsStartingWith(array, letterList1, letterList2) {
   for (let i = 0; i < array.length - 1; i++) {
@@ -48,8 +57,6 @@ function removeAdjacentStringsStartingWith(array, letterList1, letterList2) {
   return array;
 }
 
-
-
 const originalArray =[...filteredArray];
 const letterList1 = ["6"]; // Letters that the first string can start with
 const letterList2 = ["P","V"]; // Letters that the second string can start with
@@ -58,17 +65,17 @@ const result = removeAdjacentStringsStartingWith(originalArray, letterList1, let
 
 
 
- function extractAndCleanSubstrings(array) {
-   const result = array
-     .filter(str => str.includes("6240")|| str.includes("6250") || str.includes(".") || str.includes("-")|| str.includes(",")) // Step 1: Filter
-      .map(str => str.replace(/[,.-]/g, '')); // Step 2: Remove . and - symbols
-
-  return result;
- }
 
 
- const originalArray2 = [...result];
- const result2 = extractAndCleanSubstrings(originalArray2);
+function extractAndCleanSubstrings(array) {
+  const result = array
+    .filter(str => str.includes("6240")|| str.includes("6250") ) // Step 1: Filter
+     .map(str => str.replace(/[,.-]/g, '')); // Step 2: Remove . and - symbols
+
+ return result;
+}
+ const result1 = [...result];
+ const result2 = extractAndCleanSubstrings(result1);
 
 
 
@@ -81,15 +88,15 @@ const seznam3=[...result]
 const filtered=seznam3.filter(function(value){return typeof value==="string" && value.startsWith("M10");});
 
 const filtered2 = result2.filter(function(value) {
-  return typeof value === "string" && (value.startsWith("6240") || value.startsWith("6250"));
+  return typeof value === "string" && (value.includes("6240") || value.includes("6250"));
 });
 
 
     window.onload = function fc(){
 
-         var html = "<table id=tab2>";
+         let html = "<table id='tab2'>";
          for (var i = 0; i < filtered2.length; i++) {
-             html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td><td contenteditable=true></td></tr>";
+             html += "<tr><td><i class='fa-solid fa-rectangle-xmark'></i></td><td>" + filtered2[i] + "</td></tr>";
          }
          html += "</table>";
 
@@ -99,21 +106,46 @@ const filtered2 = result2.filter(function(value) {
 
 
 
+
+
      
-         var html2 = "<table id=tab1>";
+         let html2 = "<table id='tab1'>";
          for (var i = 0; i < filtered.length; i++) {
              html2 += "<tr><td>" + filtered[i] + "</td></tr>";
          }
          html2 += "</table>";
          html2 = document.getElementById("outputs2").innerHTML = html2;
 
-        
-    
- 
 
+
+
+         const firstTable = document.getElementById("tab2");
+         firstTable.addEventListener('click', function(event) {
+             const target = event.target;
+     
+             // Check if the clicked cell is the first cell of a row
+             if (target.tagName === 'TD' && target.cellIndex === 0) {
+                 // Get the parent row
+                 const row = target.parentNode;
+     
+                 // Get the current row index
+                 const rowIndex = row.rowIndex;
+     
+                 // Remove the row from the first table (tab2)
+                 firstTable.deleteRow(rowIndex);
+     
+                 // Remove the corresponding row from the second table (tab1)
+                 const secondTable = document.getElementById("tab1");
+                 if (rowIndex < secondTable.rows.length) {
+                     secondTable.deleteRow(rowIndex);
+                 } else {
+                     console.error(`Row index ${rowIndex} is out of bounds for tab1.`);
+                 }
+             }
+         });
 
          
-         let btns = document.querySelectorAll("tr td:not(:nth-child(1)):not(:nth-child(3))");
+         let btns = document.querySelectorAll("tr td:not(:nth-child(1))");
          for (i of btns) {
             i.addEventListener('click', function() {
     
@@ -227,4 +259,5 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // const f3= seznam3.filter(num => typeof num === 'number')
   // console.log(f3)}
 
- 
+  
+

@@ -319,4 +319,6 @@ function colour()  {const table = document.querySelectorAll('table')[1];
   // console.log(f3)}
 
 
-  
+  console.log(result2
+    
+  )
