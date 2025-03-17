@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="topLine">
+    <!-- Letter generator -->
+    <div id="alpha"></div>
+  
+    <figure class="clock">
+      <div class="mins">0</div>
+      <div>:</div>
+      <div class="secs">00</div>
+      <audio
+        src="http://soundbible.com/mp3/service-bell_daniel_simion.mp3"
+      ></audio>
+      <svg class="progress-ring" height="120" width="120">
+        <circle
+          class="progress-ring__circle"
+          stroke-width="8"
+          fill="transparent"
+          r="50"
+          cx="60"
+          cy="60"
+        />
+      </svg>
+    </figure>
+   
+      <button class="start">start</button>
+  
+    
+    
+      <form action=".">
+        <label for="focusTime">Time set</label>
+        <input type="number" value="1" id="focusTime" />
+
+        <input hidden type="number" value="1" id="breakTime" />
+        <button id="saveBtn" type="submit">Save</button>
+      </form>
+
+  </div>
+    <div id="inps">
+      <input type="text">
+      <input type="text">
+      <input type="text">
+      <input type="text">
+        <input type="text">
+    </div>
+  
+
+
+
+
+<script src="settings.js"></script>
+<script src="timer.js"></script>
+<script src="progress.js"></script>
+<script src="rndm.js"></script>
+</body>
+</html>
+
