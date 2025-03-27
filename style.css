@@ -10,15 +10,16 @@
 }
 
 body {
-  height: 100vh;
   padding: 35px;
-
   background: rgb(243, 243, 243);
   color: #131313;
   font-family: "Montserrat", sans-serif;
 }
-#topLine{display: flex;flex-direction:row;margin-bottom:75px ;}
-#focusTime{width: 50px;}
+label{}
+#topLine{display: flex;flex-direction:row;margin-bottom:75px ;margin-inline:5px ;}
+#focusTime{width: 50px;height: 42px;}
+#inps{display:flex;flex-direction: column;width: 200px;}
+.score{}
 input {
   transition: 0.5s ease-in-out;
   margin: 10px 0;
@@ -27,36 +28,25 @@ input {
   background: rgba(0, 0, 0, 0.11);
   border: none;
 }
-.btn-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 10%;
-  margin: 35px 0;
-}
+
+
+
 button {
-  margin: 5px;
+  
   padding: 10px;
   border: none;
   font-size: 18px;
   transition: 0.5s ease-in-out;
 }
-label {
-  font-size: 12px;
-}
 
 
 #saveBtn {
   background: rgb(25, 67, 255);
-  width: 50px;
-  height: 35px;
+  width: auto;
+  height: auto;
  
   color: white;
 }
-.start {
-  background: rgb(48, 33, 253);
-  color: white;
-}
 
 
 
@@ -64,15 +54,6 @@ label {
 
 
 
-.break {
-  background: rgb(48, 33, 253);
-  color: white;
-
-}
-.reset {
-  background: rgb(250, 69, 109);
-  color: #000000;
-}
 
 
 
@@ -88,7 +69,7 @@ label {
   align-items: center;
   font-weight: bold;
   height: 30%;
-  font-size: 24px;
+  font-size: 20px;
 }
 .progress-ring {
   position: absolute;
@@ -113,8 +94,6 @@ label {
 
 
 
-
-#inps{display:flex;flex-direction: column;width: 200px;}
 
 
 
@@ -159,16 +138,11 @@ label {
     width: 50%;
     justify-content: space-around;
   }
-  footer {
-    width: 100%;
-  }
+
 }
 
 @media screen and (max-width: 375px) {
   form {
     height: 40%;
-  }
-  footer {
-    position: static;
   }
 }
