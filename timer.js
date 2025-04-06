@@ -39,57 +39,53 @@ var validWords = [
   "Vatican City", "Venezuela", "Vietnam", "Yemen", 
   "Zambia", "Zimbabwe"
 ];
-var commonAnimalNames = [
-  "Dog", "Cat", "Fish", "Bird", "Horse", "Rabbit", "Hamster", "Turtle", 
-  "Lizard", "Snake", "Frog", "Guinea Pig", "Parrot", "Chicken", "Duck", 
-  "Goat", "Sheep", "Pig", "Cow", "Deer", "Fox", "Bear", "Wolf", "Lion", 
-  "Tiger", "Elephant", "Giraffe", "Zebra", "Monkey", "Kangaroo", "Panda", 
-  "Koala", "Otter", "Seal", "Whale", "Dolphin", "Octopus", "Crab", 
-  "Lobster", "Shrimp", "Ant", "Bee", "Butterfly", "Moth", "Spider", 
-  "Scorpion", "Dragonfly", "Grasshopper", "Cockroach", "Termite", 
-  "Slug", "Snail", "Bat", "Raccoon", "Squirrel", "Chipmunk", "Hedgehog", 
-  "Porcupine", "Bison", "Buffalo", "Cheetah", "Leopard", "Hyena", 
-  "Jaguar", "Rhino", "Hippo", "Camel", "Gorilla", "Chimpanzee", 
-  "Orangutan", "Sloth", "Anteater", "Armadillo", "Ocelot", "Serval", 
-  "Tasmanian Devil", "Wallaby", "Wombat", "Meerkat", "Mongoose", 
-  "Manatee", "Narwhal", "Penguin", "Flamingo", "Peacock", "Swan", 
-  "Canary", "Finch", "Sparrow", "Woodpecker", "Pigeon", "Dove", 
-  "Raven", "Crow", "Seagull", "Parakeet", "Macaw", "Cockatoo", 
-  "Budgerigar", "Quail", "Ostrich", "Emu", "Kookaburra", "Heron", 
-  "Eagle", "Hawk", "Falcon", "Vulture", "Condor", "Albatross", 
-  "Pelican", "Seal Lion", "Walrus", "Sea Lion", "Sea Turtle", 
-  "Starfish", "Jellyfish", "Sea Urchin", "Coral", "Anemone", 
-  "Lobster", "Crayfish", "Eel", "Pike", "Trout", "Salmon", 
-  "Catfish", "Tuna", "Mackerel", "Snapper", "Bass", "Grouper", 
-  "Swordfish", "Marlin", "Haddock", "Flounder", "Sardine", 
-  "Anchovy", "Mullet", "Perch", "Carp", "Goldfish", "Betta", 
-  "Guppy", "Molly", "Platies", "Cichlid", "Angelfish", "Koi", 
-  "Tetra", "Barb", "Rainbowfish", "Killifish", "Dwarf Pufferfish"
+var validWords2 = [
+  // ... (list of animals)
 ];
 
-// Repeat or expand this list to reach 1000 names as needed.
-
-
+var validWords3 = [
+  // ... (list of cities)
+];
 
 var score = 0; // Initialize score
 var generatedLetter = ''; // Variable to store the randomly generated letter
 
 function checkWord() {
-  const userInput = document.getElementById("userInput").value;
+  const countryInput = document.getElementById("userInput").value;
+  const animalInput = document.getElementById("userInput2").value;
+  const cityInput = document.getElementById("userInput3").value;
   const resultDiv = document.getElementById("result"); // Get result div
 
-  if (validWords.includes(userInput)) {
-      score += 10; // Add 10 points if the word is valid
-      resultDiv.textContent = "The word is valid!"; // Display valid message
-  } else if (userInput.startsWith(generatedLetter)) {
-      score += 10; // Add 10 points if the word starts with the generated letter
-      resultDiv.textContent = "The word starts with the correct letter!"; // Display message
-  } else {
-      resultDiv.textContent = "The word is not valid."; // Display invalid message
+  // Check for country input
+  if (validWords.includes(countryInput) && countryInput.startsWith(generatedLetter)) {
+      score += 10; // Add 10 points if the country is valid and starts with the generated letter
+      resultDiv.textContent = "The country name is valid and starts with the correct letter!";
+  } else if (validWords.includes(countryInput)) {
+      resultDiv.textContent = "The country name is valid!";
   }
 
-  document.getElementById("score").textContent = score; // Update score display
-  document.getElementById("userInput").value = ''; // Clear input field
+  // Check for animal input
+  if (validWords2.includes(animalInput) && animalInput.startsWith(generatedLetter)) {
+      score += 10; // Add 10 points if the animal is valid and starts with the generated letter
+      resultDiv.textContent = "The animal name is valid and starts with the correct letter!";
+  } else if (validWords2.includes(animalInput)) {
+      resultDiv.textContent = "The animal name is valid!";
+  }
+
+  // Check for city input
+  if (validWords3.includes(cityInput) && cityInput.startsWith(generatedLetter)) {
+      score += 10; // Add 10 points if the city is valid and starts with the generated letter
+      resultDiv.textContent = "The city name is valid and starts with the correct letter!";
+  } else if (validWords3.includes(cityInput)) {
+      resultDiv.textContent = "The city name is valid!";
+  }
+
+  // Update score display
+  document.getElementById("score").textContent = score; 
+  // Clear input fields
+  document.getElementById("userInput").value = ''; 
+  document.getElementById("userInput2").value = ''; 
+  document.getElementById("userInput3").value = ''; 
 }
 
 var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
