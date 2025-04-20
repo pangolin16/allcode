@@ -151,23 +151,6 @@ parseInt(s1)**0.9995+1)}}
 
 
 
-                //krabice s ořezy
-      //   function gets4(){let s4=document.getElementById("s4").value
-      //     if(s4<150){document.getElementById("output4").innerHTML=parseInt(s4)
-      //     }else if(s4<=250 && s4>150){document.getElementById("output4").innerHTML=parseInt(s4)-10}
-      //     else if(s4<=300&& s4>250){document.getElementById("output4").innerHTML=parseInt(s4)-10}
-      //     else if(s4<=500 && s4>300){document.getElementById("output4").innerHTML=parseInt(s4)-10}
-      //     else if(s4<=650 && s4>500){document.getElementById("output4").innerHTML=parseInt(s4)-10}
-      //     else if(s4<=750 && s4>650){document.getElementById("output4").innerHTML=parseInt(s4)-10}
-      // else if(s4<=1300 && s4>750){document.getElementById("output4").innerHTML=parseInt(s4)-11}
-      // else if(s4<=1500 && s4>1300){document.getElementById("output4").innerHTML=parseInt(s4)-12}
-      // else if(s4<=1650 && s4>1500){document.getElementById("output4").innerHTML=parseInt(s4)-12}
-      // else if(s4<=1800 && s4>1650){document.getElementById("output4").innerHTML=parseInt(s4)-12}
-      // else if(s4<=2000&& s4>1800){document.getElementById("output4").innerHTML=parseInt(s4)-12}
-      // else if(s4<=2500 && s4>2000){document.getElementById("output4").innerHTML=parseInt(s4)-12}
-      // else if(s4>9999){document.getElementById("output4").innerHTML="#"}
-      // else if(s4<10){document.getElementById("output4").innerHTML="#"}
-      // else{document.getElementById("output4").innerHTML=parseInt(s4)-12}}
   
 
 
