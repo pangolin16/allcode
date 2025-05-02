@@ -32,13 +32,6 @@ function handleSwipeEvents() {
             // Swipe Left: Remove the cell only if it is a newly created cell
             if (cell.classList.contains('new-cell')) {
                 const row = cell.parentElement;
-                const cellId = cell.dataset.cellId;
-
-                // Remove content from localStorage
-                if (cellId) {
-                    localStorage.removeItem(cellId);
-                }
-
                 row.removeChild(cell);
 
                 // If the row becomes empty, remove the row itself
@@ -52,12 +45,6 @@ function handleSwipeEvents() {
             const newCell = row.insertCell(-1); // Append at the end
             newCell.textContent = 'New Cell';
             newCell.classList.add('new-cell'); // Mark the cell as newly created
-
-            // Assign a unique ID to the cell for localStorage tracking
-            const uniqueId = `cell-${Date.now()}-${Math.random()}`;
-            newCell.dataset.cellId = uniqueId;
-
-            makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
         }
     }
@@ -76,24 +63,10 @@ function handleSwipeEvents() {
 }
 
 
-// Function to make a cell editable and save its content on change
-function makeCellEditable(cell) {
-    cell.contentEditable = true; // Make the cell editable
 
-    // Save content to localStorage on blur (when editing is finished)
-    cell.addEventListener('blur', function () {
-        const cellId = cell.dataset.cellId;
-        if (cellId) {
-            localStorage.setItem(cellId, cell.textContent);
-        }
-    });
 
-    // Load saved content from localStorage if available
-    const cellId = cell.dataset.cellId;
-    if (cellId && localStorage.getItem(cellId)) {
-        cell.textContent = localStorage.getItem(cellId);
-    }
-}
+
+
 
 // Function to generate tables
 function generateTables() {
