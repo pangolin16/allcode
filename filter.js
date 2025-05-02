@@ -2,6 +2,68 @@ const inpKey = document.getElementById("inpKey");
 const btnSubmit = document.getElementById("btnSubmit");
 const string0 = document.getElementById("out0");
 
+// Function to detect swipe gestures and handle them
+function handleSwipeEvents() {
+    let touchstartX = 0;
+    let touchendX = 0;
+    const table = document.getElementById('tab1');
+
+    if (!table) return;
+    
+    const rows = table.getElementsByTagName('tr');
+
+    for (let row of rows) {
+        // Add touch event listeners to each table cell
+        const cells = row.getElementsByTagName('td');
+        for (let cell of cells) {
+            cell.addEventListener('touchstart', function (event) {
+                touchstartX = event.changedTouches[0].screenX;
+            });
+
+            cell.addEventListener('touchend', function (event) {
+                touchendX = event.changedTouches[0].screenX;
+                handleSwipe(cell);
+            });
+        }
+    }
+
+    function handleSwipe(cell) {
+        if (touchendX < touchstartX - 50) {
+            // Swipe Left: Remove the cell
+            const row = cell.parentElement;
+            row.removeChild(cell);
+
+            // If the row becomes empty, remove the row itself
+            if (row.children.length === 0) {
+                row.parentElement.removeChild(row);
+            }
+        } else if (touchendX > touchstartX + 50) {
+            // Swipe Right: Add a new cell
+            const row = cell.parentElement;
+            const newCell = row.insertCell(-1); // Append at the end
+            newCell.textContent = 'New Cell';
+            addSwipeListenersToCell(newCell);
+        }
+    }
+
+    function addSwipeListenersToCell(cell) {
+        // Ensure new cell also has swipe listeners
+        cell.addEventListener('touchstart', function (event) {
+            touchstartX = event.changedTouches[0].screenX;
+        });
+
+        cell.addEventListener('touchend', function (event) {
+            touchendX = event.changedTouches[0].screenX;
+            handleSwipe(cell);
+        });
+    }
+}
+
+
+
+
+
+
 // Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
@@ -166,6 +228,11 @@ window.onload = function() {
             this.style.background = this.style.background === "white" ? "yellow" : "white";
         });
     }
+
+// Add swipe gesture handling
+handleSwipeEvents();
+
+
 };
 
 // Highlight duplicates with unique colors
