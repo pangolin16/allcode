@@ -9,7 +9,7 @@ function handleSwipeEvents() {
     const table = document.getElementById('tab1');
 
     if (!table) return;
-    
+
     const rows = table.getElementsByTagName('tr');
 
     for (let row of rows) {
@@ -29,19 +29,22 @@ function handleSwipeEvents() {
 
     function handleSwipe(cell) {
         if (touchendX < touchstartX - 50) {
-            // Swipe Left: Remove the cell
-            const row = cell.parentElement;
-            row.removeChild(cell);
+            // Swipe Left: Remove the cell only if it is a newly created cell
+            if (cell.classList.contains('new-cell')) {
+                const row = cell.parentElement;
+                row.removeChild(cell);
 
-            // If the row becomes empty, remove the row itself
-            if (row.children.length === 0) {
-                row.parentElement.removeChild(row);
+                // If the row becomes empty, remove the row itself
+                if (row.children.length === 0) {
+                    row.parentElement.removeChild(row);
+                }
             }
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell
             const row = cell.parentElement;
             const newCell = row.insertCell(-1); // Append at the end
             newCell.textContent = 'New Cell';
+            newCell.classList.add('new-cell'); // Mark the cell as newly created
             addSwipeListenersToCell(newCell);
         }
     }
@@ -58,6 +61,7 @@ function handleSwipeEvents() {
         });
     }
 }
+
 
 
 
