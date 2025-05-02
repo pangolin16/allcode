@@ -47,8 +47,17 @@ function handleSwipeEvents() {
                 }
             }
         } else if (touchendX > touchstartX + 50) {
-            // Swipe Right: Add a new cell
+            // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
+
+            // Check if the row already contains a new-cell
+            const hasNewCell = Array.from(row.children).some(td => td.classList.contains('new-cell'));
+            if (hasNewCell) {
+                alert('Only one new cell is allowed per row.');
+                return;
+            }
+
+            // Add a new cell
             const newCell = row.insertCell(-1); // Append at the end
             newCell.textContent = 'New Cell';
             newCell.classList.add('new-cell'); // Mark the cell as newly created
@@ -61,7 +70,6 @@ function handleSwipeEvents() {
             addSwipeListenersToCell(newCell);
         }
     }
-
     function addSwipeListenersToCell(cell) {
         // Ensure new cell also has swipe listeners
         cell.addEventListener('touchstart', function (event) {
@@ -263,6 +271,9 @@ window.onload = function() {
 // Add swipe gesture handling
 handleSwipeEvents();
 
+    // Reload editable cells' content
+    const editableCells = document.querySelectorAll('.new-cell');
+    editableCells.forEach(makeCellEditable);
 
 };
 
