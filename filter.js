@@ -59,7 +59,7 @@ function handleSwipeEvents() {
 
             // Add a new cell
             const newCell = row.insertCell(-1); // Append at the end
-            newCell.textContent = '++++++';
+            newCell.textContent = 'cell';
             newCell.classList.add('new-cell'); // Mark the cell as newly created
 
             // Assign a unique ID to the cell for localStorage tracking
