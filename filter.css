@@ -25,6 +25,7 @@ input {
   margin: 20px 0;
 
 }
+
   #tab2 td:nth-child(1){border: none;padding-right: 5px;}
   .new-cell{
   background-color: white;padding-left: 5px;}

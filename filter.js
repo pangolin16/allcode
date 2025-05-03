@@ -105,7 +105,17 @@ function makeCellEditable(cell) {
         cell.textContent = localStorage.getItem(cellId);
     }
 }
-
+// Function to update table borders
+function updateTableBorders() {
+    const table = document.getElementById('tab1');
+    if (table) {
+        table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
+        const cells = table.getElementsByTagName('td');
+        for (let cell of cells) {
+            cell.style.border = '1px solid black'; // Add consistent borders to all cells
+        }
+    }
+}
 // Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
