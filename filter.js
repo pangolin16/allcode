@@ -41,10 +41,8 @@ function handleSwipeEvents() {
 
                 row.removeChild(cell);
 
-                // Ensure the table maintains its borders for all cells in the row
-                if (row.children.length > 0) {
-                    updateRowBorders(row);
-                }
+               // Reapply borders to all rows in the table
+               updateTableBorders();
             }
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
@@ -68,10 +66,11 @@ function handleSwipeEvents() {
 
             makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
-              // Ensure the table maintains its borders for all cells in the row
-              updateRowBorders(row);
+             
+              // Reapply borders to all rows in the table
+              updateTableBorders();
+            }
         }
-    }
     function addSwipeListenersToCell(cell) {
         // Ensure new cell also has swipe listeners
         cell.addEventListener('touchstart', function (event) {
@@ -104,6 +103,7 @@ function makeCellEditable(cell) {
         cell.textContent = localStorage.getItem(cellId);
     }
 }
+
 // Function to update borders for all cells in a row
 function updateRowBorders(row) {
     const cells = row.children;
