@@ -45,6 +45,11 @@ function handleSwipeEvents() {
                 // Reapply borders to all cells in the column
                 updateColumnBorders(cellIndex);
             }
+              // Update borders for the adjacent cells in the same row
+              const adjacentCells = row.cells;
+              for (let i = 0; i < adjacentCells.length; i++) {
+                          adjacentCells[i].style.border = '3px solid black'; // Reapply consistent borders to adjacent cells
+                      }
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
