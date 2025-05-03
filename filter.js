@@ -32,6 +32,7 @@ function handleSwipeEvents() {
             // Swipe Left: Remove the cell only if it is a newly created cell
             if (cell.classList.contains('new-cell')) {
                 const row = cell.parentElement;
+                const cellIndex = cell.cellIndex; // Get the cell's column index
                 const cellId = cell.dataset.cellId;
 
                 // Remove content from localStorage
@@ -41,8 +42,8 @@ function handleSwipeEvents() {
 
                 row.removeChild(cell);
 
-               // Reapply borders to all rows in the table
-               updateTableBorders();
+                // Reapply borders to all cells in the column
+                updateColumnBorders(cellIndex);
             }
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
@@ -66,11 +67,12 @@ function handleSwipeEvents() {
 
             makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
-             
-              // Reapply borders to all rows in the table
-              updateTableBorders();
-            }
+
+            // Reapply borders to all rows in the table
+            updateTableBorders();
         }
+    }
+
     function addSwipeListenersToCell(cell) {
         // Ensure new cell also has swipe listeners
         cell.addEventListener('touchstart', function (event) {
@@ -101,6 +103,20 @@ function makeCellEditable(cell) {
     const cellId = cell.dataset.cellId;
     if (cellId && localStorage.getItem(cellId)) {
         cell.textContent = localStorage.getItem(cellId);
+    }
+}
+
+// Function to update borders for all cells in a specific column
+function updateColumnBorders(cellIndex) {
+    const table = document.getElementById('tab1');
+    if (table) {
+        const rows = table.getElementsByTagName('tr');
+        for (let row of rows) {
+            const cell = row.children[cellIndex];
+            if (cell) {
+                cell.style.border = '3px solid black'; // Reapply consistent borders to the column
+            }
+        }
     }
 }
 

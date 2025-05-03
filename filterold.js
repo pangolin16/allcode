@@ -32,23 +32,45 @@ function handleSwipeEvents() {
             // Swipe Left: Remove the cell only if it is a newly created cell
             if (cell.classList.contains('new-cell')) {
                 const row = cell.parentElement;
+                const cellId = cell.dataset.cellId;
+
+                // Remove content from localStorage
+                if (cellId) {
+                    localStorage.removeItem(cellId);
+                }
+
                 row.removeChild(cell);
 
-                // If the row becomes empty, remove the row itself
-                if (row.children.length === 0) {
-                    row.parentElement.removeChild(row);
-                }
+               // Reapply borders to all rows in the table
+               updateTableBorders();
             }
         } else if (touchendX > touchstartX + 50) {
-            // Swipe Right: Add a new cell
+            // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
-            const newCell = row.insertCell(-1); // Append at the end
-            newCell.textContent = 'New Cell';
-            newCell.classList.add('new-cell'); // Mark the cell as newly created
-            addSwipeListenersToCell(newCell);
-        }
-    }
 
+            // Check if the row already contains a new-cell
+            const hasNewCell = Array.from(row.children).some(td => td.classList.contains('new-cell'));
+            if (hasNewCell) {
+                alert('Only one new cell is allowed per row.');
+                return;
+            }
+
+            // Add a new cell
+            const newCell = row.insertCell(-1); // Append at the end
+            newCell.textContent = '';
+            newCell.classList.add('new-cell'); // Mark the cell as newly created
+
+            // Assign a unique ID to the cell for localStorage tracking
+            const uniqueId = `cell-${Date.now()}-${Math.random()}`;
+            newCell.dataset.cellId = uniqueId;
+
+            makeCellEditable(newCell);
+            addSwipeListenersToCell(newCell);
+             
+              // Reapply borders to all rows in the table
+              updateTableBorders();
+            }
+        }
     function addSwipeListenersToCell(cell) {
         // Ensure new cell also has swipe listeners
         cell.addEventListener('touchstart', function (event) {
@@ -63,11 +85,44 @@ function handleSwipeEvents() {
 }
 
 
+// Function to make a cell editable and save its content on change
+function makeCellEditable(cell) {
+    cell.contentEditable = true; // Make the cell editable
 
+    // Save content to localStorage on blur (when editing is finished)
+    cell.addEventListener('blur', function () {
+        const cellId = cell.dataset.cellId;
+        if (cellId) {
+            localStorage.setItem(cellId, cell.textContent);
+        }
+    });
 
+    // Load saved content from localStorage if available
+    const cellId = cell.dataset.cellId;
+    if (cellId && localStorage.getItem(cellId)) {
+        cell.textContent = localStorage.getItem(cellId);
+    }
+}
 
+// Function to update borders for all cells in a row
+function updateRowBorders(row) {
+    const cells = row.children;
+    for (let cell of cells) {
+        cell.style.border = '3px solid black'; // Reapply consistent borders to all cells
+    }
+}
 
-
+// Function to update table borders
+function updateTableBorders() {
+    const table = document.getElementById('tab1');
+    if (table) {
+        table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
+        const rows = table.getElementsByTagName('tr');
+        for (let row of rows) {
+            updateRowBorders(row); // Update borders for all cells in each row
+        }
+    }
+}
 // Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
@@ -142,6 +197,11 @@ function generateTables() {
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
+  // Ensure the table maintains its borders
+  updateTableBorders();
+
+
+    
 }
 
 // Function to find duplicates and remove them
@@ -236,6 +296,13 @@ window.onload = function() {
 // Add swipe gesture handling
 handleSwipeEvents();
 
+    // Reload editable cells' content
+    const editableCells = document.querySelectorAll('.new-cell');
+    editableCells.forEach(makeCellEditable);
+
+
+    // Ensure the table maintains its borders
+    updateTableBorders();
 
 };
 
