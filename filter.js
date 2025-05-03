@@ -62,7 +62,7 @@ function handleSwipeEvents() {
 
             // Add a new cell
             const newCell = row.insertCell(-1); // Append at the end
-            newCell.textContent = 'cell';
+            newCell.textContent = '';
             newCell.classList.add('new-cell'); // Mark the cell as newly created
 
             // Assign a unique ID to the cell for localStorage tracking
@@ -112,7 +112,7 @@ function updateTableBorders() {
         table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
         const cells = table.getElementsByTagName('td');
         for (let cell of cells) {
-            cell.style.border = '1px solid black'; // Add consistent borders to all cells
+            cell.style.border = '3px solid black'; // Add consistent borders to all cells
         }
     }
 }
