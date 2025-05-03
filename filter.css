@@ -3,15 +3,14 @@ table {
 }
 
 td {
-  border: solid 3px black; /* Ensure all cells have consistent borders */
+  border: solid 3px black;
   letter-spacing: 1px;
 }
 
 #outputs,
-#outputs2,
-#outputs3 {
+#outputs2,#outputs3 {
   display: inline-block;
-
+  margin-inline: 0px;
 }
 
 #outputs {
@@ -26,19 +25,6 @@ input {
   margin: 20px 0;
 }
 
-#tab1 {
-  border-collapse: collapse;
-}
-
-#tab2 td:nth-child(1) {
-  border: none;
-  padding-right: 5px;
-}
-
-.new-cell {
-  background-color: white;
-  width: 50px;
-  border: solid 3px black; /* Ensure new cells also have consistent borders */
-  /* Avoid margin-left to prevent layout shift */
-  padding-left: 5px; /* Use padding instead of margin for spacing */
-}
+  #tab2 td:nth-child(1){border: none;padding-right: 5px;}
+  .new-cell{
+  background-color: white;margin-left: 50px;width: 50px;}

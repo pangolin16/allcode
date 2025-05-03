@@ -42,14 +42,11 @@ function handleSwipeEvents() {
 
                 row.removeChild(cell);
 
-                // Reapply borders to all cells in the column
-                updateColumnBorders(cellIndex);
+               
+
+
             }
-              // Update borders for the adjacent cells in the same row
-              const adjacentCells = row.cells;
-              for (let i = 0; i < adjacentCells.length; i++) {
-                          adjacentCells[i].style.border = '3px solid black'; // Reapply consistent borders to adjacent cells
-                      }
+
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
@@ -73,8 +70,7 @@ function handleSwipeEvents() {
             makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
 
-            // Reapply borders to all rows in the table
-            updateTableBorders();
+           
         }
     }
 
@@ -111,39 +107,12 @@ function makeCellEditable(cell) {
     }
 }
 
-// Function to update borders for all cells in a specific column
-function updateColumnBorders(cellIndex) {
-    const table = document.getElementById('tab1');
-    if (table) {
-        const rows = table.getElementsByTagName('tr');
-        for (let row of rows) {
-            const cell = row.children[cellIndex];
-            if (cell) {
-                cell.style.border = '3px solid black'; // Reapply consistent borders to the column
-            }
-        }
-    }
-}
 
-// Function to update borders for all cells in a row
-function updateRowBorders(row) {
-    const cells = row.children;
-    for (let cell of cells) {
-        cell.style.border = '3px solid black'; // Reapply consistent borders to all cells
-    }
-}
 
-// Function to update table borders
-function updateTableBorders() {
-    const table = document.getElementById('tab1');
-    if (table) {
-        table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
-        const rows = table.getElementsByTagName('tr');
-        for (let row of rows) {
-            updateRowBorders(row); // Update borders for all cells in each row
-        }
-    }
-}
+
+
+
+
 // Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
@@ -218,8 +187,7 @@ function generateTables() {
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
-  // Ensure the table maintains its borders
-  updateTableBorders();
+
 
 
     
@@ -242,6 +210,7 @@ function removeDuplicates(result2) {
     // Now remove duplicates from both tables based on the found indices
     r1(duplicatesIndices);
     r2(duplicatesIndices);
+    
 }
 
 // Function to remove the row containing the clicked icon from both tables
@@ -264,6 +233,9 @@ function removeRow(icon) {
     if (rowIndex < tbody2.rows.length) {
         tbody2.deleteRow(rowIndex);
     }
+
+   
+    
 }
 
 // Functions to remove rows based on indices
@@ -322,8 +294,7 @@ handleSwipeEvents();
     editableCells.forEach(makeCellEditable);
 
 
-    // Ensure the table maintains its borders
-    updateTableBorders();
+    
 
 };
 
