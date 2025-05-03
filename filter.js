@@ -41,12 +41,9 @@ function handleSwipeEvents() {
 
                 row.removeChild(cell);
 
-                // If the row becomes empty, remove the row itself
-                if (row.children.length === 0) {
-                    row.parentElement.removeChild(row);
-                } else {
-                    // Ensure the table maintains its borders
-                    updateTableBorders();
+                // Ensure the table maintains its borders for all cells in the row
+                if (row.children.length > 0) {
+                    updateRowBorders(row);
                 }
             }
         } else if (touchendX > touchstartX + 50) {
@@ -71,6 +68,8 @@ function handleSwipeEvents() {
 
             makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
+              // Ensure the table maintains its borders for all cells in the row
+              updateRowBorders(row);
         }
     }
     function addSwipeListenersToCell(cell) {
@@ -105,14 +104,22 @@ function makeCellEditable(cell) {
         cell.textContent = localStorage.getItem(cellId);
     }
 }
+// Function to update borders for all cells in a row
+function updateRowBorders(row) {
+    const cells = row.children;
+    for (let cell of cells) {
+        cell.style.border = '3px solid black'; // Reapply consistent borders to all cells
+    }
+}
+
 // Function to update table borders
 function updateTableBorders() {
     const table = document.getElementById('tab1');
     if (table) {
         table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
-        const cells = table.getElementsByTagName('td');
-        for (let cell of cells) {
-            cell.style.border = '3px solid black'; // Add consistent borders to all cells
+        const rows = table.getElementsByTagName('tr');
+        for (let row of rows) {
+            updateRowBorders(row); // Update borders for all cells in each row
         }
     }
 }
