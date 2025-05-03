@@ -44,6 +44,9 @@ function handleSwipeEvents() {
                 // If the row becomes empty, remove the row itself
                 if (row.children.length === 0) {
                     row.parentElement.removeChild(row);
+                } else {
+                    // Ensure the table maintains its borders
+                    updateTableBorders();
                 }
             }
         } else if (touchendX > touchstartX + 50) {
@@ -177,6 +180,11 @@ function generateTables() {
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
+
+ // Ensure the table maintains its borders
+ updateTableBorders();
+
+
 }
 
 // Function to find duplicates and remove them
@@ -274,6 +282,11 @@ handleSwipeEvents();
     // Reload editable cells' content
     const editableCells = document.querySelectorAll('.new-cell');
     editableCells.forEach(makeCellEditable);
+   // Ensure the table maintains its borders
+   updateTableBorders();
+
+
+
 
 };
 
