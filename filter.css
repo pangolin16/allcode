@@ -1,14 +1,15 @@
 table {
-  border-collapse: collapse;
+  border-collapse: collapse; /* Collapse borders for all cells by default */
 }
 
 td {
-  border: solid 3px black;
+  border: solid 3px black; /* Ensure all cells have consistent borders */
   letter-spacing: 1px;
 }
 
 #outputs,
-#outputs2,#outputs3 {
+#outputs2,
+#outputs3 {
   display: inline-block;
   margin-inline: 0px;
 }
@@ -25,6 +26,30 @@ input {
   margin: 20px 0;
 }
 
-  #tab2 td:nth-child(1){border: none;padding-right: 5px;}
-  .new-cell{
-  background-color: white;margin-left: 50px;width: 50px;}
+#tab2 td:nth-child(1) {
+  border: none;
+  padding-right: 5px;
+}
+
+.new-cell {
+
+  background-color: white; /* Highlight for clarity */
+
+  width: 50px; /* Set consistent width */
+}
+
+* Styling for new cells */
+#tab1 td.new-cell {
+  border-collapse: separate; /* Separate borders for new cells */
+  border-spacing: 10px; /* Add space around new cells */
+  border: solid 3px black; /* Ensure consistent border for new cells */
+  background-color: white; /* Optional: Highlight new cells */
+  padding: 5px; /* Add padding inside the new cells */
+  box-sizing: border-box; /* Ensure padding doesn’t affect width */
+}
+
+/* Add spacing between all cells in #tab1 */
+#tab1 td {
+  padding: 5px; /* Add padding to all cells */
+}
+s
