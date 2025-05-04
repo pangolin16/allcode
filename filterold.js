@@ -1,6 +1,11 @@
+
+
 const inpKey = document.getElementById("inpKey");
 const btnSubmit = document.getElementById("btnSubmit");
 const string0 = document.getElementById("out0");
+
+
+
 
 // Function to detect swipe gestures and handle them
 function handleSwipeEvents() {
@@ -32,6 +37,7 @@ function handleSwipeEvents() {
             // Swipe Left: Remove the cell only if it is a newly created cell
             if (cell.classList.contains('new-cell')) {
                 const row = cell.parentElement;
+                const cellIndex = cell.cellIndex; // Get the cell's column index
                 const cellId = cell.dataset.cellId;
 
                 // Remove content from localStorage
@@ -41,9 +47,11 @@ function handleSwipeEvents() {
 
                 row.removeChild(cell);
 
-               // Reapply borders to all rows in the table
-               updateTableBorders();
+               
+
+
             }
+
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
@@ -60,17 +68,14 @@ function handleSwipeEvents() {
             newCell.textContent = '';
             newCell.classList.add('new-cell'); // Mark the cell as newly created
 
-            // Assign a unique ID to the cell for localStorage tracking
-            const uniqueId = `cell-${Date.now()}-${Math.random()}`;
-            newCell.dataset.cellId = uniqueId;
-
+       
             makeCellEditable(newCell);
             addSwipeListenersToCell(newCell);
-             
-              // Reapply borders to all rows in the table
-              updateTableBorders();
-            }
+
+           
         }
+    }
+
     function addSwipeListenersToCell(cell) {
         // Ensure new cell also has swipe listeners
         cell.addEventListener('touchstart', function (event) {
@@ -87,42 +92,16 @@ function handleSwipeEvents() {
 
 // Function to make a cell editable and save its content on change
 function makeCellEditable(cell) {
-    cell.contentEditable = true; // Make the cell editable
+    cell.contentEditable = true;} // Make the cell editable
 
-    // Save content to localStorage on blur (when editing is finished)
-    cell.addEventListener('blur', function () {
-        const cellId = cell.dataset.cellId;
-        if (cellId) {
-            localStorage.setItem(cellId, cell.textContent);
-        }
-    });
 
-    // Load saved content from localStorage if available
-    const cellId = cell.dataset.cellId;
-    if (cellId && localStorage.getItem(cellId)) {
-        cell.textContent = localStorage.getItem(cellId);
-    }
-}
 
-// Function to update borders for all cells in a row
-function updateRowBorders(row) {
-    const cells = row.children;
-    for (let cell of cells) {
-        cell.style.border = '3px solid black'; // Reapply consistent borders to all cells
-    }
-}
 
-// Function to update table borders
-function updateTableBorders() {
-    const table = document.getElementById('tab1');
-    if (table) {
-        table.style.borderCollapse = 'collapse'; // Ensure consistent border collapse
-        const rows = table.getElementsByTagName('tr');
-        for (let row of rows) {
-            updateRowBorders(row); // Update borders for all cells in each row
-        }
-    }
-}
+
+
+
+
+
 // Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
@@ -197,8 +176,7 @@ function generateTables() {
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
-  // Ensure the table maintains its borders
-  updateTableBorders();
+
 
 
     
@@ -221,6 +199,7 @@ function removeDuplicates(result2) {
     // Now remove duplicates from both tables based on the found indices
     r1(duplicatesIndices);
     r2(duplicatesIndices);
+    
 }
 
 // Function to remove the row containing the clicked icon from both tables
@@ -243,6 +222,9 @@ function removeRow(icon) {
     if (rowIndex < tbody2.rows.length) {
         tbody2.deleteRow(rowIndex);
     }
+
+   
+    
 }
 
 // Functions to remove rows based on indices
@@ -301,8 +283,7 @@ handleSwipeEvents();
     editableCells.forEach(makeCellEditable);
 
 
-    // Ensure the table maintains its borders
-    updateTableBorders();
+    
 
 };
 

@@ -1,5 +1,7 @@
+/* General Table Styling */
 table {
   border-collapse: collapse; /* Collapse borders for all cells by default */
+  user-select: none; /* Prevents text selection */
 }
 
 td {
@@ -8,10 +10,8 @@ td {
 }
 
 #outputs,
-#outputs2
- {
+#outputs2 {
   display: inline-block;
-  margin-inline: 0px;
 }
 
 #outputs {
@@ -31,22 +31,19 @@ input {
   padding-right: 5px;
 }
 
+/* New Cell Styling */
 .new-cell {
-
   background-color: white; /* Highlight for clarity */
-
   width: 50px;
-
-
-
+  transition: transform 0.5s ease-out; /* Smooth animation for transformations */
 }
 
-#tab1 td:nth-child(2) {
-margin-left: 10px;
+/* Animation for swipe left (removing a cell) */
+.new-cell.translate-out {
+  transform: translateX(100px); /* Moves the cell to the right */
 }
 
-
-
-table {
-  user-select: none; /* Prevents text selection */
+/* Animation for swipe right (adding a new cell) */
+.new-cell.translate-in {
+  transform: translateX(-100px); /* Moves the cell in from the left */
 }
