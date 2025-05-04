@@ -44,3 +44,9 @@ input {
 #tab1 td:nth-child(2) {
 margin-left: 10px;
 }
+
+
+
+table {
+  user-select: none; /* Prevents text selection */
+}
