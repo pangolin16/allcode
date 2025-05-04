@@ -8,8 +8,8 @@ td {
 }
 
 #outputs,
-#outputs2,
-#outputs3 {
+#outputs2
+ {
   display: inline-block;
   margin-inline: 0px;
 }
@@ -38,18 +38,11 @@ input {
   width: 50px; /* Set consistent width */
 }
 
-* Styling for new cells */
-#tab1 td.new-cell {
-  border-collapse: separate; /* Separate borders for new cells */
-  border-spacing: 10px; /* Add space around new cells */
-  border: solid 3px black; /* Ensure consistent border for new cells */
-  background-color: white; /* Optional: Highlight new cells */
-  padding: 5px; /* Add padding inside the new cells */
-  box-sizing: border-box; /* Ensure padding doesn’t affect width */
+
+#tab1 td {
+
+
+padding-left: 5px;border: none; /* Add padding inside the new cells */
+
 }
 
-/* Add spacing between all cells in #tab1 */
-#tab1 td {
-  padding: 5px; /* Add padding to all cells */
-}
-s
