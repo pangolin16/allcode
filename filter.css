@@ -35,14 +35,12 @@ input {
 
   background-color: white; /* Highlight for clarity */
 
-  width: 50px; /* Set consistent width */
-}
+  width: 50px;
 
 
-#tab1 td {
-
-
-padding-left: 5px;border: none; /* Add padding inside the new cells */
 
 }
 
+#tab1 td:nth-child(2) {
+margin-left: 10px;
+}
