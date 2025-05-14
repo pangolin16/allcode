@@ -1,5 +1,4 @@
-const inpKey = document.getElementById("inpKey");
-
+const inpKey ="";
 const btnSubmit = document.getElementById("btnSubmit");
 const string0 = document.getElementById("out0");
 
@@ -13,108 +12,6 @@ async function getClipboardValue() {
         console.error("Failed to read clipboard:", error);
     }
 }
-
-
-  
-
-   
-
-
-
-// Function to detect swipe gestures and handle them
-function handleSwipeEvents() {
-    let touchstartX = 0;
-    let touchendX = 0;
-    const table = document.getElementById('tab1');
-
-    if (!table) return;
-
-    const rows = table.getElementsByTagName('tr');
-
-    for (let row of rows) {
-        // Add touch event listeners to each table cell
-        const cells = row.getElementsByTagName('td');
-        for (let cell of cells) {
-            cell.addEventListener('touchstart', function (event) {
-                touchstartX = event.changedTouches[0].screenX;
-            });
-
-            cell.addEventListener('touchend', function (event) {
-                touchendX = event.changedTouches[0].screenX;
-                handleSwipe(cell);
-            });
-        }
-    }
-
-    function handleSwipe(cell) {
-        if (touchendX < touchstartX - 50) {
-            // Swipe Left: Remove the cell only if it is a newly created cell
-            if (cell.classList.contains('new-cell')) {
-                const row = cell.parentElement;
-                const cellIndex = cell.cellIndex; // Get the cell's column index
-                const cellId = cell.dataset.cellId;
-
-                // Remove content from localStorage
-                if (cellId) {
-                    localStorage.removeItem(cellId);
-                }
-
-                row.removeChild(cell);
-
-               
-
-
-            }
-
-        } else if (touchendX > touchstartX + 50) {
-            // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
-            const row = cell.parentElement;
-
-            // Check if the row already contains a new-cell
-            const hasNewCell = Array.from(row.children).some(td => td.classList.contains('new-cell'));
-            if (hasNewCell) {
-                alert('Only one new cell is allowed per row.');
-                return;
-            }
-
-            // Add a new cell
-            const newCell = row.insertCell(-1); // Append at the end
-            newCell.textContent = '';
-            newCell.classList.add('new-cell'); // Mark the cell as newly created
-
-       
-            makeCellEditable(newCell);
-            addSwipeListenersToCell(newCell);
-
-           
-        }
-    }
-
-    function addSwipeListenersToCell(cell) {
-        // Ensure new cell also has swipe listeners
-        cell.addEventListener('touchstart', function (event) {
-            touchstartX = event.changedTouches[0].screenX;
-        });
-
-        cell.addEventListener('touchend', function (event) {
-            touchendX = event.changedTouches[0].screenX;
-            handleSwipe(cell);
-        });
-    }
-}
-
-
-// Function to make a cell editable and save its content on change
-function makeCellEditable(cell) {
-    cell.contentEditable = true;} // Make the cell editable
-
-
-
-
-
-
-
-
 
 // Function to generate tables
 function generateTables() {
@@ -190,10 +87,6 @@ function generateTables() {
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
-
-
-
-    
 }
 
 // Function to find duplicates and remove them
@@ -213,7 +106,6 @@ function removeDuplicates(result2) {
     // Now remove duplicates from both tables based on the found indices
     r1(duplicatesIndices);
     r2(duplicatesIndices);
-    
 }
 
 // Function to remove the row containing the clicked icon from both tables
@@ -236,9 +128,6 @@ function removeRow(icon) {
     if (rowIndex < tbody2.rows.length) {
         tbody2.deleteRow(rowIndex);
     }
-
-   
-    
 }
 
 // Functions to remove rows based on indices
@@ -274,7 +163,6 @@ btnSubmit.onclick = async function() {
         localStorage.setItem("vstup", key);
         generateTables(); // Generate tables after setting the key
     }
-
 };
 
 // Load tables on page load if there is a value in local storage
@@ -282,51 +170,4 @@ window.onload = function() {
     if (localStorage.getItem("vstup")) {
         generateTables();
     }
-
-    // Highlight cells on click 
-    let btns = document.querySelectorAll("tr td:not(:nth-child(1))");
-    for (let i of btns) {
-        i.addEventListener('click', function() {
-            this.style.background = this.style.background === "white" ? "yellow" : "white";
-        });
-    }
-
-// Add swipe gesture handling
-handleSwipeEvents();
-
-    // Reload editable cells' content
-    const editableCells = document.querySelectorAll('.new-cell');
-    editableCells.forEach(makeCellEditable);
-
-
-    
-
 };
-
-// Highlight duplicates with unique colors
-function colour() {
-    const table = document.querySelectorAll('table')[1];
-    const rows = table.getElementsByTagName('tr');
-    const valueCount = {};
-    const colors = ['#ff9999', '#99ff99', '#9999ff', '#ffff99', '#ffcc99','#99f6ff','#e100fa','#0081fa', '#A3E3A3','#CCCC00','#C4BDD8',' #7404DF',' #FF5992']; // Array of unique colors
-    
-    // Count occurrences of each value
-    for (let i = 0; i < rows.length; i++) {
-        const value = rows[i].textContent.trim();
-        valueCount[value] = (valueCount[value] || 0) + 1;
-    }
-    
-    // Highlight duplicates with unique colors
-    for (let i = 0; i < rows.length; i++) {
-        const value = rows[i].textContent.trim();
-        if (valueCount[value] > 1) {
-            const index = Object.keys(valueCount).indexOf(value);
-            // Use a color from the colors array based on the index of the value
-            rows[i].style.backgroundColor = colors[index % colors.length];
-        }
-    }
-}
-document.getElementById('translateButton').addEventListener('click', function() {
-    // Open Google Translate in a new tab
-    window.open('https://translate.google.com', '_blank');
-});
