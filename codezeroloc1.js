@@ -184,3 +184,17 @@ parseInt(s1)**0.9995+1)}}
         // We need to capture the [Shift] key and check the [Enter] key either way.
         if (e.shiftKey) { enterKey() } else { enterKey()  }
       });
+
+
+          const clearButton = document.getElementById('clearButton');
+
+    // Add an event listener to the button
+    clearButton.addEventListener('click', function() {
+      // Clear the value of the input fields
+      s1.value = '';
+      s2.value = '';
+      s3.value = '';
+       s4.value = '';
+      
+      console.log('Input fields cleared');
+    });

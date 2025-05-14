@@ -184,3 +184,15 @@ else if(s4<10){document.getElementById("output4").innerHTML="#"}
     else{document.getElementById("output4").innerHTML=Math.round(parseInt(s4)+(Math.log(parseInt(s4))*4.9755+32.7087))}}
 
 
+    const clearButton = document.getElementById('clearButton');
+
+    // Add an event listener to the button
+    clearButton.addEventListener('click', function() {
+      // Clear the value of the input fields
+      s1.value = '';
+      s2.value = '';
+      s3.value = '';
+       s4.value = '';
+      
+      console.log('Input fields cleared');
+    });
