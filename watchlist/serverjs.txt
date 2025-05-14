@@ -33,7 +33,7 @@ async function scrapeEarningsDate(url) {
 // Endpoint to scrape data
 app.get('/scrape-earnings-date', async (req, res) => {
   try {
-    const urlToScrape = "https://www.gurufocus.com/term/wacc/TPE:1786";
+    const urlToScrape = 'https://www.marketscreener.com/quote/stock/TELEPERFORMANCE-SE-4709/calendar/';
     const earningsDate = await scrapeEarningsDate(urlToScrape);
 
     res.json({ earningsDate });

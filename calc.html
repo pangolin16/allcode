@@ -128,6 +128,36 @@
 
 
   <script src="page.js"></script>
+    <h1>Clipboard Example</h1>
+  <p>Click the button below to get the clipboard content:</p>
+  
+  <button id="getClipboardButton">Get Clipboard Content</button>
+  <p id="clipboardOutput" style="font-weight: bold; color: blue;"></p>
+
+  <script>
+    let clipboardValue = ''; // Variable to store clipboard value
+
+    async function getClipboardText() {
+      try {
+        const text = await navigator.clipboard.readText();
+        clipboardValue = text; // Save clipboard value to variable
+        const outputElement = document.getElementById('clipboardOutput');
+        if (clipboardValue) {
+          outputElement.textContent = `Clipboard content: "${clipboardValue}"`;
+        } else {
+          outputElement.textContent = 'Clipboard is empty or access not granted.';
+        }
+        console.log('Clipboard value:', clipboardValue);
+      } catch (error) {
+        console.error('Error reading clipboard:', error);
+        const outputElement = document.getElementById('clipboardOutput');
+        outputElement.textContent = 'Failed to read clipboard. Please check permissions.';
+      }
+    }
+
+    // Add event listener to the button
+    document.getElementById('getClipboardButton').addEventListener('click', getClipboardText);
+  </script>
 </body>
 
 </html>
