@@ -37,25 +37,25 @@ function handleSwipeEvents() {
             // Swipe Left: Remove the cell only if it is a newly created cell
             if (cell.classList.contains('new-cell')) {
                 const row = cell.parentElement;
-                const cellIndex = cell.cellIndex; // Get the cell's column index
                 const cellId = cell.dataset.cellId;
-
-                // Remove content from localStorage
-                if (cellId) {
-                    localStorage.removeItem(cellId);
-                }
-
-                row.removeChild(cell);
-
-               
-
-
+    
+                // Add the "translate-out" class for the swipe-left animation
+                cell.classList.add('translate-out');
+    
+                // Wait for the animation to complete before removing the cell
+                setTimeout(() => {
+                    cell.remove(); // Remove the cell after animation
+    
+                    // Remove content from localStorage
+                    if (cellId) {
+                        localStorage.removeItem(cellId);
+                    }
+                }, 500); // Matches the CSS animation duration
             }
-
         } else if (touchendX > touchstartX + 50) {
             // Swipe Right: Add a new cell ONLY if there isn't already a new-cell in the row
             const row = cell.parentElement;
-
+    
             // Check if the row already contains a new-cell
             const hasNewCell = Array.from(row.children).some(td => td.classList.contains('new-cell'));
             if (hasNewCell) {

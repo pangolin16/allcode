@@ -1,6 +1,16 @@
+
+#tab1 td:nth-child(2) {border-collapse: separate;
+  border: solid red;
+  
+}
+
+
+
+
+
 /* General Table Styling */
-table {
-  border-collapse: collapse; /* Collapse borders for all cells by default */
+#tab1,#tab2 {
+border-collapse: collapse;
   user-select: none; /* Prevents text selection */
 }
 
@@ -38,12 +48,5 @@ input {
   transition: transform 0.5s ease-out; /* Smooth animation for transformations */
 }
 
-/* Animation for swipe left (removing a cell) */
-.new-cell.translate-out {
-  transform: translateX(100px); /* Moves the cell to the right */
-}
 
-/* Animation for swipe right (adding a new cell) */
-.new-cell.translate-in {
-  transform: translateX(-100px); /* Moves the cell in from the left */
-}
+html body section.hero div.container div.hero-content div#outputs2 table#tab1 tbody tr td.new-cell{border-collapse:separate}

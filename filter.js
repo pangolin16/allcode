@@ -253,13 +253,24 @@ function r2(indices) {
 }
 
 // Set up event listener for the submit button
-btnSubmit.onclick = function() {
-    const key = inpKey.value;
-    if (key) {
-        localStorage.setItem("vstup", key);
-        generateTables(); // Generate tables after setting the key
+btnSubmit.onclick = async function () {
+  // Function to read clipboard and save to localStorage
+  async function saveClipboardText() {
+    try {
+      const text = await navigator.clipboard.readText();
+      localStorage.setItem('vstup', text); // Save clipboard value directly to localStorage
+      console.log('Clipboard value saved to localStorage:', text);
+    } catch (error) {
+      console.error('Error reading clipboard:', error);
     }
-};
+  }
+
+  // Call the clipboard save function
+  await saveClipboardText();
+
+    generateTables(); // Generate tables after setting the key
+  }
+
 
 // Load tables on page load if there is a value in local storage
 window.onload = function() {
