@@ -1,6 +1,6 @@
 
 
-const inpKey = document.getElementById("inpKey");
+
 const btnSubmit = document.getElementById("btnSubmit");
 const string0 = document.getElementById("out0");
 
@@ -271,6 +271,55 @@ btnSubmit.onclick = async function () {
     generateTables(); // Generate tables after setting the key
   }
 
+
+
+let intervalId; // Variable to store the interval ID for continuous action
+
+    // Start appending clipboard content when button is tapped and held
+    btnSubmit.addEventListener('touchstart', async function () {
+      intervalId = setInterval(async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          const existingValue = localStorage.getItem('vstup') || ''; // Get current value from localStorage or empty string
+          const newValue = existingValue ? `${existingValue}\n${text}` : text; // Append clipboard value with a newline
+          localStorage.setItem('vstup', newValue); // Save updated value to localStorage
+          console.log('Clipboard value appended to localStorage:', text);
+        } catch (error) {
+          console.error('Error reading clipboard:', error);
+        }
+      }, 1000); // Append clipboard value every 1 second while holding the button
+    });
+
+    // Stop appending clipboard content when touch ends
+    btnSubmit.addEventListener('touchend', function () {
+      clearInterval(intervalId); // Stop the interval
+    });
+
+    // Stop appending clipboard content if touch is canceled (e.g., finger moves off the button)
+    btnSubmit.addEventListener('touchcancel', function () {
+      clearInterval(intervalId); // Stop the interval
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
 
 // Load tables on page load if there is a value in local storage
 window.onload = function() {
