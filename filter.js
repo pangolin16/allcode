@@ -103,7 +103,6 @@ function makeCellEditable(cell) {
 
 
 
-// Function to generate tables
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
     string0.value = vystupek;
@@ -133,11 +132,11 @@ function generateTables() {
     const array1 = array0.map(removeLettersIfConditionMet);
     const filteredArray = array1.filter(item => item.trim() !== "");
 
-    function removeAdjacentStringsStartingWith(array, letterList1, letterList2) {
+    function insertBetweenAdjacentStrings(array, letterList1, letterList2) {
         for (let i = 0; i < array.length - 1; i++) {
             if (letterList1.includes(array[i][0]) && letterList2.includes(array[i + 1][0])) {
-                array.splice(i, 2);
-                i--;
+                array.splice(i + 1, 0, "M101?!?"); // Insert "M101?!?" between the adjacent strings
+                i++; // Skip the next index since we've inserted a new string
             }
         }
         return array;
@@ -146,8 +145,7 @@ function generateTables() {
     const originalArray = [...filteredArray];
     const letterList1 = ["6"];
     const letterList2 = ["P", "V"];
-    const result = removeAdjacentStringsStartingWith(originalArray, letterList1, letterList2);
-
+    const result = insertBetweenAdjacentStrings(originalArray, letterList1, letterList2);
     function extractAndCleanSubstrings(array) {
         return array
             .filter(str => str.includes("6240") || str.includes("6250"))
@@ -203,9 +201,8 @@ function removeDuplicates(result2) {
     r2(duplicatesIndices);
     
 }
-
 // Function to search through table cells, replace text, and apply styles
-// Only the cell directly left of the first changed cell is replaced, and vertical borders are removed from the second changed cell
+// Only the cell directly left of the first changed cell is replaced, vertical borders are removed from the second changed cell, and "M101?!?" is replaced with "Neuvedeno" without affecting formatting
 function replaceTableCellText() {
     // Get all the tables in the document
     const tables = document.querySelectorAll('table');
@@ -231,10 +228,15 @@ function replaceTableCellText() {
                     textChanged = true;
                 }
 
-                // Replace "M101???" with "______"
+                // Replace "M101???" with "\u2002"
                 if (cell.textContent.includes("M101???")) {
                     cell.textContent = cell.textContent.replace("M101???", "\u2002");
                     textChanged = true;
+                }
+
+                // Replace "M101?!?" with "Neuvedeno" (without affecting formatting)
+                if (cell.textContent.includes("M101?!?")) {
+                    cell.textContent = cell.textContent.replace("M101?!?", "No data");
                 }
 
                 // If text was changed
@@ -246,14 +248,13 @@ function replaceTableCellText() {
                         cell.style.backgroundColor = "grey"; // Change background color
                         cell.style.borderLeft = "none"; // Remove left border
                         cell.style.borderRight = "none"; // Remove right border
-           cell.style.marginTop= "10px"; // Remove right border
+                        cell.style.marginTop = "10px"; // Add margin at the top
+
                         // Replace the cell directly left of the first changed cell
                         if (index > 0) { // Ensure there is a cell to the left
                             const leftCell = cells[index - 1];
                             leftCell.textContent = "✂️"; // Replace with "✂️"
                             leftCell.style.textAlign = "center"; // Align text to the center
-                           
-                            
                         }
 
                         firstChangedCellStyled = true; // Mark the first changed cell as styled
@@ -269,7 +270,6 @@ function replaceTableCellText() {
         });
     });
 }
-
 
 
 
