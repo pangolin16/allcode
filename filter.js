@@ -178,7 +178,8 @@ function generateTables() {
     // Call function to find and remove duplicates
     removeDuplicates(result2);
 
-
+// Call the function to replace text in table cells
+replaceTableCellText();
 
     
 }
@@ -202,6 +203,67 @@ function removeDuplicates(result2) {
     r2(duplicatesIndices);
     
 }
+
+// Function to search through table cells, replace text, and apply styles only to the first changed cell
+function replaceTableCellText() {
+    // Get all the tables in the document
+    const tables = document.querySelectorAll('table');
+
+    let firstChangedCellStyled = false; // Flag to track if the first changed cell has been styled
+
+    // Loop through each table
+    tables.forEach((table) => {
+        // Get all cells (td elements) in the table
+        const cells = table.querySelectorAll('td');
+
+        // Loop through each cell
+        cells.forEach((cell) => {
+            let textChanged = false; // Track if the text in the cell is changed
+
+            // Replace "6240???" with "Nůžky"
+            if (cell.textContent.includes("6240???")) {
+                cell.textContent = cell.textContent.replace("6240???", "Nůžky");
+                textChanged = true;
+            }
+
+            // Replace "M101???" with "______"
+            if (cell.textContent.includes("M101???")) {
+                cell.textContent = cell.textContent.replace("M101???", "\u2002");
+                textChanged = true;
+            }
+
+            // If text was changed and the first changed cell hasn't been styled yet
+            if (textChanged && !firstChangedCellStyled) {
+                cell.style.textAlign = "center"; // Align text to the center
+                cell.style.fontStyle = "italic"; // Make text cursive
+                cell.style.backgroundColor = "salmon"; // Change background color to salmon
+                cell.style.fontWeight = "normal"; // Set font weight to normal
+
+                firstChangedCellStyled = true; // Mark the first changed cell as styled
+            }
+        });
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Function to remove the row containing the clicked icon from both tables
 function removeRow(icon) {
