@@ -27,19 +27,20 @@ input {
   padding-right: 5px;
 }
 
-/* New Cell Styling */
-.new-cell {
-  background-color: white; /* Highlight for clarity */
-  width: 50px;
-  transition: transform 0.5s ease-out; /* Smooth animation for transformations */
+
+table{ border-collapse: separate;}
+
+
+#tab2 {
+   
+    border-spacing: 0px 0px ;
+}
+#tab1:not(.new-cell){
+   
+    border-spacing: 0px 0px
+    ;
 }
 
-
-
-table {
-    border-collapse: separate;
-    border-spacing: 4px 0;
-}
 table td{
     border-width: 1px 2px;
     border-style: solid;
@@ -50,4 +51,13 @@ table tr:first-child td {
 }
 table tr:last-child td {
     border-bottom-width: 2px;
+}
+/* New Cell Styling */
+.new-cell {
+  background-color: white; /* Highlight for clarity */
+  width: 50px;
+
+}
+#tab1 tr.new-cell  {
+  border-spacing: 10px 0; /* horizontal spacing between columns */
 }

@@ -2,6 +2,7 @@
 
 
 const btnSubmit = document.getElementById("btnSubmit");
+const btnAdd = document.getElementById("btnAdd");
 const string0 = document.getElementById("out0");
 
 
@@ -252,14 +253,44 @@ function r2(indices) {
     }
 }
 
+// Function to format the input string before saving
+function formatClipboardText(inputString) {
+  const lines = inputString.trim().split(/\r?\n/);
+  const groupedLines = [];
+  let currentGroup = [];
+
+  // Group lines based on empty lines
+  lines.forEach((line) => {
+    if (line.trim()) {
+      // Add non-empty lines to the current group
+      currentGroup.push(line.trim());
+    } else {
+      if (currentGroup.length > 0) {
+        // Join the current group with spaces and add to groupedLines
+        groupedLines.push(currentGroup.join(" "));
+        currentGroup = [];
+      }
+    }
+  });
+
+  // Add the last group if it exists
+  if (currentGroup.length > 0) {
+    groupedLines.push(currentGroup.join(" "));
+  }
+
+  // Join all groups into a single string separated by double spaces
+  return groupedLines.join("  ");
+}
+
 // Set up event listener for the submit button
 btnSubmit.onclick = async function () {
-  // Function to read clipboard and save to localStorage
+  // Function to read clipboard, format the content, and save to localStorage
   async function saveClipboardText() {
     try {
-      const text = await navigator.clipboard.readText();
-      localStorage.setItem('vstup', text); // Save clipboard value directly to localStorage
-      console.log('Clipboard value saved to localStorage:', text);
+      const text = await navigator.clipboard.readText(); // Read clipboard content
+      const formattedText = formatClipboardText(text); // Format the clipboard content
+      localStorage.setItem('vstup', formattedText); // Save formatted value to localStorage
+      console.log('Formatted clipboard value saved to localStorage:', formattedText);
     } catch (error) {
       console.error('Error reading clipboard:', error);
     }
@@ -268,39 +299,62 @@ btnSubmit.onclick = async function () {
   // Call the clipboard save function
   await saveClipboardText();
 
-    generateTables(); // Generate tables after setting the key
+  generateTables(); // Generate tables after setting the key
+};
+
+
+// Function to format the input string before appending
+function formatClipboardText(inputString) {
+  const lines = inputString.trim().split(/\r?\n/);
+  const groupedLines = [];
+  let currentGroup = [];
+
+  // Group lines based on empty lines
+  lines.forEach((line) => {
+    if (line.trim()) {
+      // Add non-empty lines to the current group
+      currentGroup.push(line.trim());
+    } else {
+      if (currentGroup.length > 0) {
+        // Join the current group with spaces and add to groupedLines
+        groupedLines.push(currentGroup.join(" "));
+        currentGroup = [];
+      }
+    }
+  });
+
+  // Add the last group if it exists
+  if (currentGroup.length > 0) {
+    groupedLines.push(currentGroup.join(" "));
   }
 
+  // Join all groups into a single string separated by double spaces
+  return groupedLines.join("  ");
+}
 
+// Set up event listener for the add button
+btnAdd.addEventListener('click', async function () {
+  try {
+    // Read the clipboard content
+    const clipboardText = await navigator.clipboard.readText();
 
-let intervalId; // Variable to store the interval ID for continuous action
+    // Format the clipboard content
+    const formattedClipboardText = formatClipboardText(clipboardText);
 
-    // Start appending clipboard content when button is tapped and held
-    btnSubmit.addEventListener('touchstart', async function () {
-      intervalId = setInterval(async () => {
-        try {
-          const text = await navigator.clipboard.readText();
-          const existingValue = localStorage.getItem('vstup') || ''; // Get current value from localStorage or empty string
-          const newValue = existingValue ? `${existingValue}\n${text}` : text; // Append clipboard value with a newline
-          localStorage.setItem('vstup', newValue); // Save updated value to localStorage
-          console.log('Clipboard value appended to localStorage:', text);
-        } catch (error) {
-          console.error('Error reading clipboard:', error);
-        }
-      }, 1000); // Append clipboard value every 1 second while holding the button
-    });
+    // Get the existing value from localStorage or an empty string if it doesn't exist
+    const existingValue = localStorage.getItem('vstup') || '';
 
-    // Stop appending clipboard content when touch ends
-    btnSubmit.addEventListener('touchend', function () {
-      clearInterval(intervalId); // Stop the interval
-    });
+    // Append " 6240??? M101??? " and the formatted clipboard text
+    const newValue = `${existingValue} 6240??? M101???  ${formattedClipboardText}`;
 
-    // Stop appending clipboard content if touch is canceled (e.g., finger moves off the button)
-    btnSubmit.addEventListener('touchcancel', function () {
-      clearInterval(intervalId); // Stop the interval
-    });
+    // Save the updated value to localStorage
+    localStorage.setItem('vstup', newValue);
 
-
+    console.log('Updated localStorage value:', newValue);
+  } catch (error) {
+    console.error('Error reading clipboard:', error);
+  }
+});
 
 
 
@@ -311,11 +365,6 @@ let intervalId; // Variable to store the interval ID for continuous action
 
 
 
-
-
-
-
-  
 
 
 

@@ -5,8 +5,8 @@
 #s4{border: dotted 5px gray;}
 table{font-size:20px;height: 50px;}
 #output1,#output2,#output3,#output4{text-align: center;border:dashed 7px #ff0000;}
-#output1{ width:24.99%;max-width:24.99%;}
-#output2{ width:24.99%;max-width:24.99%;}
-#output3{ width:24.99%;max-width:24.99%;}
-#output4{ width:24.99%;max-width:24.99%;}
-#clearButton{background-color:white;border: dotted 2px grey;border-radius: 100%;margin-bottom: 5px;}
+#output1{ width:23.99%;max-width:23.99%;}
+#output2{ width:23.99%;max-width:23.99%;}
+#output3{ width:23.99%;max-width:23.99%;}
+#output4{ width:23.99%;max-width:23.99%;}
+#clearButton{background-color:white;border: dotted 2px grey;border-radius: 100%;}
