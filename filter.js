@@ -204,48 +204,71 @@ function removeDuplicates(result2) {
     
 }
 
-// Function to search through table cells, replace text, and apply styles only to the first changed cell
+// Function to search through table cells, replace text, and apply styles
+// Only the cell directly left of the first changed cell is replaced, and vertical borders are removed from the second changed cell
 function replaceTableCellText() {
     // Get all the tables in the document
     const tables = document.querySelectorAll('table');
 
     let firstChangedCellStyled = false; // Flag to track if the first changed cell has been styled
+    let secondChangedCellHandled = false; // Flag to track if the second changed cell has been handled
 
     // Loop through each table
     tables.forEach((table) => {
-        // Get all cells (td elements) in the table
-        const cells = table.querySelectorAll('td');
+        // Get all rows in the table
+        const rows = table.querySelectorAll('tr');
 
-        // Loop through each cell
-        cells.forEach((cell) => {
-            let textChanged = false; // Track if the text in the cell is changed
+        // Loop through each row
+        rows.forEach((row) => {
+            const cells = row.querySelectorAll('td'); // Get all cells in the row
 
-            // Replace "6240???" with "Nůžky"
-            if (cell.textContent.includes("6240???")) {
-                cell.textContent = cell.textContent.replace("6240???", "Nůžky");
-                textChanged = true;
-            }
+            cells.forEach((cell, index) => {
+                let textChanged = false; // Track if the text in the cell is changed
 
-            // Replace "M101???" with "______"
-            if (cell.textContent.includes("M101???")) {
-                cell.textContent = cell.textContent.replace("M101???", "\u2002");
-                textChanged = true;
-            }
+                // Replace "6240???" with "Nůžky"
+                if (cell.textContent.includes("6240???")) {
+                    cell.textContent = cell.textContent.replace("6240???", "Nůžky");
+                    textChanged = true;
+                }
 
-            // If text was changed and the first changed cell hasn't been styled yet
-            if (textChanged && !firstChangedCellStyled) {
-                cell.style.textAlign = "center"; // Align text to the center
-                cell.style.fontStyle = "italic"; // Make text cursive
-                cell.style.backgroundColor = "salmon"; // Change background color to salmon
-                cell.style.fontWeight = "normal"; // Set font weight to normal
+                // Replace "M101???" with "______"
+                if (cell.textContent.includes("M101???")) {
+                    cell.textContent = cell.textContent.replace("M101???", "\u2002");
+                    textChanged = true;
+                }
 
-                firstChangedCellStyled = true; // Mark the first changed cell as styled
-            }
+                // If text was changed
+                if (textChanged) {
+                    if (!firstChangedCellStyled) {
+                        // Apply styles to the first changed cell
+                        cell.style.textAlign = "center"; // Align text to the center
+                        cell.style.fontStyle = "italic"; // Make text cursive
+                        cell.style.backgroundColor = "grey"; // Change background color
+                        cell.style.borderLeft = "none"; // Remove left border
+                        cell.style.borderRight = "none"; // Remove right border
+           cell.style.marginTop= "10px"; // Remove right border
+                        // Replace the cell directly left of the first changed cell
+                        if (index > 0) { // Ensure there is a cell to the left
+                            const leftCell = cells[index - 1];
+                            leftCell.textContent = "✂️"; // Replace with "✂️"
+                            leftCell.style.textAlign = "center"; // Align text to the center
+                           
+                            
+                        }
+
+                        firstChangedCellStyled = true; // Mark the first changed cell as styled
+                    } else if (!secondChangedCellHandled) {
+                        // Remove vertical borders for the second changed cell
+                        cell.style.borderLeft = "none"; // Remove left border
+                        cell.style.borderRight = "none"; // Remove right border
+
+                        secondChangedCellHandled = true; // Mark the second changed cell as handled
+                    }
+                }
+            });
         });
     });
 }
-
-
 
 
 
