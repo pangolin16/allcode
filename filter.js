@@ -436,13 +436,14 @@ btnAdd.addEventListener('click', async function () {
     localStorage.setItem('vstup', newValue);
 
     console.log('Updated localStorage value:', newValue);
+
+    // Regenerate the tables dynamically without reloading the page
+    generateTables();
+
   } catch (error) {
     console.error('Error reading clipboard:', error);
   }
 });
-
-
-
 
 
 
