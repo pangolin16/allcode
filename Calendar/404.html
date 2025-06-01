@@ -95,6 +95,8 @@
 <script type="module">
        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
        import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+       import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
         authDomain: "pangolin-f37fa.firebaseapp.com",
@@ -104,6 +106,46 @@
         appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
         measurementId: "G-M31Q6C45FX"
     };
+
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// --- UI elements ---
+const userInfo = document.getElementById('user-info');
+const userEmail = document.getElementById('user-email');
+const signOutBtn = document.getElementById('sign-out-btn');
+const signInOptions = document.getElementById('sign-in-options');
+const googleSignInBtn = document.getElementById('google-signin-btn');
+const mainApp = document.getElementById('main-app');
+
+// --- Auth logic ---
+googleSignInBtn.onclick = () => signInWithPopup(auth, provider);
+
+signOutBtn.onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, user => {
+    if (user) {
+        userInfo.style.display = '';
+        signInOptions.style.display = 'none';
+        mainApp.style.display = '';
+        userEmail.textContent = user.email || user.displayName || 'User';
+        window.currentUser = user;
+        loadEventsFromFirestore(user.uid);
+    } else {
+        userInfo.style.display = 'none';
+        signInOptions.style.display = '';
+        mainApp.style.display = 'none';
+        window.currentUser = null;
+    }
+});
+
+
+
+
+
+
+
+
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
