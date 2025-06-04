@@ -16,8 +16,9 @@
         rel="stylesheet"
     />
 </head>
-<body>
-    
+<body> <input id="passwordInput" type="password" />
+  <button onclick="checkPassword()"   id="submitBtn">Submit</button>
+     <div id="content" style="display: none;">
 <div class="container">
     <div class="left">
         <div class="calendar">
@@ -89,7 +90,7 @@
 </div>
 
 <div class="credits"></div>
-
+</div>
 
 
 <script type="module">
@@ -257,3 +258,27 @@ const calendarEntries = localStorage.getItem("events")
 <script src="calendar.js"></script>
 </body>
 </html>
+  <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+  <script>
+    const password = "open";
+    const hash = CryptoJS.SHA256(password).toString();
+
+    function checkPassword() {
+      const inputPassword = document.getElementById("passwordInput").value;
+      const inputHash = CryptoJS.SHA256(inputPassword).toString();
+
+      if (inputHash === hash) {
+        document.getElementById("content").style.display = "block";
+        document.getElementById("passwordInput").style.display = "none";
+        document.getElementById("submitBtn").style.display = "none";
+      } else {
+        alert("Incorrect password");
+      }
+    }
+        // Add this event listener to handle pressing Enter
+    document.getElementById("passwordInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkPassword();
+      }
+    });
+  </script>
