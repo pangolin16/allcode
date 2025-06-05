@@ -1,0 +1,29 @@
+#btns{margin-left:40px;}
+
+
+
+
+#outputs,
+#outputs2 {
+  display: inline-block;
+}
+
+#outputs {
+  font-weight: bold;
+}
+
+
+
+#tab2 td:nth-child(1) {
+  border: none;
+  padding-right: 5px;
+}
+
+
+
+
+table td{
+ border-collapse: collapse;
+    border-style: solid;
+    border-color: black;
+}
