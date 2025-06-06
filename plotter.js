@@ -73,21 +73,98 @@ const filtered = originalArray.filter(value => typeof value === "string" && (val
     html += "</table>";
     document.getElementById("outputs").innerHTML = html;
 
-    let html2 = "<table id='tab1'>";
-    for (let i = 0; i < filtered.length; i++) {
-        let cellValue = filtered[i];
-        html2 += "<tr>";
-        html2 += `<td>${cellValue}</td>`;
-        // Add extra cell if value matches
-        if (cellValue === "M102339") {
-            html2 += "<td>2.31BC</td>";
-        } else if (cellValue === "M101443") {
-            html2 += "<td>1.41B</td>";
-        }
-        html2 += "</tr>";
+
+
+
+let data = [
+  ["M300015", "Pěna 23/10"],
+  ["M300013", "Pěna 23/20"],
+  ["M300014", "Pěna 23/30"],
+  ["M300010", "Pěna 23/40"],
+  ["M300011", "Pěna 23/50"],
+  ["M300012", "Pěna 24/60"],
+  ["M300057", "Pěna 28/70"],
+  ["M300066", "Pěna 28/10"],
+  ["M300024", "Pěna 35/20"],
+  ["M300025", "Pěna 35/50"],
+  ["M300086", "Pěna 65/40"],
+  ["M300114", "Pěna 24/25"],
+  ["M300022", "Pěna 35/30"],
+  ["M102780", "2.31 BE"],
+  ["M103226", "2.35 BE"],
+  ["M105367", "2.41 BE"],
+  ["M101447", "2.31 BE"],
+  ["M104281", "3.90 AAC"],
+  ["M103469", "3.91 AAC"],
+  ["M104730", "3.92 AAC"],
+  ["M102476", "3.95 AAC"],
+  ["M104188", "3.96 AAC"],
+  ["M200009", "CP 2mm"],
+  ["M200043", "CP 2,5mm"],
+  ["M200034", "CP 3mm"],
+  ["M200001", "CP 3,5mm"],
+  ["M200004", "CP 5mm"],
+  ["M200014", "CP 5mm"],
+  ["M102112", "2.03 BC"],
+  ["M101446", "2.30 BC"],
+  ["M106269", "2.30 BC"],
+  ["M100197", "2.31 BC"],
+  ["M100446", "2.31 BC"],
+  ["M102338", "2.31 BC"],
+  ["M103231", "2.35 BC N2"],
+  ["M101765", "2.40 BC N2"],
+  ["M101538", "2.41 BC"],
+  ["M101455", "2.50 BC N2"],
+  ["M101539", "2.51 BC"],
+  ["M103225", "2.60 BC N2"],
+  ["M103223", "2.70 BC N2"],
+  ["M101448", "2.71 BC"],
+  ["M102036", "2.71 BC"],
+  ["M101989", "2.90 BC"],
+  ["M101990", "2.91 BC"],
+  ["M101449", "2.91 BC"],
+  ["M103035", "2.91 AC"],
+  ["M103945", "2.92 AC"],
+  ["M101588", "1.20 B"],
+  ["M103229", "1.25 B"],
+  ["M100187", "1.30 B"],
+  ["M101454", "1.30 B"],
+  ["M100062", "1,37 B"],
+  ["M102964", "1.31 B"],
+  ["M102425", "1.41 B"],
+  ["M103232", "1.20 C"],
+  ["M101764", "1.30 C"],
+  ["M101444", "1.31 C"],
+  ["M102086", "1.31 C"],
+  ["M100198", "1.41 C"],
+  ["M100012", "1.21 E"],
+  ["M102364", "1.25 E"]
+];
+let dataMap = {};
+for (let i = 0; i < data.length; i++) {
+    dataMap[data[i][0]] = data[i][1];
+}
+
+let html2 = "<table id='tab1'>";
+for (let i = 0; i < filtered.length; i++) {
+    let cellValue = filtered[i];
+    html2 += "<tr>";
+    html2 += `<td>${cellValue}</td>`;
+    // Add extra cell if value matches any in dataMap
+    if (dataMap[cellValue]) {
+        html2 += `<td>${dataMap[cellValue]}</td>`;
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
+    } else if (cellValue === "M10000") {
+        html2 += "<td>2.2C</td>";
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
+    } else if (cellValue === "M1111") {
+        html2 += "<td>1.41B</td>";
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
     }
-    html2 += "</table>";
-    document.getElementById("outputs2").innerHTML = html2;
+    html2 += "</tr>";
+}
+html2 += "</table>";
+document.getElementById("outputs2").innerHTML = html2;
 
     // Call function to find and remove duplicates
     removeDuplicates(result2);
@@ -296,7 +373,7 @@ window.onload = function() {
     }
 
     // Highlight cells on click 
-    let btns = document.querySelectorAll("tr td:not(:nth-child(1))");
+    let btns = document.querySelectorAll("tr td:not(:nth-child(1),:nth-child(3))");
     for (let i of btns) {
         i.addEventListener('click', function() {
             this.style.background = this.style.background === "white" ? "yellow" : "white";
@@ -308,26 +385,35 @@ window.onload = function() {
 
 };
 
-// Highlight duplicates with unique colors
+// Highlight duplicates in the 2nd table cell with unique colors
 function colour() {
     const table = document.querySelectorAll('table')[1];
     const rows = table.getElementsByTagName('tr');
     const valueCount = {};
-    const colors = ['#ff9999', '#99ff99', '#9999ff', '#ffff99', '#ffcc99','#99f6ff','#e100fa','#0081fa', '#A3E3A3','#CCCC00','#C4BDD8',' #7404DF',' #FF5992']; // Array of unique colors
-    
-    // Count occurrences of each value
+    const colors = ['#ff9999', '#99ff99', '#9999ff', '#ffff99', '#ffcc99','#99f6ff','#e100fa','#0081fa', '#A3E3A3','#CCCC00','#C4BDD8','#7404DF','#FF5992']; // Array of unique colors
+
+    // Count occurrences of each value in 2nd cell
     for (let i = 0; i < rows.length; i++) {
-        const value = rows[i].textContent.trim();
-        valueCount[value] = (valueCount[value] || 0) + 1;
+        const cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 1) {
+            const value = cells[1].textContent.trim();
+            valueCount[value] = (valueCount[value] || 0) + 1;
+        }
     }
-    
-    // Highlight duplicates with unique colors
+
+    // Highlight duplicates in the 2nd cell
     for (let i = 0; i < rows.length; i++) {
-        const value = rows[i].textContent.trim();
-        if (valueCount[value] > 1) {
-            const index = Object.keys(valueCount).indexOf(value);
-            // Use a color from the colors array based on the index of the value
-            rows[i].style.backgroundColor = colors[index % colors.length];
+        const cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 1) {
+            const value = cells[1].textContent.trim();
+            if (valueCount[value] > 1) {
+                const index = Object.keys(valueCount).indexOf(value);
+                // Use a color from the colors array based on the index of the value
+                cells[1].style.backgroundColor = colors[index % colors.length];
+            } else {
+                // Optional: clear background if not duplicate
+                cells[1].style.backgroundColor = '';
+            }
         }
     }
 }
