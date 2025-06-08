@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+  <title>title</title>
+</head>
+<body>
+  <div class="row d-flex justify-content-center mt-100">
+    <div class="col-md-6">
+      <select id="choices-multiple-remove-button" placeholder="Materiál" multiple>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="E">E</option>
+        <option value="BC">BC</option>
+        <option value="BE">BE</option>
+        <option value="AAC">AAC</option>
+        <option value="Pěna">Pěna</option>
+      </select>
+    </div>
+  </div>
+</body>
+</html>
+<style>
+.mt-100 { margin-top: 100px }
+body {
+  background: #00B4DB;
+  background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
+  background: linear-gradient(to right, #0083B0, #00B4DB);
+  color: #514B64;
+  min-height: 100vh
+}
+</style>
+<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+<script>
+$(document).ready(function(){
+  // Initial master option sets
+  const optionSets = {
+    Pěna: ["Pěna 23/10", "Pěna 23/20", "Pěna 23/30", "Pěna 23/40", "Pěna 23/50", "Pěna 24/60", "Pěna 28/70", "Pěna 28/10", "Pěna 35/20", "Pěna 35/50", "Pěna 65/40", "Pěna 24/25", "Pěna 35/30"],
+    B: ["1.20B", "1.31B", "1.41B"],
+    C: ["1.21C", "1.41C"],
+    E: ["1.21E"],
+    BC: ["2.03BC", "2.31BC", "2.41BC", "2.51BC", "2.71BC", "2.90BC", "2.91BC"],
+    BE: ["1.31BE", "1.41BE"],
+    AAC: ["3.95AAC"],
+    default: ["B", "C", "E", "BC", "BE", "AAC", "Pěna"]
+  };
+
+  let currentMenu = optionSets.default.slice();
+
+  var select = document.getElementById('choices-multiple-remove-button');
+  var choicesInstance = new Choices(select, {
+    removeItemButton: true,
+    maxItemCount: 10,
+    searchResultLimit: 100,
+    renderChoiceLimit: 100,
+    addItems: true,
+    duplicateItemsAllowed: false,
+    addItemFilter: function(value) { return false; }
+  });
+
+  // Helper: get selected values that are menu options (not custom/appended tags)
+  function getMenuSelected(options) {
+    return (choicesInstance.getValue(true) || []).filter(val => options.includes(val));
+  }
+
+  // Helper: get the "base" value of appended tags (e.g., "2.90BC 1" -> "2.90BC")
+  function getBaseValuesFromAppendedTags(options) {
+    return (choicesInstance.getValue(true) || []).map(function(val){
+      // If it starts with one of the options and a space, consider it an appended tag
+      for (const opt of options) {
+        if(val.startsWith(opt + ' ')) return opt;
+      }
+      return null;
+    }).filter(Boolean);
+  }
+
+  // Helper: set the dropdown menu to only show unselected options
+  function setFilteredOptions(optionList, selectedValues, appendedBases) {
+    // Remove anything in selectedValues or appendedBases from optionList
+    const unselected = optionList.filter(opt => !selectedValues.includes(opt) && !appendedBases.includes(opt));
+    choicesInstance.clearChoices();
+    choicesInstance.setChoices(
+      unselected.map(opt => ({
+        value: opt,
+        label: opt,
+        selected: false
+      })),
+      'value', 'label', true
+    );
+  }
+
+  select.addEventListener('change', function() {
+    let allSelected = choicesInstance.getValue(true) || [];
+    let menuList, menuSelected, appendedBases;
+    // If user selected a category, switch to its sub-options
+    if (allSelected.length === 1 && optionSets[allSelected[0]]) {
+      menuList = optionSets[allSelected[0]].slice();
+      currentMenu = menuList.slice();
+      choicesInstance.removeActiveItems();
+      setFilteredOptions(menuList, [], []);
+    } else if (allSelected.length === 0) {
+      currentMenu = optionSets.default.slice();
+      setFilteredOptions(currentMenu, [], []);
+    } else {
+      menuList = currentMenu.slice();
+      menuSelected = getMenuSelected(menuList);
+      appendedBases = getBaseValuesFromAppendedTags(menuList);
+      setFilteredOptions(menuList, menuSelected, appendedBases);
+    }
+  });
+
+  // On remove tag, restore that value into the menu
+  select.addEventListener('removeItem', function(){
+    setTimeout(function(){
+      let menuList = currentMenu.slice();
+      let menuSelected = getMenuSelected(menuList);
+      let appendedBases = getBaseValuesFromAppendedTags(menuList);
+      setFilteredOptions(menuList, menuSelected, appendedBases);
+    }, 10);
+  });
+
+  // Appending logic: appended values never show up in dropdown, and original menu stays intact except for appended base
+  $(document).on('keydown', '.choices__input', function(e){
+    if((e.key === "Tab" || e.keyCode === 9) && !e.shiftKey) {
+      var inputVal = $(this).val().trim();
+      if(inputVal.length > 0 && !/\s/.test(inputVal)) {
+        var currentValues = choicesInstance.getValue(true);
+        if(currentValues.length > 0) {
+          var menuList = currentMenu.slice();
+          var menuSelected = getMenuSelected(menuList);
+          var appendedBases = getBaseValuesFromAppendedTags(menuList);
+
+          var allTags = currentValues.slice(0, -1); // keep all but last
+          var lastValue = currentValues[currentValues.length-1];
+          var newValue = lastValue + ' ' + inputVal;
+          allTags.push(newValue);
+
+          choicesInstance.removeActiveItems();
+          choicesInstance.setValue(allTags.map(val => ({value: val, label: val})));
+
+          // After appending, refresh menu (custom/appended tags never appear in dropdown, and their base is gone too)
+          appendedBases = getBaseValuesFromAppendedTags(menuList);
+          setFilteredOptions(menuList, menuSelected, appendedBases);
+
+          $(this).val('');
+          e.preventDefault();
+        }
+      }
+    }
+  });
+
+  // Initialize with default options
+  setFilteredOptions(optionSets.default, [], []);
+});
+
+
+// Helper to get or set data in localStorage
+  function getInputData() {
+    try {
+      return JSON.parse(localStorage.getItem('inputTableData') || '[]');
+    } catch(e) { return []; }
+  }
+  function setInputData(arr) {
+    localStorage.setItem('inputTableData', JSON.stringify(arr));
+  }
+
+  // Generate the table from localStorage
+  function generateTable() {
+    var data = getInputData();
+    var html = '';
+    if(data.length > 0) {
+      html += '<table><thead><tr><th>#</th><th>Input</th></tr></thead><tbody>';
+      data.forEach(function(val, idx){
+        html += '<tr><td>'+(idx+1)+'</td><td>'+val+'</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    $('#input-table-wrapper').html(html);
+  }
+  generateTable();
+
+  // Listen to Choices input field for right arrow key (ArrowRight)
+  $(document).on('keydown', '.choices__input', function(e){
+    // Right arrow key: e.key === "ArrowRight" or e.keyCode === 39
+    if(document.activeElement === this && (e.key === "ArrowRight" || e.keyCode === 39)) {
+      var val = $(this).val().trim();
+      if(val.length > 0) {
+        var arr = getInputData();
+        arr.push(val);
+        setInputData(arr);
+        generateTable();
+        $(this).val('');
+        e.preventDefault();
+      }
+    }
+  });
+
+
+  // Optional: Clear table on double click
+  $('#input-table-wrapper').on('dblclick', function(){
+    if(confirm('Clear all saved inputs?')) {
+      setInputData([]);
+      generateTable();
+    }
+  });
+
+
+
+
+
+</script>
