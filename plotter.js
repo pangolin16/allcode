@@ -14,20 +14,28 @@ function generateTables() {
     const vystupek = localStorage.getItem("vstup");
     string0.value = vystupek;
 
-    const string1 = string0.value;
+ const string2 = string0.value;
 
-    function replaceLetters(inputString) {
-        return inputString
-            .replace(/d/gi, '')
-            .replace(/l/gi, '')
-            .replace(/á/gi, '')
-            .replace(/o/gi, '0')
-            .replace(/i/gi, '1')
-            .replace(/a/gi, '4');
+function transformToArray(input) {
+  // Split input by whitespace to get all tokens
+  const tokens = input.trim().split(/\s+/);
+  // Build result by grouping pairs and inserting empty string
+  const result = [];
+  for (let i = 0; i < tokens.length; i += 2) {
+    result.push(tokens[i]);
+    if (tokens[i + 1] !== undefined) {
+      result.push(tokens[i + 1]);
     }
+    result.push(""); // Insert empty string after each pair
+  }
+  // Optionally, remove the last "" if not needed
+  // if (result[result.length - 1] === "") result.pop();
+  return result;
+}
 
-    const string2 = replaceLetters(string1);
-    let array0 = string2.split(' ');
+const array0 = transformToArray(string2);
+    // let array0 = string2.split(' ');
+
 
     function removeLettersIfConditionMet(inputString) {
         if ((inputString.includes('6250') || inputString.includes('6240')) && !inputString.includes('m')) {
