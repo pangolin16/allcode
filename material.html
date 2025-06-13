@@ -8,6 +8,7 @@
 </head>
 <body>
     <button id="saveButton">Save</button>
+    <button id="copySecondTable">Copy</button>
   <div class="row d-flex justify-content-center mt-100">
     <div class="col-md-6">
       <select id="choices-multiple-remove-button" placeholder="Materiál" multiple>
@@ -22,7 +23,6 @@
       <div id="input-table-wrapper" style="margin-top:30px;"></div>
     </div>
   </div>
-
 </body>
 </html>
 <style>
@@ -174,10 +174,13 @@ $(document).ready(function(){
   function setInputData(arr) {
     localStorage.setItem('inputTableData', JSON.stringify(arr));
   }
+
+  // This is the only function modified to insert the new table underneath the original one.
   function generateTable() {
     var dataArr = getInputData();
     var html = '';
     if(dataArr.length > 0) {
+      // First/original table
       html += '<table><thead><tr><th>Code</th><th>Material</th><th>Number</th></tr></thead><tbody>';
       dataArr.forEach(function(obj, idx){
         let code = "";
@@ -185,6 +188,15 @@ $(document).ready(function(){
         let baseMaterial = (obj.material || '').replace(/\s+/g, ' ').trim();
         code = materialCodeMap[baseMaterial] || "";
         html += '<tr><td>'+code+'</td><td>'+obj.material+'</td><td>'+obj.number+'</td></tr>';
+      });
+      html += '</tbody></table>';
+      // Second table as requested, but without header
+      html += '<table hidden id="second-table" style="margin-top:30px;"><tbody>';
+      dataArr.forEach(function(obj, idx){
+        let code = "";
+        let baseMaterial = (obj.material || '').replace(/\s+/g, ' ').trim();
+        code = materialCodeMap[baseMaterial] || "";
+        html += '<tr><td>'+code+'</td><td></td><td>04</td><td>'+obj.number+'</td></tr>';
       });
       html += '</tbody></table>';
     }
@@ -236,6 +248,37 @@ $(document).ready(function(){
     if(confirm('Clear all saved inputs?')) {
       setInputData([]);
       generateTable();
+    }
+  });
+
+  // --- Copy Second Table Button Logic ---
+  $('#copySecondTable').on('click', function(){
+    // Find the second table by its id
+    var $table = $('#second-table');
+    if ($table.length === 0) return;
+
+    // Collect all rows as tab-separated values (no header)
+    var rows = [];
+    $table.find('tbody tr').each(function(){
+      var cols = [];
+      $(this).find('td').each(function(){
+        cols.push($(this).text().trim());
+      });
+      rows.push(cols.join('\t'));
+    });
+    var tableText = rows.join('\n');
+
+    // Copy to clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(tableText);
+    } else {
+      // Fallback for older browsers
+      var textarea = document.createElement('textarea');
+      textarea.value = tableText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
     }
   });
 });
