@@ -62,7 +62,7 @@ function generateTables() {
     }
 
     const originalArray = [...filteredArray];
-    const letterList1 = ["6"];
+    const letterList1 = ["625"];
     const letterList2 = ["P", "V"];
     const result = insertBetweenAdjacentStrings(originalArray, letterList1, letterList2);
 

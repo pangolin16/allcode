@@ -135,33 +135,39 @@ $(document).ready(function(){
       setFilteredOptions(menuList, menuSelected, appendedBases);
     }, 10);
   });
-  $(document).on('keydown', '.choices__input', function(e){
-    if((e.key === "Tab" || e.keyCode === 9) && !e.shiftKey) {
-      var inputVal = $(this).val().trim();
-      if(inputVal.length > 0 && !/\s/.test(inputVal)) {
-        var currentValues = choicesInstance.getValue(true);
-        if(currentValues.length > 0) {
-          var menuList = currentMenu.slice();
-          var menuSelected = getMenuSelected(menuList);
-          var appendedBases = getBaseValuesFromAppendedTags(menuList);
+$(document).on('keydown', '.choices__input', function(e){
+  // Tab: custom material with number
+  if((e.key === "Tab" || e.keyCode === 9) && !e.shiftKey) {
+    var inputVal = $(this).val().trim();
+    if(inputVal.length > 0 && !/\s/.test(inputVal)) {
+      var currentValues = choicesInstance.getValue(true);
+      if(currentValues.length > 0) {
+        var menuList = currentMenu.slice();
+        var menuSelected = getMenuSelected(menuList);
+        var appendedBases = getBaseValuesFromAppendedTags(menuList);
 
-          var allTags = currentValues.slice(0, -1);
-          var lastValue = currentValues[currentValues.length-1];
-          var newValue = lastValue + ' ' + inputVal;
-          allTags.push(newValue);
+        var allTags = currentValues.slice(0, -1);
+        var lastValue = currentValues[currentValues.length-1];
+        var newValue = lastValue + ' ' + inputVal;
+        allTags.push(newValue);
 
-          choicesInstance.removeActiveItems();
-          choicesInstance.setValue(allTags.map(val => ({value: val, label: val})));
+        choicesInstance.removeActiveItems();
+        choicesInstance.setValue(allTags.map(val => ({value: val, label: val})));
 
-          appendedBases = getBaseValuesFromAppendedTags(menuList);
-          setFilteredOptions(menuList, menuSelected, appendedBases);
+        appendedBases = getBaseValuesFromAppendedTags(menuList);
+        setFilteredOptions(menuList, menuSelected, appendedBases);
 
-          $(this).val('');
-          e.preventDefault();
-        }
+        $(this).val('');
+        e.preventDefault();
       }
     }
-  });
+  }
+  // ENTER: Save instead of select
+  if((e.key === "Enter" || e.keyCode === 13) && !e.shiftKey) {
+    e.preventDefault();
+    $('#saveButton').click();
+  }
+});
 
   setFilteredOptions(optionSets.default, [], []);
 
@@ -205,46 +211,49 @@ $(document).ready(function(){
   generateTable();
 
   // --- Save data on button click ---
-$('#saveButton').on('click', function(){
-  var selected = choicesInstance.getValue(true);
-  if(selected.length > 0) {
-    var arr = getInputData();
-    // Convert old array to object map for faster lookup
-    var map = {};
-    arr.forEach(function(obj){
-      map[obj.material] = obj;
-    });
+  $('#saveButton').on('click', function(){
+    var selected = choicesInstance.getValue(true);
+    if(selected.length > 0) {
+      var arr = getInputData();
+      // Convert old array to object map for faster lookup
+      var map = {};
+      arr.forEach(function(obj){
+        map[obj.material] = obj;
+      });
 
-    selected.forEach(function(val){
-      var material = val, number = "";
-      var parts = val.trim().split(" ");
-      if(parts.length > 1) {
-        number = parts.pop();
-        material = parts.join(" ");
-      }
-      material = material.replace(/\s+/g, ' ').trim(); // normalize for map/codes
-      var numToAdd = parseInt(number,10);
-      numToAdd = isNaN(numToAdd) ? 0 : numToAdd;
-      if(map[material]) {
-        var prev = parseInt(map[material].number,10);
-        prev = isNaN(prev) ? 0 : prev;
-        map[material].number = prev + numToAdd;
-      } else {
-        map[material] = {material: material, number: numToAdd};
-      }
-    });
+      // Only accept valid input: must end with a number (integer, can be negative), and reject if not
+      var validEntryRegex = /^(.+)\s(-?\d+)$/;
 
-    // *** Remove rows with number === 0 ***
-    var newArr = Object.values(map).filter(obj => obj.number !== 0);
+      selected.forEach(function(val){
+        var match = val.trim().match(validEntryRegex);
+        if (!match) {
+          // Invalid entry: does not end with a number, skip!
+          return;
+        }
+        var material = match[1].replace(/\s+/g, ' ').trim();
+        var number = match[2];
+        var numToAdd = parseInt(number,10);
+        numToAdd = isNaN(numToAdd) ? 0 : numToAdd;
+        if(map[material]) {
+          var prev = parseInt(map[material].number,10);
+          prev = isNaN(prev) ? 0 : prev;
+          map[material].number = prev + numToAdd;
+        } else {
+          map[material] = {material: material, number: numToAdd};
+        }
+      });
 
-    setInputData(newArr);
-    generateTable();
-    // Reset selections, dropdown, and menu to default after save
-    choicesInstance.removeActiveItems();
-    currentMenu = optionSets.default.slice();
-    setFilteredOptions(optionSets.default, [], []);
-  }
-});
+      // Remove rows with number === 0
+      var newArr = Object.values(map).filter(obj => obj.number !== 0);
+
+      setInputData(newArr);
+      generateTable();
+      // Reset selections, dropdown, and menu to default after save
+      choicesInstance.removeActiveItems();
+      currentMenu = optionSets.default.slice();
+      setFilteredOptions(optionSets.default, [], []);
+    }
+  });
 
   $('#input-table-wrapper').on('dblclick', function(){
     if(confirm('Clear all saved inputs?')) {
