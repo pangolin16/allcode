@@ -1,45 +1,41 @@
 
+
+
 const btnSubmit = document.getElementById("btnSubmit");
 const btnAdd = document.getElementById("btnAdd");
 const string0 = document.getElementById("out0");
 
-// Key for saving comments in localStorage
-const COMMENTS_KEY = "tab1_comments";
 
-// Utility: get comments object from localStorage
-function getSavedComments() {
-    try {
-        return JSON.parse(localStorage.getItem(COMMENTS_KEY) || "{}");
-    } catch (e) {
-        return {};
-    }
-}
 
-// Utility: save comments object to localStorage
-function setSavedComments(obj) {
-    localStorage.setItem(COMMENTS_KEY, JSON.stringify(obj));
-}
+
+
 
 function generateTables() {
     const vystupek = localStorage.getItem("vstup");
     string0.value = vystupek;
 
-    const string2 = string0.value;
+ const string2 = string0.value;
 
-    function transformToArray(input) {
-        const tokens = input.trim().split(/\s+/);
-        const result = [];
-        for (let i = 0; i < tokens.length; i += 2) {
-            result.push(tokens[i]);
-            if (tokens[i + 1] !== undefined) {
-                result.push(tokens[i + 1]);
-            }
-            result.push(""); // Insert empty string after each pair
-        }
-        return result;
+function transformToArray(input) {
+  // Split input by whitespace to get all tokens
+  const tokens = input.trim().split(/\s+/);
+  // Build result by grouping pairs and inserting empty string
+  const result = [];
+  for (let i = 0; i < tokens.length; i += 2) {
+    result.push(tokens[i]);
+    if (tokens[i + 1] !== undefined) {
+      result.push(tokens[i + 1]);
     }
+    result.push(""); // Insert empty string after each pair
+  }
+  // Optionally, remove the last "" if not needed
+  // if (result[result.length - 1] === "") result.pop();
+  return result;
+}
 
-    const array0 = transformToArray(string2);
+const array0 = transformToArray(string2);
+    // let array0 = string2.split(' ');
+
 
     function removeLettersIfConditionMet(inputString) {
         if ((inputString.includes('6250') || inputString.includes('6240')) && !inputString.includes('m')) {
@@ -62,10 +58,9 @@ function generateTables() {
     }
 
     const originalArray = [...filteredArray];
-    const letterList1 = ["625"];
+    const letterList1 = ["6"];
     const letterList2 = ["P", "V"];
     const result = insertBetweenAdjacentStrings(originalArray, letterList1, letterList2);
-
     function extractAndCleanSubstrings(array) {
         return array
             .filter(str => str.includes("6240") || str.includes("6250"))
@@ -73,9 +68,9 @@ function generateTables() {
     }
 
     const result2 = extractAndCleanSubstrings(result);
-    const filtered = originalArray.filter(value => typeof value === "string" && (value.startsWith("M10") || value.startsWith("M30")));
-
-    // Generate HTML for tab2
+const filtered = originalArray.filter(value => typeof value === "string" && (value.startsWith("M10") || value.startsWith("M30")));
+    
+    // Generate HTML for tables
     let html = "<table id='tab2'>";
     for (let i = 0; i < result2.length; i++) {
         html += `<tr>
@@ -86,418 +81,107 @@ function generateTables() {
     html += "</table>";
     document.getElementById("outputs").innerHTML = html;
 
-    let data = [
-  [
-    "M300015",
-    "Pěna 23/10"
-  ],
-  [
-    "M300013",
-    "Pěna 23/20"
-  ],
-  [
-    "M300014",
-    "Pěna 23/30"
-  ],
-  [
-    "M300010",
-    "Pěna 23/40"
-  ],
-  [
-    "M300011",
-    "Pěna 23/50"
-  ],
-  [
-    "M300012",
-    "Pěna 24/60"
-  ],
-  [
-    "M300057",
-    "Pěna 28/70"
-  ],
-  [
-    "M300066",
-    "Pěna 28/10"
-  ],
-  [
-    "M300024",
-    "Pěna 35/20"
-  ],
-  [
-    "M300025",
-    "Pěna 35/50"
-  ],
-  [
-    "M300086",
-    "Pěna 65/40"
-  ],
-  [
-    "M300114",
-    "Pěna 24/25"
-  ],
-  [
-    "M300022",
-    "Pěna 35/30"
-  ],
-  [
-    "M102780",
-    "2.31 BE"
-  ],
-  [
-    "M103226",
-    "2.35 BE"
-  ],
-  [
-    "M105367",
-    "2.41 BE"
-  ],
-  [
-    "M101447",
-    "2.31 BE"
-  ],
-  [
-    "M104281",
-    "3.90 AAC"
-  ],
-  [
-    "M103469",
-    "3.91 AAC"
-  ],
-  [
-    "M104730",
-    "3.92 AAC"
-  ],
-  [
-    "M102476",
-    "3.95 AAC"
-  ],
-  [
-    "M104188",
-    "3.96 AAC"
-  ],
-  [
-    "M200009",
-    "CP 2mm"
-  ],
-  [
-    "M200043",
-    "CP 2,5mm"
-  ],
-  [
-    "M200034",
-    "CP 3mm"
-  ],
-  [
-    "M200001",
-    "CP 3,5mm"
-  ],
-  [
-    "M200004",
-    "CP 5mm"
-  ],
-  [
-    "M200014",
-    "CP 5mm"
-  ],
-  [
-    "M102112",
-    "2.03 BC"
-  ],
-  [
-    "M101446",
-    "2.30 BC"
-  ],
-  [
-    "M106269",
-    "2.30 BC"
-  ],
-  [
-    "M100197",
-    "2.31 BC"
-  ],
-  [
-    "M100446",
-    "2.31 BC"
-  ],
-  [
-    "M102338",
-    "2.31 BC"
-  ],
-  [
-    "M103231",
-    "2.35 BC N2"
-  ],
-  [
-    "M101765",
-    "2.40 BC N2"
-  ],
-  [
-    "M101538",
-    "2.41 BC"
-  ],
-  [
-    "M101455",
-    "2.50 BC N2"
-  ],
-  [
-    "M101539",
-    "2.51 BC"
-  ],
-  [
-    "M103225",
-    "2.60 BC N2"
-  ],
-  [
-    "M103223",
-    "2.70 BC N2"
-  ],
-  [
-    "M101448",
-    "2.71 BC"
-  ],
-  [
-    "M102036",
-    "2.71 BC"
-  ],
-  [
-    "M101989",
-    "2.90 BC"
-  ],
-  [
-    "M101990",
-    "2.91 BC"
-  ],
-  [
-    "M101449",
-    "2.91 BC"
-  ],
-  [
-    "M103035",
-    "2.91 AC"
-  ],
-  [
-    "M103945",
-    "2.92 AC"
-  ],
-  [
-    "M101588",
-    "1.20 B"
-  ],
-  [
-    "M103229",
-    "1.25 B"
-  ],
-  [
-    "M100187",
-    "1.30 B"
-  ],
-  [
-    "M101454",
-    "1.30 B"
-  ],
-  [
-    "M100062",
-    "1,37 B"
-  ],
-  [
-    "M102964",
-    "1.31 B"
-  ],
-  [
-    "M102425",
-    "1.41 B"
-  ],
-  [
-    "M103232",
-    "1.20 C"
-  ],
-  [
-    "M101764",
-    "1.30 C"
-  ],
-  [
-    "M101444",
-    "1.31 C"
-  ],
-  [
-    "M102086",
-    "1.31 C"
-  ],
-  [
-    "M100198",
-    "1.41 C"
-  ],
-  [
-    "M100012",
-    "1.21 E"
-  ],
-  [
-    "M102364",
-    "1.25 E"
-  ],
-  [
-    "M107859",
-    "1.41 B"
-  ],
-  [
-    "M107860",
-    "2.31 BC N2"
-  ],
-  [
-    "M107861",
-    "1.20 B"
-  ],
-  [
-    "M107862",
-    "2.30 BC"
-  ],
-  [
-    "M107863",
-    "2.71 BC"
-  ],
-  [
-    "M107864",
-    "2.91 BC"
-  ],
-  [
-    "M107865",
-    "1.41 C"
-  ],
-  [
-    "M107866",
-    "1.31 C"
-  ],
-  [
-    "M107867",
-    "1.30 B N7"
-  ],
-  [
-    "M107868",
-    "2.50 BC"
-  ],
-  [
-    "M107869",
-    "2.31 BE"
-  ],
-  [
-    "M107870",
-    "1.37 B"
-  ],
-  [
-    "M107871",
-    "1.25 B"
-  ],
-  [
-    "M107872",
-    "1.30 C"
-  ],
-  [
-    "M107873",
-    "2.41 BC"
-  ],
-  [
-    "M107874",
-    "1.31 B"
-  ],
-  [
-    "M107875",
-    "2.51 BC"
-  ],
-  [
-    "M107876",
-    "2.90 BC"
-  ],
-  [
-    "M107877",
-    "2.03 BC"
-  ],
-  [
-    "M107878",
-    "1.41 B"
-  ],
-  [
-    "M107879",
-    "2.91 AC"
-  ],
-  [
-    "M107880",
-    "3.92 AAC"
-  ],
-  [
-    "M107881",
-    "2.41 BE X4"
-  ],
-  [
-    "M107882",
-    "3.96 AAC"
-  ],
-  [
-    "M107883",
-    "2.35 BC N2"
-  ],
-  [
-    "M101450",
-    "3.95 AAC"
-  ],
-  [
-    "M100013",
-    "1.25 E"
-  ]
+
+
+
+let data = [
+  ["M300015", "Pěna 23/10"],
+  ["M300013", "Pěna 23/20"],
+  ["M300014", "Pěna 23/30"],
+  ["M300010", "Pěna 23/40"],
+  ["M300011", "Pěna 23/50"],
+  ["M300012", "Pěna 24/60"],
+  ["M300057", "Pěna 28/70"],
+  ["M300066", "Pěna 28/10"],
+  ["M300024", "Pěna 35/20"],
+  ["M300025", "Pěna 35/50"],
+  ["M300086", "Pěna 65/40"],
+  ["M300114", "Pěna 24/25"],
+  ["M300022", "Pěna 35/30"],
+  ["M102780", "2.31 BE"],
+  ["M103226", "2.35 BE"],
+  ["M105367", "2.41 BE"],
+  ["M101447", "2.31 BE"],
+  ["M104281", "3.90 AAC"],
+  ["M103469", "3.91 AAC"],
+  ["M104730", "3.92 AAC"],
+  ["M102476", "3.95 AAC"],
+  ["M104188", "3.96 AAC"],
+  ["M200009", "CP 2mm"],
+  ["M200043", "CP 2,5mm"],
+  ["M200034", "CP 3mm"],
+  ["M200001", "CP 3,5mm"],
+  ["M200004", "CP 5mm"],
+  ["M200014", "CP 5mm"],
+  ["M102112", "2.03 BC"],
+  ["M101446", "2.30 BC"],
+  ["M106269", "2.30 BC"],
+  ["M100197", "2.31 BC"],
+  ["M100446", "2.31 BC"],
+  ["M102338", "2.31 BC"],
+  ["M103231", "2.35 BC N2"],
+  ["M101765", "2.40 BC N2"],
+  ["M101538", "2.41 BC"],
+  ["M101455", "2.50 BC N2"],
+  ["M101539", "2.51 BC"],
+  ["M103225", "2.60 BC N2"],
+  ["M103223", "2.70 BC N2"],
+  ["M101448", "2.71 BC"],
+  ["M102036", "2.71 BC"],
+  ["M101989", "2.90 BC"],
+  ["M101990", "2.91 BC"],
+  ["M101449", "2.91 BC"],
+  ["M103035", "2.91 AC"],
+  ["M103945", "2.92 AC"],
+  ["M101588", "1.20 B"],
+  ["M103229", "1.25 B"],
+  ["M100187", "1.30 B"],
+  ["M101454", "1.30 B"],
+  ["M100062", "1,37 B"],
+  ["M102964", "1.31 B"],
+  ["M102425", "1.41 B"],
+  ["M103232", "1.20 C"],
+  ["M101764", "1.30 C"],
+  ["M101444", "1.31 C"],
+  ["M102086", "1.31 C"],
+  ["M100198", "1.41 C"],
+  ["M100012", "1.21 E"],
+  ["M102364", "1.25 E"]
 ];
-    let dataMap = {};
-    for (let i = 0; i < data.length; i++) {
-        dataMap[data[i][0]] = data[i][1];
-    }
-
-    // Get saved comments for editable cells
-    const savedComments = getSavedComments();
-
-    let html2 = "<table id='tab1'>";
-    for (let i = 0; i < filtered.length; i++) {
-        let cellValue = filtered[i];
-        html2 += "<tr>";
-        html2 += `<td>${cellValue}</td>`;
-        // Add extra cell if value matches any in dataMap
-        if (dataMap[cellValue]) {
-            html2 += `<td>${dataMap[cellValue]}</td>`;
-            // Always render editable cell for every row
-            const commentVal = savedComments[cellValue + "_" + i] || "";
-            html2 += `<td contenteditable="true" class="comment" data-key="${cellValue}_${i}">${commentVal}</td>`;
-        } else if (cellValue === "M10000") {
-            html2 += "<td>2.2C</td>";
-            const commentVal = savedComments[cellValue + "_" + i] || "";
-            html2 += `<td contenteditable="true" class="comment" data-key="${cellValue}_${i}">${commentVal}</td>`;
-        } else if (cellValue === "M1111") {
-            html2 += "<td>1.41B</td>";
-            const commentVal = savedComments[cellValue + "_" + i] || "";
-            html2 += `<td contenteditable="true" class="comment" data-key="${cellValue}_${i}">${commentVal}</td>`;
-        }
-        html2 += "</tr>";
-    }
-    html2 += "</table>";
-    document.getElementById("outputs2").innerHTML = html2;
-
-    // Add event listeners to all comment cells
-    document.querySelectorAll("#tab1 td.comment").forEach(cell => {
-        cell.addEventListener("input", function () {
-            const key = cell.getAttribute("data-key");
-            const value = cell.textContent.trim();
-            const comments = getSavedComments();
-            if (value) {
-                comments[key] = value;
-            } else {
-                delete comments[key];
-            }
-            setSavedComments(comments);
-        });
-    });
-
-    removeDuplicates(result2);
-    replaceTableCellText();
+let dataMap = {};
+for (let i = 0; i < data.length; i++) {
+    dataMap[data[i][0]] = data[i][1];
 }
 
+let html2 = "<table id='tab1'>";
+for (let i = 0; i < filtered.length; i++) {
+    let cellValue = filtered[i];
+    html2 += "<tr>";
+    html2 += `<td>${cellValue}</td>`;
+    // Add extra cell if value matches any in dataMap
+    if (dataMap[cellValue]) {
+        html2 += `<td>${dataMap[cellValue]}</td>`;
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
+    } else if (cellValue === "M10000") {
+        html2 += "<td>2.2C</td>";
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
+    } else if (cellValue === "M1111") {
+        html2 += "<td>1.41B</td>";
+        html2 += `<td contenteditable="true" class="comment"></td>`; // Editable cell
+    }
+    html2 += "</tr>";
+}
+html2 += "</table>";
+document.getElementById("outputs2").innerHTML = html2;
 
+    // Call function to find and remove duplicates
+    removeDuplicates(result2);
 
+// Call the function to replace text in table cells
+replaceTableCellText();
+
+    
+}
 
 // Function to find duplicates and remove them
 function removeDuplicates(result2) {
