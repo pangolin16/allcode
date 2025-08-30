@@ -16,7 +16,7 @@ function gets1a(){
 
      if(s1<=150&& s1>10){document.getElementById("output1").innerHTML=parseInt(s1)+10}
      else if(s1<=250 && s1>150){document.getElementById("output1").innerHTML=parseInt(s1)+11}
-     else if(s1<=400&& s1>250){document.getElementById("output1").innerHTML=parseInt(s1)+12}
+     else if(s1<=400&& s1>250){document.getElementById("output1").innerHTML=parseInt(s1)+12}    
      else if(s1<=450 && s1>400){document.getElementById("output1").innerHTML=parseInt(s1)+13}
      else if(s1<=650 && s1>450){document.getElementById("output1").innerHTML=parseInt(s1)+14}
      else if(s1<=950 && s1>650){document.getElementById("output1").innerHTML=parseInt(s1)+15}
@@ -32,18 +32,18 @@ function gets1a(){
   }}
 
   function gets1b(){let s1=document.getElementById("s1").value
-    if(s1<150){document.getElementById("output1").innerHTML=parseInt(s1)-18
-    }else if(s1<=250 && s1>150){document.getElementById("output1").innerHTML=parseInt(s1)-18}
-    else if(s1<=300&& s1>250){document.getElementById("output1").innerHTML=parseInt(s1)-19}
-    else if(s1<=500 && s1>300){document.getElementById("output1").innerHTML=parseInt(s1)-19}
-    else if(s1<=650 && s1>500){document.getElementById("output1").innerHTML=parseInt(s1)-19}
-    else if(s1<=750 && s1>650){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=1300 && s1>750){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=1500 && s1>1300){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=1650 && s1>1500){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=800 && s1>1650){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=2000&& s1>1800){document.getElementById("output1").innerHTML=parseInt(s1)-19}
- else if(s1<=2500 && s1>2000){document.getElementById("output1").innerHTML=parseInt(s1)-19}
+    if(s1<150){document.getElementById("output1").innerHTML=parseInt(s1)-6
+    }else if(s1<=250 && s1>150){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+    else if(s1<=300&& s1>250){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+    else if(s1<=500 && s1>300){document.getElementById("output1").innerHTML=parseInt(s1)-6} //krabice -19 --->-6
+    else if(s1<=650 && s1>500){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+    else if(s1<=750 && s1>650){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=1300 && s1>750){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=1500 && s1>1300){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=1650 && s1>1500){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=800 && s1>1650){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=2000&& s1>1800){document.getElementById("output1").innerHTML=parseInt(s1)-6}
+ else if(s1<=2500 && s1>2000){document.getElementById("output1").innerHTML=parseInt(s1)-6}
  else if(s1>9999){document.getElementById("output1").innerHTML="#"}
  else if(s1<10){document.getElementById("output1").innerHTML="#"}
  else{document.getElementById("output1").innerHTML=parseInt(s1)-19}}

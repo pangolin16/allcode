@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background: #f5f7fb;
+            color: #24324a;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 16px;
+        }
+        input[type="text"] {
+            width: 80px;
+            padding: 7px 12px;
+            font-size: 1.1em;
+            border: 1px solid #b4c6e7;
+            border-radius: 6px;
+            margin-left: 0;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #1932b1;
+        }
+        #obraz {
+            cursor: pointer;
+            margin-right: 16px;
+            transition: box-shadow 0.2s;
+            box-shadow: 2px 2px 8px rgba(40,40,90,0.08);
+        }
+        #results {
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        #results table {
+            min-width: 250px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(40,40,90,0.07);
+            border-collapse: collapse;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        #results tr {
+            transition: background 0.2s;
+        }
+        #results td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eaecef;
+            text-align: center;
+        }
+        #results tr:last-child td {
+            border-bottom: none;
+        }
+        #results tr:hover {
+            background: #f3f6fa;
+        }
+        .shadowed {
+            text-shadow: 2px 2px 4px #1932b1;
+        }
+        @media (min-width: 600px) {
+            .input-row button {
+                display: inline-block;
+                margin-left: 20px;
+                padding: 8px 18px;
+                background: #1932b1;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 1em;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            .input-row button:hover {
+                background: #3652e1;
+            }
+        }
+        #obraz {
+    user-select: none;         /* Prevent selection in all browsers */
+    -webkit-user-select: none; /* Prevent selection in Safari/Chrome */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight in mobile browsers */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-row">
+            <img id="obraz" onclick="zmena()" src="images/5vvl.svg" width="80px">
+            <input id="length" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Length">
+            <input id="width" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Width">
+            <button onclick="Choose()" style="display:none;">Go</button>
+        </div>
+        <div id="results"></div>
+    </div>
+    <script>
+        function zmena() {
+            var image = document.getElementById('obraz');
+            if (image.src.includes("5vvl")) {
+              image.src = "images/3vvl.svg";
+            } else {
+              image.src = "images/5vvl.svg";
+            }
+        }
+
+        const VVl3 = [
+            [2.93, [1580, 1855], "M101600"],
+            [0.63, [620, 1010], "M101605"],
+            [1.06, [780, 1360], "M101604"],
+            [0.85, [845, 1010], "M101596"],
+            [1.26, [1015, 1240], "M101763"],
+            [1.90, [1395, 1365], "M101769"],
+            [2.17, [1360, 1595], "M101762"]
+        ];
+        const VVL5 = [
+            [0.88, [855, 1030], "M101622"],
+            [1.04, [848, 1225], "M101616"],
+            [1.06, [780, 1360], "M101645"],
+            [0.65, [630, 1030], "M101585"],
+            [1.65, [1180, 1400], "M101644"],
+            [1.93, [1177, 1644], "M101613"],
+            [2.16, [1350, 1600], "M101766"],
+            [2.30, [1350, 1700], "M101627"],
+            [1.82, [1350, 1350], "M101626"],
+            [2.83, [1505, 1880], "M101624"],
+            [1.22, [1015, 1200], "M101597"],
+            [3.17, [1350, 2350], "M101628"],
+            [4.76, [1700, 2800], "M102338"]
+        ];
+
+        function Choose() {
+            var image = document.getElementById('obraz');
+            if (image.src.includes("5vvl")) {
+                filterByDimensions1();
+            } else {
+                filterByDimensions2();
+            }
+        }
+        function filterByDimensions1() {
+            const inputLength = Number(document.getElementById('length').value);
+            const inputWidth = Number(document.getElementById('width').value);
+
+            const filtered = VVL5.filter(item => {
+                const [length, width] = item[1];
+                return length >= inputLength && width >= inputWidth;
+            });
+
+            showTable(filtered, inputLength, inputWidth);
+        }
+        function filterByDimensions2() {
+            const inputLength = Number(document.getElementById('length').value);
+            const inputWidth = Number(document.getElementById('width').value);
+
+            const filtered = VVl3.filter(item => {
+                const [length, width] = item[1];
+                return length >= inputLength && width >= inputWidth;
+            });
+
+            showTable(filtered, inputLength, inputWidth);
+        }
+
+        function showTable(filtered, inputLength, inputWidth) {
+            function getProcessedRows(length, width, doubleFits = false) {
+                return filtered.map(item => {
+                    const itemArea = item[0];
+                    const itemLength = item[1][0];
+                    const itemWidth = item[1][1];
+                    const fitLength = Math.floor(itemLength / length);
+                    const fitWidth = Math.floor(itemWidth / width);
+                    let totalFits = fitLength * fitWidth;
+                    let areaPerFit;
+                    if (doubleFits) {
+                        areaPerFit = totalFits > 0 ? +(itemArea / (totalFits * 2)).toFixed(2) : Infinity;
+                        totalFits = totalFits * 2;
+                    } else {
+                        areaPerFit = totalFits > 0 ? +(itemArea / totalFits).toFixed(2) : Infinity;
+                    }
+                    return {
+                        areaPerFit: areaPerFit !== Infinity ? areaPerFit : null,
+                        itemLength: parseInt(itemLength, 10),
+                        itemWidth: parseInt(itemWidth, 10),
+                        code: item[2],
+                        totalFits: parseInt(totalFits, 10)
+                    };
+                }).filter(row => row.totalFits > 0 && row.areaPerFit !== null);
+            }
+
+            function sortRows(rows) {
+                return rows.slice().sort((a, b) => a.areaPerFit - b.areaPerFit);
+            }
+
+            function areRowsIdentical(rowA, rowB) {
+                return (
+                    rowA.areaPerFit.toFixed(2) === rowB.areaPerFit.toFixed(2) &&
+                    rowA.itemLength === rowB.itemLength &&
+                    rowA.itemWidth === rowB.itemWidth &&
+                    rowA.code === rowB.code &&
+                    rowA.totalFits === rowB.totalFits
+                );
+            }
+
+            const table1Rows = sortRows(getProcessedRows(inputLength, inputWidth, false));
+            let table2Rows = sortRows(getProcessedRows(inputLength, inputWidth * 2, true));
+
+            let textShadowIndices = [];
+            table2Rows = table2Rows.filter(table2Row => {
+                const foundIndex = table1Rows.findIndex(table1Row => areRowsIdentical(table1Row, table2Row));
+                if (foundIndex !== -1) {
+                    textShadowIndices.push(foundIndex);
+                    return false;
+                }
+                return true;
+            });
+
+            function makeTableHTML(rows, textShadowIndices = []) {
+                let html = `<table>`;
+                rows.forEach((row, idx) => {
+                    const hasShadow = textShadowIndices.includes(idx);
+                    html += `<tr${hasShadow ? " class='shadowed'" : ""}>
+                      <td>${row.areaPerFit.toFixed(2)}</td>
+                      <td>${row.itemLength}</td>
+                      <td>${row.itemWidth}</td>
+                      <td>${row.code}</td>
+                      <td>${row.totalFits}</td>
+                    </tr>`;
+                });
+                html += "</table>";
+                return html;
+            }
+
+            // Only show second table if it has at least one row
+            let html = makeTableHTML(table1Rows, textShadowIndices);
+            if (table2Rows.length > 0) {
+                html += makeTableHTML(table2Rows);
+            }
+            document.getElementById('results').innerHTML = html;
+        }
+
+        document.getElementById('length').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                Choose();
+            }
+        });
+        document.getElementById('width').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                Choose();
+            }
+        });
+    </script>
+</body>
+</html>
