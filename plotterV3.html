@@ -351,9 +351,9 @@ async function readClipboardAndProcess() {
     // Take columns [0], [1], and [21] only
     const tableData = rows.map(row => {
       const cells = row.split('\t');
-      const col0 = cells[0] !== undefined ? cells[1] : '';
-      const col1 = cells[1] !== undefined ? cells[2] : '';
-      const col22 = cells[21] !== undefined ? cells[22] : '';
+      const col0 = cells[0] !== undefined ? cells[2] : '';
+      const col1 = cells[1] !== undefined ? cells[3] : '';
+      const col22 = cells[21] !== undefined ? cells[23] : '';
       return [col0, col1, col22];
     });
 
