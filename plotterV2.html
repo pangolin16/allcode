@@ -27,6 +27,7 @@ body {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(25, 118, 210, 0.12);
   transition: background 0.2s, box-shadow 0.2s;
+  margin-right: 10px;
 }
 .btn:hover {
   background: #115293;
@@ -104,7 +105,9 @@ td {
     </style>
 </head>
 <body>
-    <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i></button>
+    <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
+    <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
+
     <div id="tableContainer"></div>
 </body>
 
@@ -219,6 +222,10 @@ matData.forEach(([code, value]) => {
   matLookup[code] = value;
 });
 
+// Global variable to store current table data
+let currentTableData = [];
+let originalRowCount = 0;
+
 function getColor(index) {
   const palette = [
     "#c9f1fc", "#d4f8c4", "#ffe0ac", "#f9c6c7", "#d6c6f9", "#ffc6e0",
@@ -233,10 +240,110 @@ function removeContextMenu() {
   if (menu) menu.remove();
 }
 
-document.addEventListener('click', removeContextMenu);
-document.addEventListener('scroll', removeContextMenu);
+function processTableData(rawTableData) {
+  // Replace 2nd column cell value if found in matLookup
+  rawTableData.forEach(rowData => {
+    if (rowData.length > 1) {
+      const lookupValue = matLookup[rowData[1]];
+      if (lookupValue !== undefined) {
+        rowData[1] = lookupValue;
+      }
+    }
+    
+    // Convert 3rd column date format from DD.MM.YY to DD.MM.
+    if (rowData.length > 2 && rowData[2]) {
+      // Match DD.MM.YY format (where YY can be 2 or 4 digits)
+      const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+      if (dateMatch) {
+        const [, day, month] = dateMatch;
+        rowData[2] = `${day}.${month}.`;
+      }
+    }
+  });
+  
+  return rawTableData;
+}
 
-document.getElementById('btnSubmit').addEventListener('click', async () => {
+function renderTable(tableData) {
+  // Count occurrences of each value in the 2nd column
+  const valueCounts = {};
+  tableData.forEach(row => {
+    if (row.length > 1 && row[1]) {
+      valueCounts[row[1]] = (valueCounts[row[1]] || 0) + 1;
+    }
+  });
+
+  const frequentValues = Object.keys(valueCounts).filter(val => valueCounts[val] > 1);
+  const valueColorMap = {};
+  frequentValues.forEach((val, i) => {
+    valueColorMap[val] = getColor(i);
+  });
+
+  // Create table without header, and only columns 0, 1, 21
+  const table = document.createElement('table');
+  table.style.borderCollapse = 'collapse';
+
+  tableData.forEach((rowData, rowIdx) => {
+    const tr = document.createElement('tr');
+    // Add columns 0, 1, and 2 (which correspond to orig 0, 1, 21)
+    rowData.forEach((cellData, colIdx) => {
+      const td = document.createElement('td');
+      td.textContent = cellData;
+      td.style.border = '1px solid #ccc';
+      td.style.padding = '4px 8px';
+      // Only color 2nd column if its value occurs more than once
+      if (colIdx === 1 && valueColorMap[cellData]) {
+        td.style.background = valueColorMap[cellData];
+      }
+      // Context menu for 2nd column
+      if (colIdx === 1) {
+        td.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          removeContextMenu();
+          const codes = valueToCodes[cellData];
+          if (!codes || codes.length === 0) return;
+          const menu = document.createElement('div');
+          menu.className = 'custom-context-menu';
+          const ul = document.createElement('ul');
+          codes.forEach(code => {
+            const li = document.createElement('li');
+            li.textContent = code;
+            ul.appendChild(li);
+          });
+          menu.appendChild(ul);
+          document.body.appendChild(menu);
+          menu.style.left = `${e.pageX}px`;
+          menu.style.top = `${e.pageY}px`;
+        });
+      }
+      // Highlight first column cell on click
+      if (colIdx === 0) {
+        td.addEventListener('click', function() {
+          td.classList.toggle('highlight-first-col');
+        });
+      }
+      tr.appendChild(td);
+    });
+    
+    // Add scissors emoji cell for original rows only
+    const scissorsTd = document.createElement('td');
+    if (rowIdx < originalRowCount) {
+      scissorsTd.textContent = '✂️';
+    }
+    scissorsTd.style.border = '1px solid #ccc';
+    scissorsTd.style.padding = '4px 8px';
+    scissorsTd.style.textAlign = 'center';
+    tr.appendChild(scissorsTd);
+    
+    table.appendChild(tr);
+  });
+
+  const container = document.getElementById('tableContainer');
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+async function readClipboardAndProcess() {
   try {
     const text = await navigator.clipboard.readText();
     const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
@@ -250,84 +357,49 @@ document.getElementById('btnSubmit').addEventListener('click', async () => {
       return [col0, col1, col22];
     });
 
-    // Replace 2nd column cell value if found in matLookup
-    tableData.forEach(rowData => {
-      if (rowData.length > 1) {
-        const lookupValue = matLookup[rowData[1]];
-        if (lookupValue !== undefined) {
-          rowData[1] = lookupValue;
-        }
-      }
-    });
-
-    // Count occurrences of each value in the 2nd column
-    const valueCounts = {};
-    tableData.forEach(row => {
-      if (row.length > 1 && row[1]) {
-        valueCounts[row[1]] = (valueCounts[row[1]] || 0) + 1;
-      }
-    });
-
-    const frequentValues = Object.keys(valueCounts).filter(val => valueCounts[val] > 1);
-    const valueColorMap = {};
-    frequentValues.forEach((val, i) => {
-      valueColorMap[val] = getColor(i);
-    });
-
-    // Create table without header, and only columns 0, 1, 21
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-
-    tableData.forEach((rowData, rowIdx) => {
-      const tr = document.createElement('tr');
-      // Only add col 0, 1, and 2 (which correspond to orig 0, 1, 21)
-      rowData.forEach((cellData, colIdx) => {
-        const td = document.createElement('td');
-        td.textContent = cellData;
-        td.style.border = '1px solid #ccc';
-        td.style.padding = '4px 8px';
-        // Only color 2nd column if its value occurs more than once
-        if (colIdx === 1 && valueColorMap[cellData]) {
-          td.style.background = valueColorMap[cellData];
-        }
-        // Context menu for 2nd column
-        if (colIdx === 1) {
-          td.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            removeContextMenu();
-            const codes = valueToCodes[cellData];
-            if (!codes || codes.length === 0) return;
-            const menu = document.createElement('div');
-            menu.className = 'custom-context-menu';
-            const ul = document.createElement('ul');
-            codes.forEach(code => {
-              const li = document.createElement('li');
-              li.textContent = code;
-              ul.appendChild(li);
-            });
-            menu.appendChild(ul);
-            document.body.appendChild(menu);
-            menu.style.left = `${e.pageX}px`;
-            menu.style.top = `${e.pageY}px`;
-          });
-        }
-        // Highlight first column cell on click
-        if (colIdx === 0) {
-          td.addEventListener('click', function() {
-            td.classList.toggle('highlight-first-col');
-          });
-        }
-        tr.appendChild(td);
-      });
-      table.appendChild(tr);
-    });
-
-    const container = document.getElementById('tableContainer');
-    container.innerHTML = '';
-    container.appendChild(table);
+    return processTableData(tableData);
   } catch (err) {
     alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
     console.error(err);
+    return null;
+  }
+}
+
+document.addEventListener('click', removeContextMenu);
+document.addEventListener('scroll', removeContextMenu);
+
+document.getElementById('btnSubmit').addEventListener('click', async () => {
+  const tableData = await readClipboardAndProcess();
+  if (tableData) {
+    currentTableData = tableData;
+    originalRowCount = tableData.length; // Track original rows
+    renderTable(currentTableData);
+  }
+});
+
+document.getElementById('btnAppend').addEventListener('click', async () => {
+  const newTableData = await readClipboardAndProcess();
+  if (newTableData) {
+    // Create a set of existing row signatures for fast lookup
+    const existingRowSignatures = new Set(
+      currentTableData.map(row => JSON.stringify(row))
+    );
+    
+    // Filter out duplicate rows
+    const uniqueNewRows = newTableData.filter(row => {
+      const rowSignature = JSON.stringify(row);
+      return !existingRowSignatures.has(rowSignature);
+    });
+    
+    // Show info about filtered rows
+    const duplicateCount = newTableData.length - uniqueNewRows.length;
+    if (duplicateCount > 0) {
+      alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
+    }
+    
+    // Append only unique new data to existing data
+    currentTableData = currentTableData.concat(uniqueNewRows);
+    renderTable(currentTableData);
   }
 });
 </script>
