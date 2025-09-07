@@ -59,6 +59,9 @@ td {
   border-radius: 4px;
   transition: background 0.2s;
   vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .highlight-first-col {
   background: #fff59d !important;
@@ -288,19 +291,21 @@ function renderTable(tableData) {
     // Add columns 0, 1, and 2 (which correspond to orig 0, 1, 21)
     rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
-      td.textContent = cellData;
+      // Remove line breaks from cell data and take only the first line
+      const cleanedData = cellData.split(/\r?\n/)[0];
+      td.textContent = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
       // Only color 2nd column if its value occurs more than once
-      if (colIdx === 1 && valueColorMap[cellData]) {
-        td.style.background = valueColorMap[cellData];
+      if (colIdx === 1 && valueColorMap[cleanedData]) {
+        td.style.background = valueColorMap[cleanedData];
       }
       // Context menu for 2nd column
       if (colIdx === 1) {
         td.addEventListener('contextmenu', function(e) {
           e.preventDefault();
           removeContextMenu();
-          const codes = valueToCodes[cellData];
+          const codes = valueToCodes[cleanedData];
           if (!codes || codes.length === 0) return;
           const menu = document.createElement('div');
           menu.className = 'custom-context-menu';
@@ -343,17 +348,68 @@ function renderTable(tableData) {
   container.appendChild(table);
 }
 
+function parseTabSeparatedData(text) {
+  const lines = text.split(/\r?\n/);
+  const rows = [];
+  let currentRow = [];
+  let cellContent = '';
+  let inQuotedCell = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    let j = 0;
+    
+    while (j < line.length) {
+      const char = line[j];
+      
+      if (!inQuotedCell && char === '\t') {
+        // End of cell
+        currentRow.push(cellContent);
+        cellContent = '';
+      } else if (char === '"') {
+        // Toggle quoted cell state
+        inQuotedCell = !inQuotedCell;
+      } else {
+        // Add character to current cell content
+        cellContent += char;
+      }
+      j++;
+    }
+    
+    // Check if we're at the end of a row (not in a quoted cell)
+    if (!inQuotedCell) {
+      // Add the last cell of the row
+      currentRow.push(cellContent);
+      rows.push(currentRow);
+      currentRow = [];
+      cellContent = '';
+    } else {
+      // We're in a multi-line quoted cell, add a newline and continue
+      cellContent += '\n';
+    }
+  }
+  
+  // Add any remaining row if we ended in the middle of one
+  if (currentRow.length > 0 || cellContent) {
+    currentRow.push(cellContent);
+    rows.push(currentRow);
+  }
+  
+  return rows.filter(row => row.some(cell => cell.trim() !== ''));
+}
+
 async function readClipboardAndProcess() {
   try {
     const text = await navigator.clipboard.readText();
-    const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
+    
+    // Parse the tab-separated data properly handling multi-line cells
+    const rows = parseTabSeparatedData(text);
 
     // Take columns [0], [1], and [21] only
     const tableData = rows.map(row => {
-      const cells = row.split('\t');
-      const col0 = cells[0] !== undefined ? cells[1] : '';
-      const col1 = cells[1] !== undefined ? cells[2] : '';
-      const col22 = cells[21] !== undefined ? cells[22] : '';
+      const col0 = row[0] !== undefined ? row[1] : '';
+      const col1 = row[1] !== undefined ? row[2] : '';
+      const col22 = row[21] !== undefined ? row[23] : '';
       return [col0, col1, col22];
     });
 
