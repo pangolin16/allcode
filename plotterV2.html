@@ -110,6 +110,8 @@ td {
 <body>
     <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
     <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
+        <button class="btn" id="btnQR" ><a href="QR/qrcode.html">QR</a></button>
+
 
     <div id="tableContainer"></div>
 </body>
@@ -243,6 +245,21 @@ function removeContextMenu() {
   if (menu) menu.remove();
 }
 
+function removeDuplicateRows(tableData) {
+  const uniqueRows = [];
+  const seenRowSignatures = new Set();
+  
+  tableData.forEach(row => {
+    const rowSignature = JSON.stringify(row);
+    if (!seenRowSignatures.has(rowSignature)) {
+      seenRowSignatures.add(rowSignature);
+      uniqueRows.push(row);
+    }
+  });
+  
+  return uniqueRows;
+}
+
 function processTableData(rawTableData) {
   // Replace 2nd column cell value if found in matLookup
   rawTableData.forEach(rowData => {
@@ -264,7 +281,8 @@ function processTableData(rawTableData) {
     }
   });
   
-  return rawTableData;
+  // Remove duplicate rows
+  return removeDuplicateRows(rawTableData);
 }
 
 function renderTable(tableData) {
@@ -427,8 +445,16 @@ document.addEventListener('scroll', removeContextMenu);
 document.getElementById('btnSubmit').addEventListener('click', async () => {
   const tableData = await readClipboardAndProcess();
   if (tableData) {
-    currentTableData = tableData;
-    originalRowCount = tableData.length; // Track original rows
+    const originalCount = tableData.length;
+    currentTableData = tableData; // processTableData already removes duplicates
+    originalRowCount = currentTableData.length; // Track original rows after deduplication
+    
+    // Show info about filtered duplicates if any were removed
+    const duplicateCount = originalCount - currentTableData.length;
+    if (duplicateCount > 0) {
+      alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
+    }
+    
     renderTable(currentTableData);
   }
 });
