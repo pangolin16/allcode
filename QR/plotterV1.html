@@ -104,21 +104,121 @@ td {
       .custom-context-menu li:hover {
         background: #e6e6fa;
       }
-
+    #output {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 100px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
     </style>
 </head>
 <body>
     <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
     <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
 
+
     <div id="tableContainer"></div>
-    <!-- Input field for synced data -->
-    <textarea id="dataOutput" rows="10" style="width:100%;margin-top:20px;font-size:16px;"></textarea>
+
+
+
+
+
+		<div id="loading">
+			<p>Loading application...</p>
+			<p>(Are the JavaScript files missing?)</p>
+			<p>(The JavaScript code needs to be compiled from the TypeScript code.)</p>
+		</div>
+		<form id="loaded" style="display:none" onsubmit="event.preventDefault();">
+			<table>
+				<tbody>
+					<tr>
+						<td><strong>Text string:</strong></td>
+						<td><textarea placeholder="Enter your text to be put into the QR Code" id="text-input" style="width:30em; height:5em"></textarea></td>
+					</tr>
+					<tr>
+						<td><strong>QR Code:</strong></td>
+						<td>
+							<canvas id="qrcode-canvas" style="padding:1em; background-color:#E8E8E8"></canvas>
+							<svg id="qrcode-svg" style="width:30em; height:30em; padding:1em; background-color:#E8E8E8">
+								<rect width="100%" height="100%" fill="#FFFFFF" stroke-width="0"></rect>
+								<path d="" fill="#000000" stroke-width="0"></path>
+							</svg>
+						</td>
+					</tr>
+					<tr>
+						<td><strong>Error correction:</strong></td>
+						<td>
+							<input type="radio" name="errcorlvl" id="errcorlvl-low" checked="checked"><label for="errcorlvl-low">Low</label>
+							<input type="radio" name="errcorlvl" id="errcorlvl-medium"><label for="errcorlvl-medium">Medium</label>
+							<input type="radio" name="errcorlvl" id="errcorlvl-quartile"><label for="errcorlvl-quartile">Quartile</label>
+							<input type="radio" name="errcorlvl" id="errcorlvl-high"><label for="errcorlvl-high">High</label>
+						</td>
+					</tr>
+					<tr>
+						<td>Output format:</td>
+						<td>
+							<input type="radio" name="output-format" id="output-format-bitmap" checked="checked"><label for="output-format-bitmap">Bitmap</label>
+							<input type="radio" name="output-format" id="output-format-vector"><label for="output-format-vector">Vector</label>
+						</td>
+					</tr>
+					<tr>
+						<td>Border:</td>
+						<td><input type="number" value="4" min="0" max="100" step="1" id="border-input" style="width:4em"> modules</td>
+					</tr>
+					<tr id="scale-row">
+						<td>Scale:</td>
+						<td><input type="number" value="8" min="1" max="30" step="1" id="scale-input" style="width:4em"> pixels per module</td>
+					</tr>
+					<tr>
+						<td>Colors:</td>
+						<td>
+							Light = <input type="text" value="#FFFFFF" id="light-color-input" style="width:6em">,
+							dark = <input type="text" value="#000000" id="dark-color-input" style="width:6em">
+						</td>
+					</tr>
+					<tr>
+						<td>Version range:</td>
+						<td>
+							Minimum = <input type="number" value="1"  min="1" max="40" step="1" id="version-min-input" style="width:4em" oninput="app.handleVersionMinMax('min');">,
+							maximum = <input type="number" value="40" min="1" max="40" step="1" id="version-max-input" style="width:4em" oninput="app.handleVersionMinMax('max');">
+						</td>
+					</tr>
+					<tr>
+						<td>Mask pattern:</td>
+						<td><input type="number" value="-1" min="-1" max="7" step="1" id="mask-input" style="width:4em"> (−1 for automatic, 0 to 7 for manual)</td>
+					</tr>
+					<tr>
+						<td>Boost ECC:</td>
+						<td><input type="checkbox" checked="checked" id="boost-ecc-input"><label for="boost-ecc-input">Increase <abbr title="error-correcting code">ECC</abbr> level within same version</label></td>
+					</tr>
+					<tr>
+						<td>Statistics:</td>
+						<td id="statistics-output" style="white-space:pre"></td>
+					</tr>
+					<tr id="svg-xml-row">
+						<td>SVG XML code:</td>
+						<td>
+							<textarea id="svg-xml-output" readonly="readonly" style="width:100%; max-width:50em; height:15em; font-family:monospace"></textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+
+
+		<script type="application/javascript" src="qrcodegen.js"></script>
+		<script type="application/javascript" src="qrcodegen-input-demo.js"></script>
 </body>
 
-
 <script>
-// --- matData and matLookup ---
+/// --- matData and matLookup ---
 let matData = [
   ["M300015", "Pěna 23/10"],
   ["M300013", "Pěna 23/20"],
@@ -228,9 +328,13 @@ matData.forEach(([code, value]) => {
   matLookup[code] = value;
 });
 
+
 // Global variable to store current table data
 let currentTableData = [];
 let originalRowCount = 0;
+
+// Global variable for textarea (raw full data)
+let currentFullData = [];
 
 function getColor(index) {
   const palette = [
@@ -261,19 +365,19 @@ function removeDuplicateRows(tableData) {
   return uniqueRows;
 }
 
+
 function processTableData(rawTableData) {
-  // Replace 2nd column cell value if found in matLookup
   rawTableData.forEach(rowData => {
+    // Replace 2nd column if found in matLookup
     if (rowData.length > 1) {
       const lookupValue = matLookup[rowData[1]];
       if (lookupValue !== undefined) {
         rowData[1] = lookupValue;
       }
     }
-    
+
     // Convert 3rd column date format from DD.MM.YY to DD.MM.
     if (rowData.length > 2 && rowData[2]) {
-      // Match DD.MM.YY format (where YY can be 2 or 4 digits)
       const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
       if (dateMatch) {
         const [, day, month] = dateMatch;
@@ -281,10 +385,10 @@ function processTableData(rawTableData) {
       }
     }
   });
-  
-  // Remove duplicate rows
+
   return removeDuplicateRows(rawTableData);
 }
+
 
 function renderTable(tableData) {
   // Count occurrences of each value in the 2nd column
@@ -301,25 +405,20 @@ function renderTable(tableData) {
     valueColorMap[val] = getColor(i);
   });
 
-  // Create table without header, and only columns 0, 1, 21
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
 
   tableData.forEach((rowData, rowIdx) => {
     const tr = document.createElement('tr');
-    // Add columns 0, 1, and 2 (which correspond to orig 0, 1, 21)
     rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
-      // Remove line breaks from cell data and take only the first line
-      const cleanedData = cellData.split(/\r?\n/)[0];
+      const cleanedData = (cellData || '').split(/\r?\n/)[0];
       td.textContent = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
-      // Only color 2nd column if its value occurs more than once
       if (colIdx === 1 && valueColorMap[cleanedData]) {
         td.style.background = valueColorMap[cleanedData];
       }
-      // Context menu for 2nd column
       if (colIdx === 1) {
         td.addEventListener('contextmenu', function(e) {
           e.preventDefault();
@@ -340,7 +439,6 @@ function renderTable(tableData) {
           menu.style.top = `${e.pageY}px`;
         });
       }
-      // Highlight first column cell on click
       if (colIdx === 0) {
         td.addEventListener('click', function() {
           td.classList.toggle('highlight-first-col');
@@ -348,8 +446,6 @@ function renderTable(tableData) {
       }
       tr.appendChild(td);
     });
-    
-    // Add scissors emoji cell for original rows only
     const scissorsTd = document.createElement('td');
     if (rowIdx < originalRowCount) {
       scissorsTd.textContent = '✂️';
@@ -358,7 +454,6 @@ function renderTable(tableData) {
     scissorsTd.style.padding = '4px 8px';
     scissorsTd.style.textAlign = 'center';
     tr.appendChild(scissorsTd);
-    
     table.appendChild(tr);
   });
 
@@ -367,76 +462,26 @@ function renderTable(tableData) {
   container.appendChild(table);
 }
 
-function parseTabSeparatedData(text) {
-  const lines = text.split(/\r?\n/);
-  const rows = [];
-  let currentRow = [];
-  let cellContent = '';
-  let inQuotedCell = false;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let j = 0;
-    
-    while (j < line.length) {
-      const char = line[j];
-      
-      if (!inQuotedCell && char === '\t') {
-        // End of cell
-        currentRow.push(cellContent);
-        cellContent = '';
-      } else if (char === '"') {
-        // Toggle quoted cell state
-        inQuotedCell = !inQuotedCell;
-      } else {
-        // Add character to current cell content
-        cellContent += char;
-      }
-      j++;
-    }
-    
-    // Check if we're at the end of a row (not in a quoted cell)
-    if (!inQuotedCell) {
-      // Add the last cell of the row
-      currentRow.push(cellContent);
-      rows.push(currentRow);
-      currentRow = [];
-      cellContent = '';
-    } else {
-      // We're in a multi-line quoted cell, add a newline and continue
-      cellContent += '\n';
-    }
-  }
-  
-  // Add any remaining row if we ended in the middle of one
-  if (currentRow.length > 0 || cellContent) {
-    currentRow.push(cellContent);
-    rows.push(currentRow);
-  }
-  
-  return rows.filter(row => row.some(cell => cell.trim() !== ''));
-}
-
 async function readClipboardAndProcess() {
   try {
     const text = await navigator.clipboard.readText();
-    
-    // Parse the tab-separated data properly handling multi-line cells
-    const rows = parseTabSeparatedData(text);
+    const rows = text
+      .split(/\r?\n/)
+      .map(row => row.split(/\t/).map(cell => cell.trim()))
+      .filter(row => row.length > 0);
 
-    // Take columns [0], [1], and [21] only
-const tableData = rows.map(row => {
-  const col0 = row[1] !== undefined ? row[1] : '';
-  const col1 = row[2] !== undefined ? row[2] : '';
-  const col21 = row[23] !== undefined ? row[23] : '';
-  return [col0, col1, col21];
-});
+    const fullData = rows;
 
+    const tableData = rows.map(row => {
+      const col1 = row[1] !== undefined ? row[1] : '';
+      const col2 = row[2] !== undefined ? row[2] : '';
+      const col23 = row[23] !== undefined ? row[23] : '';
+      return [col1, col2, col23];
+    });
 
-    return processTableData(tableData);
+    return { fullData, tableData };
   } catch (err) {
-    alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
-    console.error(err);
+    console.error("Failed to read clipboard contents: ", err);
     return null;
   }
 }
@@ -444,55 +489,78 @@ const tableData = rows.map(row => {
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
 
-// --- NEW FUNCTION ---
-function updateInputField(tableData) {
-  const textarea = document.getElementById('dataOutput');
-  // Join rows with tab separation, one row per line
-  const text = tableData.map(row => row.join('\t')).join('\n');
+function updateInputField(fullData) {
+  const textarea = document.getElementById('text-input');
+
+  // To track duplicates
+  const seen = new Set();
+
+  const text = fullData.map(row => {
+    const col1 = row[1] !== undefined ? row[1] : '';
+    const col2 = row[2] !== undefined ? row[2] : '';
+    let col23 = row[23] !== undefined ? row[23] : '';
+
+    // ✅ convert DD.MM.YY → DD.MM.
+    const dateMatch = col23.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+    if (dateMatch) {
+      const [, day, month] = dateMatch;
+      col23 = `${day}.${month}.`;
+    }
+
+    // Build row: empty col + 2 data cols + 20 empties + date col
+    const rowArr = [''];                // 1 empty col
+    rowArr.push(col1, col2);            // 2 data cols
+    rowArr.push(...Array(20).fill('')); // 20 empty cols
+    rowArr.push(col23);                 // last col (date)
+
+    return rowArr.join('\t');
+  }).filter(rowStr => {
+    if (seen.has(rowStr)) return false; // remove duplicate
+    seen.add(rowStr);
+    return true;
+  }).join('\n');
+
   textarea.value = text;
 }
 
-// --- inside Replace button click ---
+
+// --- Replace button ---
 document.getElementById('btnSubmit').addEventListener('click', async () => {
-  const tableData = await readClipboardAndProcess();
-  if (tableData) {
-    const originalCount = tableData.length;
+  const result = await readClipboardAndProcess();
+  if (result) {
+    let { fullData, tableData } = result;
+
+    // ✅ apply matData conversions
+    tableData = processTableData(tableData);
+
     currentTableData = tableData; 
-    originalRowCount = currentTableData.length; 
-    
-    const duplicateCount = originalCount - currentTableData.length;
-    if (duplicateCount > 0) {
-      alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-    }
+    currentFullData = fullData; 
+    originalRowCount = currentTableData.length;
 
     renderTable(currentTableData);
-    updateInputField(currentTableData); // ✅ sync to textarea
-  }
-});
+    updateInputField(currentFullData); 
 
-// --- inside Append button click ---
-document.getElementById('btnAppend').addEventListener('click', async () => {
-  const newTableData = await readClipboardAndProcess();
-  if (newTableData) {
+
+    // ✅ apply matData conversions
+    tableData = processTableData(tableData);
+
     const existingRowSignatures = new Set(
       currentTableData.map(row => JSON.stringify(row))
     );
-    
-    const uniqueNewRows = newTableData.filter(row => {
+
+    const uniqueNewRows = tableData.filter(row => {
       const rowSignature = JSON.stringify(row);
       return !existingRowSignatures.has(rowSignature);
     });
-    
-    const duplicateCount = newTableData.length - uniqueNewRows.length;
-    if (duplicateCount > 0) {
-      alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
-    }
-    
+
     currentTableData = currentTableData.concat(uniqueNewRows);
+    currentFullData = currentFullData.concat(fullData);
+
     renderTable(currentTableData);
-    updateInputField(currentTableData); // ✅ sync to textarea
+    updateInputField(currentFullData);
   }
 });
+
 </script>
 
 </html>

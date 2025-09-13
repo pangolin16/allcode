@@ -111,256 +111,9 @@ td {
     <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
     <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
 
-
     <div id="tableContainer"></div>
- 
-    <button class="btn" id="btnProcess"><i class="fa-solid fa-clipboard"></i> Process Clipboard</button>
-    <button class="btn" id="btnCopy"><i class="fa-solid fa-copy"></i> Copy Result to Clipboard</button>
-    
-    <div id="status"></div>
-    <div id="output"></div>
-		<div id="loading">
-			<p>Loading application...</p>
-			<p>(Are the JavaScript files missing?)</p>
-			<p>(The JavaScript code needs to be compiled from the TypeScript code.)</p>
-		</div>
-		<form id="loaded" style="display:none" onsubmit="event.preventDefault();">
-			<table>
-				<tbody>
-					<tr>
-						<td><strong>Text string:</strong></td>
-						<td><textarea placeholder="Enter your text to be put into the QR Code" id="text-input" style="width:30em; height:5em"></textarea></td>
-					</tr>
-					<tr>
-						<td><strong>QR Code:</strong></td>
-						<td>
-							<canvas id="qrcode-canvas" style="padding:1em; background-color:#E8E8E8"></canvas>
-							<svg id="qrcode-svg" style="width:30em; height:30em; padding:1em; background-color:#E8E8E8">
-								<rect width="100%" height="100%" fill="#FFFFFF" stroke-width="0"></rect>
-								<path d="" fill="#000000" stroke-width="0"></path>
-							</svg>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>Error correction:</strong></td>
-						<td>
-							<input type="radio" name="errcorlvl" id="errcorlvl-low" checked="checked"><label for="errcorlvl-low">Low</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-medium"><label for="errcorlvl-medium">Medium</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-quartile"><label for="errcorlvl-quartile">Quartile</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-high"><label for="errcorlvl-high">High</label>
-						</td>
-					</tr>
-					<tr>
-						<td>Output format:</td>
-						<td>
-							<input type="radio" name="output-format" id="output-format-bitmap" checked="checked"><label for="output-format-bitmap">Bitmap</label>
-							<input type="radio" name="output-format" id="output-format-vector"><label for="output-format-vector">Vector</label>
-						</td>
-					</tr>
-					<tr>
-						<td>Border:</td>
-						<td><input type="number" value="4" min="0" max="100" step="1" id="border-input" style="width:4em"> modules</td>
-					</tr>
-					<tr id="scale-row">
-						<td>Scale:</td>
-						<td><input type="number" value="8" min="1" max="30" step="1" id="scale-input" style="width:4em"> pixels per module</td>
-					</tr>
-					<tr>
-						<td>Colors:</td>
-						<td>
-							Light = <input type="text" value="#FFFFFF" id="light-color-input" style="width:6em">,
-							dark = <input type="text" value="#000000" id="dark-color-input" style="width:6em">
-						</td>
-					</tr>
-					<tr>
-						<td>Version range:</td>
-						<td>
-							Minimum = <input type="number" value="1"  min="1" max="40" step="1" id="version-min-input" style="width:4em" oninput="app.handleVersionMinMax('min');">,
-							maximum = <input type="number" value="40" min="1" max="40" step="1" id="version-max-input" style="width:4em" oninput="app.handleVersionMinMax('max');">
-						</td>
-					</tr>
-					<tr>
-						<td>Mask pattern:</td>
-						<td><input type="number" value="-1" min="-1" max="7" step="1" id="mask-input" style="width:4em"> (−1 for automatic, 0 to 7 for manual)</td>
-					</tr>
-					<tr>
-						<td>Boost ECC:</td>
-						<td><input type="checkbox" checked="checked" id="boost-ecc-input"><label for="boost-ecc-input">Increase <abbr title="error-correcting code">ECC</abbr> level within same version</label></td>
-					</tr>
-					<tr>
-						<td>Statistics:</td>
-						<td id="statistics-output" style="white-space:pre"></td>
-					</tr>
-					<tr id="svg-xml-row">
-						<td>SVG XML code:</td>
-						<td>
-							<textarea id="svg-xml-output" readonly="readonly" style="width:100%; max-width:50em; height:15em; font-family:monospace"></textarea>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-<script>
-        let processedResult = null;
-
-        function parseTabSeparatedData(text) {
-            const lines = text.split(/\r?\n/);
-            const rows = [];
-            let currentRow = [];
-            let cellContent = '';
-            let inQuotedCell = false;
-            
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                let j = 0;
-                
-                while (j < line.length) {
-                    const char = line[j];
-                    
-                    if (!inQuotedCell && char === '\t') {
-                        // End of cell
-                        currentRow.push(cellContent);
-                        cellContent = '';
-                    } else if (char === '"') {
-                        // Toggle quoted cell state
-                        inQuotedCell = !inQuotedCell;
-                    } else {
-                        // Add character to current cell content
-                        cellContent += char;
-                    }
-                    j++;
-                }
-                
-                // Check if we're at the end of a row (not in a quoted cell)
-                if (!inQuotedCell) {
-                    // Add the last cell of the row
-                    currentRow.push(cellContent);
-                    rows.push(currentRow);
-                    currentRow = [];
-                    cellContent = '';
-                } else {
-                    // We're in a multi-line quoted cell, add a newline and continue
-                    cellContent += '\n';
-                }
-            }
-            
-            // Add any remaining row if we ended in the middle of one
-            if (currentRow.length > 0 || cellContent) {
-                currentRow.push(cellContent);
-                rows.push(currentRow);
-            }
-            
-            return rows.filter(row => row.some(cell => cell.trim() !== ''));
-        }
-
-        function processClipboardData(clipboardText) {
-            try {
-                // Parse the tab-separated data properly handling multi-line cells
-                const rows = parseTabSeparatedData(clipboardText);
-                
-                // Process each row: add empty column at start, keep first 3 columns and insert 22 empty columns between 2nd and 3rd
-                const processedRows = rows.map(row => {
-                    // Get first 3 columns (or empty strings if they don't exist)
-                    const col1 = row[0] || '';
-                    const col2 = row[1] || '';
-                    const col3 = row[2] || '';
-                    
-                    // Create an array of 22 empty strings
-                    const emptyColumns = Array(20).fill('');
-                    
-                    // Return array with an empty column at the start, then col1, col2, 22 empty columns, then col3
-                    return ['', col1, col2, ...emptyColumns, col3];
-                });
-                
-                return processedRows;
-                
-            } catch (error) {
-                console.error('Error processing clipboard data:', error);
-                return null;
-            }
-        }
-
-        // Convert processed data back to tab-separated string
-        function convertToTabSeparated(processedData) {
-            return processedData.map(row => row.join('\t')).join('\n');
-        }
-
-        // Display functions
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('status');
-            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
-        }
-
-        function displayResult(data) {
-            const output = document.getElementById('output');
-            if (data && data.length > 0) {
-                const tabSeparated = convertToTabSeparated(data);
-                output.textContent = tabSeparated;
-                showStatus(`Successfully processed ${data.length} rows. Result displayed below.`, 'success');
-            } else {
-                output.textContent = 'No data to display';
-                showStatus('No valid data found to process.', 'error');
-            }
-        }
-
-        // Main processing function
-        async function processFromClipboard() {
-            try {
-                showStatus('Reading clipboard...', 'info');
-                const clipboardText = await navigator.clipboard.readText();
-                
-                if (!clipboardText.trim()) {
-                    showStatus('Clipboard is empty.', 'error');
-                    return null;
-                }
-                
-                const processedData = processClipboardData(clipboardText);
-                
-                if (processedData) {
-                    processedResult = processedData;
-                    displayResult(processedData);
-                    console.log('Processed data:', processedData);
-                    return processedData;
-                } else {
-                    showStatus('Failed to process clipboard data.', 'error');
-                    return null;
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard:', err);
-                showStatus('Failed to read clipboard. Make sure to grant clipboard permissions.', 'error');
-                    return null;
-                }
-            }
-
-
-
-        // Copy result to clipboard
-        async function copyResultToClipboard() {
-            if (!processedResult) {
-                showStatus('No processed data to copy. Process some data first.', 'error');
-                return;
-            }
-            
-            try {
-                const tabSeparated = convertToTabSeparated(processedResult);
-                await navigator.clipboard.writeText(tabSeparated);
-                showStatus('Result copied to clipboard successfully!', 'success');
-            } catch (err) {
-                console.error('Failed to copy to clipboard:', err);
-                showStatus('Failed to copy to clipboard.', 'error');
-            }
-        }
-
-        // Event listeners
-        document.getElementById('btnProcess').addEventListener('click', processFromClipboard);
-        document.getElementById('btnTest').addEventListener('click', testProcessClipboardData);
-        document.getElementById('btnCopy').addEventListener('click', copyResultToClipboard);
-    </script>
-
-
-		<script type="application/javascript" src="qrcodegen.js"></script>
-		<script type="application/javascript" src="qrcodegen-input-demo.js"></script>
 </body>
+
 
 <script>
 // --- matData and matLookup ---
@@ -689,44 +442,43 @@ const tableData = rows.map(row => {
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
 
+
+
+// --- inside Replace button click ---
 document.getElementById('btnSubmit').addEventListener('click', async () => {
   const tableData = await readClipboardAndProcess();
   if (tableData) {
     const originalCount = tableData.length;
-    currentTableData = tableData; // processTableData already removes duplicates
-    originalRowCount = currentTableData.length; // Track original rows after deduplication
+    currentTableData = tableData; 
+    originalRowCount = currentTableData.length; 
     
-    // Show info about filtered duplicates if any were removed
     const duplicateCount = originalCount - currentTableData.length;
     if (duplicateCount > 0) {
       alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
     }
-    
+
     renderTable(currentTableData);
   }
 });
 
+// --- inside Append button click ---
 document.getElementById('btnAppend').addEventListener('click', async () => {
   const newTableData = await readClipboardAndProcess();
   if (newTableData) {
-    // Create a set of existing row signatures for fast lookup
     const existingRowSignatures = new Set(
       currentTableData.map(row => JSON.stringify(row))
     );
     
-    // Filter out duplicate rows
     const uniqueNewRows = newTableData.filter(row => {
       const rowSignature = JSON.stringify(row);
       return !existingRowSignatures.has(rowSignature);
     });
     
-    // Show info about filtered rows
     const duplicateCount = newTableData.length - uniqueNewRows.length;
     if (duplicateCount > 0) {
       alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
     }
     
-    // Append only unique new data to existing data
     currentTableData = currentTableData.concat(uniqueNewRows);
     renderTable(currentTableData);
   }
