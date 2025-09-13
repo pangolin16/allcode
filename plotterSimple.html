@@ -116,6 +116,42 @@ td {
 
 
 <script>
+  function addSwipeHandlers(rowElement) {
+  let touchStartX = 0;
+
+  rowElement.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  });
+
+  rowElement.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
+
+    // Swipe right
+    if (diffX > 50) {
+      // Remove existing editable cell if present
+      const lastCell = rowElement.querySelector('.editable-cell');
+      if (!lastCell) {
+        const td = document.createElement('td');
+        td.className = 'editable-cell';
+        td.contentEditable = 'true';
+        td.style.border = '1px solid #ccc';
+        td.style.padding = '4px 8px';
+        td.style.background = '#ffffcc';
+        rowElement.appendChild(td);
+      }
+    }
+
+    // Swipe left
+    if (diffX < -50) {
+      const lastCell = rowElement.querySelector('.editable-cell');
+      if (lastCell) {
+        rowElement.removeChild(lastCell);
+      }
+    }
+  });
+}
+
 // --- matData and matLookup ---
 let matData = [
   ["M300015", "Pěna 23/10"],
@@ -483,6 +519,8 @@ document.getElementById('btnAppend').addEventListener('click', async () => {
     renderTable(currentTableData);
   }
 });
+addSwipeHandlers(tr);
+
 </script>
 
 </html>
