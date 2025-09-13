@@ -137,7 +137,7 @@ td {
 		<form id="loaded" style="display:none" onsubmit="event.preventDefault();">
 			<table>
 				<tbody>
-					<tr>
+					<tr hidden>
 						<td><strong>Text string:</strong></td>
 						<td><textarea placeholder="Enter your text to be put into the QR Code" id="text-input" style="width:30em; height:5em"></textarea></td>
 					</tr>
@@ -529,6 +529,36 @@ document.getElementById('btnSubmit').addEventListener('click', async () => {
   const result = await readClipboardAndProcess();
   if (result) {
     let { fullData, tableData } = result;
+
+
+document.getElementById('btnAppend').addEventListener('click', async () => {
+  const result = await readClipboardAndProcess();
+  if (result) {
+    let { fullData, tableData } = result;
+
+    // ✅ apply matData conversions
+    tableData = processTableData(tableData);
+
+    const existingRowSignatures = new Set(
+      currentTableData.map(row => JSON.stringify(row))
+    );
+
+    const uniqueNewRows = tableData.filter(row => {
+      const rowSignature = JSON.stringify(row);
+      return !existingRowSignatures.has(rowSignature);
+    });
+
+    currentTableData = currentTableData.concat(uniqueNewRows);
+    currentFullData = currentFullData.concat(fullData);
+
+    renderTable(currentTableData);
+    updateInputField(currentFullData);
+  }
+});
+
+
+
+
 
     // ✅ apply matData conversions
     tableData = processTableData(tableData);
