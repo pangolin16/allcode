@@ -38,29 +38,43 @@ function go () {
     }
   })
 }
-function camera (id) {
-  document.getElementById('main').innerHTML = '<video id=vid width=640 height=480 autoplay></video><p>Result:<pre><div id=result></div></pre></p>'
-  const qr = scan.qr(2)
-  qr.callback = function(error, result) {
-    if(error) { console.log(error); return }
-    document.getElementById('result').innerHTML = result.result
-  }
-  const vid = document.getElementById('vid')
-  const w = 640; const h = 480
-  const canvas = document.getElementById('qr-canvas')
-  canvas.width = w; canvas.height = h
-  const ctx = canvas.getContext('2d')
-  if (navigator.mediaDevices) {
-navigator.mediaDevices.getUserMedia({
-  video: { facingMode: { exact: "environment" }, width: 640, height: 480 }
-})
+function camera () {
+  document.getElementById('main').innerHTML = `
+    <video id="vid" width="640" height="480" autoplay></video>
+    <p>
+      <button onclick="scanFrame()">Scan QR</button>
+    </p>
+    <p>Result:<pre><div id="result"></div></pre></p>
+  `;
 
-    .then((stream) => {
-      vid.srcObject = stream
-      setInterval( () => { ctx.drawImage(vid, 0, 0, w, h); qr.decode(ctx.getImageData(0, 0, w, h)) }, 500)
-    })
-    .catch((err) => { document.body.textContent = err })
+  window.qr = scan.qr(2);
+  qr.callback = function(error, result) {
+    if (error) { console.log(error); return }
+    document.getElementById('result').innerHTML = result.result;
   }
+
+  const vid = document.getElementById('vid');
+  const w = 640, h = 480;
+  const canvas = document.getElementById('qr-canvas');
+  canvas.width = w; canvas.height = h;
+  window.ctx = canvas.getContext('2d');
+
+  if (navigator.mediaDevices) {
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: "environment" }, width: 640, height: 480 }
+    })
+    .then((stream) => {
+      vid.srcObject = stream;
+    })
+    .catch((err) => { document.body.textContent = err });
+  }
+}
+
+function scanFrame() {
+  const vid = document.getElementById('vid');
+  const w = 640, h = 480;
+  ctx.drawImage(vid, 0, 0, w, h);
+  qr.decode(ctx.getImageData(0, 0, w, h));
 }
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.scan = f()}})(function(){var define,module,exports;return (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
 module.exports = { qr : qr }
