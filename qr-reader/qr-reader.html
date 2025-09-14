@@ -51,7 +51,10 @@ function camera (id) {
   canvas.width = w; canvas.height = h
   const ctx = canvas.getContext('2d')
   if (navigator.mediaDevices) {
-    navigator.mediaDevices.getUserMedia({ video: { optional: [{ sourceId: id}], mandatory: { minWidth: 640, minHeight: 480 } } })
+navigator.mediaDevices.getUserMedia({
+  video: { facingMode: { exact: "environment" }, width: 640, height: 480 }
+})
+
     .then((stream) => {
       vid.srcObject = stream
       setInterval( () => { ctx.drawImage(vid, 0, 0, w, h); qr.decode(ctx.getImageData(0, 0, w, h)) }, 500)

@@ -1,0 +1,5526 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    
+</body>
+<script type="module">
+const API_KEY = "e56e757ad4ae4e778f78e039f95cbb3f"; // get free one at financialmodelingprep.com
+
+// Example tickers array
+const tickers = [
+  {
+    "name": "1st Source Corporation",
+    "result": {
+      "symbol": "SRCE"
+    }
+  },
+  {
+    "name": "A&D Holon Holdings",
+    "result": {
+      "symbol": "7745.T"
+    }
+  },
+  {
+    "name": "A10 Networks, Inc.",
+    "result": {
+      "symbol": "ATEN"
+    }
+  },
+  {
+    "name": "A2M",
+    "result": {
+      "symbol": "A2M.AX"
+    }
+  },
+  {
+    "name": "ACCELLERON",
+    "result": {
+      "symbol": "ZH20.F"
+    }
+  },
+  {
+    "name": "Accton Technology",
+    "result": {
+      "symbol": "2345.TW"
+    }
+  },
+  {
+    "name": "ACER CYBER SECURITY INC",
+    "result": {
+      "symbol": "6690.TWO"
+    }
+  },
+  {
+    "name": "ACER E-ENABLING SERVICE BUSINESS IN",
+    "result": {
+      "symbol": "6811.TWO"
+    }
+  },
+  {
+    "name": "ACM Research, Inc.",
+    "result": {
+      "symbol": "ACMR"
+    }
+  },
+  {
+    "name": "ACTER GROUP CORPORATION LTD",
+    "result": {
+      "symbol": "5536.TWO"
+    }
+  },
+  {
+    "name": "Acuity Inc.",
+    "result": {
+      "symbol": "AYI"
+    }
+  },
+  {
+    "name": "ADDTECH AB SER. B",
+    "result": {
+      "symbol": "ADDT-B.ST"
+    }
+  },
+  {
+    "name": "ADMIRAL GROUP PLC",
+    "result": {
+      "symbol": "FLN.F"
+    }
+  },
+  {
+    "name": "ADVANCED INFO SERVICE PUBLIC CO",
+    "result": {
+      "symbol": "AVIVF"
+    }
+  },
+  {
+    "name": "adyen",
+    "result": {
+      "symbol": "ADYEN.AS"
+    }
+  },
+  {
+    "name": "aena s",
+    "result": {
+      "symbol": "A441.F"
+    }
+  },
+  {
+    "name": "AIXTRON",
+    "result": {
+      "symbol": "AIXAD.XC"
+    }
+  },
+  {
+    "name": "AJ BELL PLC ORD GBP",
+    "result": {
+      "symbol": "AJB.L"
+    }
+  },
+  {
+    "name": "ako-b",
+    "result": {
+      "symbol": "AKO-B"
+    }
+  },
+  {
+    "name": "Allegion",
+    "result": {
+      "symbol": "ALLE"
+    }
+  },
+  {
+    "name": "Allstate Corporation (The)",
+    "result": {
+      "symbol": "ALL"
+    }
+  },
+  {
+    "name": "AlphaPolis Co",
+    "result": {
+      "symbol": "9467.T"
+    }
+  },
+  {
+    "name": "ALS",
+    "result": {
+      "symbol": "AEI"
+    }
+  },
+  {
+    "name": "ALZCHEM GROUP AG",
+    "result": {
+      "symbol": "ACT.F"
+    }
+  },
+  {
+    "name": "amadeus it",
+    "result": {
+      "symbol": "AI3A.F"
+    }
+  },
+  {
+    "name": "Amalgamated Financial Corp.",
+    "result": {
+      "symbol": "AMAL"
+    }
+  },
+  {
+    "name": "Amano",
+    "result": {
+      "symbol": "6436.T"
+    }
+  },
+  {
+    "name": "amat",
+    "result": {
+      "symbol": "AMAT"
+    }
+  },
+  {
+    "name": "Amazon.com, Inc.",
+    "result": {
+      "symbol": "AMZN"
+    }
+  },
+  {
+    "name": "amdocs",
+    "result": {
+      "symbol": "DOX"
+    }
+  },
+  {
+    "name": "American Coastal Insurance Corporation",
+    "result": {
+      "symbol": "ACIC"
+    }
+  },
+  {
+    "name": "AMETEK, Inc.",
+    "result": {
+      "symbol": "AME"
+    }
+  },
+  {
+    "name": "Amphastar",
+    "result": {
+      "symbol": "AMPH"
+    }
+  },
+  {
+    "name": "Amvis Holdings",
+    "result": {
+      "symbol": "7071.T"
+    }
+  },
+  {
+    "name": "Andritz",
+    "result": {
+      "symbol": "AZ2.HA"
+    }
+  },
+  {
+    "name": "APP INC",
+    "result": {
+      "symbol": "AAPL"
+    }
+  },
+  {
+    "name": "Applied Industrial Technologies",
+    "result": {
+      "symbol": "AIT"
+    }
+  },
+  {
+    "name": "Applovin Corporation",
+    "result": {
+      "symbol": "APP"
+    }
+  },
+  {
+    "name": "ARC RESOURCES LTD",
+    "result": {
+      "symbol": "ARX.TO"
+    }
+  },
+  {
+    "name": "Arcadyan Technology",
+    "result": {
+      "symbol": "3596.TW"
+    }
+  },
+  {
+    "name": "Arhaus",
+    "result": {
+      "symbol": "ARHS"
+    }
+  },
+  {
+    "name": "Aritzia",
+    "result": {
+      "symbol": "280.F"
+    }
+  },
+  {
+    "name": "Armstrong World Industries Inc",
+    "result": {
+      "symbol": "AWI"
+    }
+  },
+  {
+    "name": "ARTECHE LANTEGI ELKARTEA, S.A.",
+    "result": {
+      "symbol": "ART.MC"
+    }
+  },
+  {
+    "name": "Artner Co",
+    "result": {
+      "symbol": "2163.T"
+    }
+  },
+  {
+    "name": "Asahi Intecc",
+    "result": {
+      "symbol": "7747.T"
+    }
+  },
+  {
+    "name": "Asahi Yukizai",
+    "result": {
+      "symbol": "4216.T"
+    }
+  },
+  {
+    "name": "ASTOR ENERJI",
+    "result": {
+      "symbol": "ASTOR.IS"
+    }
+  },
+  {
+    "name": "ATHABASCA OIL CORP",
+    "result": {
+      "symbol": "ATI.F"
+    }
+  },
+  {
+    "name": "ATI Inc.",
+    "result": {
+      "symbol": "ATI"
+    }
+  },
+  {
+    "name": "Atlas Engineered Products",
+    "result": {
+      "symbol": "AEP.V"
+    }
+  },
+  {
+    "name": "Atmus Filtration Technologies Inc.",
+    "result": {
+      "symbol": "ATMU"
+    }
+  },
+  {
+    "name": "ATOSS SOFTWARE SE",
+    "result": {
+      "symbol": "AOF.HA"
+    }
+  },
+  {
+    "name": "AUBAY",
+    "result": {
+      "symbol": "BAQ.F"
+    }
+  },
+  {
+    "name": "AURAS TECHNOLOGY CO",
+    "result": {
+      "symbol": "3324.TWO"
+    }
+  },
+  {
+    "name": "Aussie Broadband",
+    "result": {
+      "symbol": "9JI.F"
+    }
+  },
+  {
+    "name": "AUSTEVOLL SEAFOOD ASA",
+    "result": {
+      "symbol": "Z85.F"
+    }
+  },
+  {
+    "name": "AUSTRALIAN ETHICAL INVESTMENT LIMITED",
+    "result": {
+      "symbol": "1OP.F"
+    }
+  },
+  {
+    "name": "autoliv",
+    "result": {
+      "symbol": "ALV"
+    }
+  },
+  {
+    "name": "AVANZA BANK HOLDING AB",
+    "result": {
+      "symbol": "1JJA.F"
+    }
+  },
+  {
+    "name": "Avery Dennison Corporation",
+    "result": {
+      "symbol": "AVY"
+    }
+  },
+  {
+    "name": "AVI LTD",
+    "result": {
+      "symbol": "FTAI"
+    }
+  },
+  {
+    "name": "Axcelis Technologies",
+    "result": {
+      "symbol": "ACLS"
+    }
+  },
+  {
+    "name": "Axis Capital Holdings Limited",
+    "result": {
+      "symbol": "AXS"
+    }
+  },
+  {
+    "name": "axon",
+    "result": {
+      "symbol": "AXON"
+    }
+  },
+  {
+    "name": "axp",
+    "result": {
+      "symbol": "AXP"
+    }
+  },
+  {
+    "name": "AZZ",
+    "result": {
+      "symbol": "AZZ"
+    }
+  },
+  {
+    "name": "Badger Infrastructure",
+    "result": {
+      "symbol": "BDGIF"
+    }
+  },
+  {
+    "name": "BADGER INFRASTRUCTURE SOLUTIONS LTD",
+    "result": {
+      "symbol": "BDGIF"
+    }
+  },
+  {
+    "name": "Badger Meter, Inc.",
+    "result": {
+      "symbol": "BMI"
+    }
+  },
+  {
+    "name": "BAE Systems",
+    "result": {
+      "symbol": "BA.L"
+    }
+  },
+  {
+    "name": "Baker Hughes Company",
+    "result": {
+      "symbol": "BKR"
+    }
+  },
+  {
+    "name": "Barco NV",
+    "result": {
+      "symbol": "BC1P.F"
+    }
+  },
+  {
+    "name": "Base Co",
+    "result": {
+      "symbol": "4481.T"
+    }
+  },
+  {
+    "name": "BASILEA",
+    "result": {
+      "symbol": "0QNA.L"
+    }
+  },
+  {
+    "name": "Baudroie",
+    "result": {
+      "symbol": "4413.T"
+    }
+  },
+  {
+    "name": "BayCurrent Consulting",
+    "result": {
+      "symbol": "BYCRF"
+    }
+  },
+  {
+    "name": "BDO UNIBANK, INC.",
+    "result": {
+      "symbol": "BDOUF"
+    }
+  },
+  {
+    "name": "Beauty Garage",
+    "result": {
+      "symbol": "3180.T"
+    }
+  },
+  {
+    "name": "Bechtle",
+    "result": {
+      "symbol": "BC8.F"
+    }
+  },
+  {
+    "name": "BEIJER ALMA AB SER. B",
+    "result": {
+      "symbol": "BEIA-B.ST"
+    }
+  },
+  {
+    "name": "Belc Co",
+    "result": {
+      "symbol": "9974.T"
+    }
+  },
+  {
+    "name": "Belimo Holding",
+    "result": {
+      "symbol": "8RJ.F"
+    }
+  },
+  {
+    "name": "Bellring Brands",
+    "result": {
+      "symbol": "BRBR"
+    }
+  },
+  {
+    "name": "Bengo4.com",
+    "result": {
+      "symbol": "6027.T"
+    }
+  },
+  {
+    "name": "better collective",
+    "result": {
+      "symbol": "BETCO.ST"
+    }
+  },
+  {
+    "name": "BEXIMCO PHARMACEUTICALS LTD",
+    "result": {
+      "symbol": "R2WA.SG"
+    }
+  },
+  {
+    "name": "BFF BANK",
+    "result": {
+      "symbol": "2BF.MU"
+    }
+  },
+  {
+    "name": "BHI CO., LTD.",
+    "result": {
+      "symbol": "083650.KQ"
+    }
+  },
+  {
+    "name": "Biesse",
+    "result": {
+      "symbol": "BI2.SG"
+    }
+  },
+  {
+    "name": "Biosyent",
+    "result": {
+      "symbol": "BIOYF"
+    }
+  },
+  {
+    "name": "Bird Construction",
+    "result": {
+      "symbol": "6LT.F"
+    }
+  },
+  {
+    "name": "Blackstone Inc.",
+    "result": {
+      "symbol": "BX"
+    }
+  },
+  {
+    "name": "Block, Inc.",
+    "result": {
+      "symbol": "GEMI"
+    }
+  },
+  {
+    "name": "Blue Bird Corporation",
+    "result": {
+      "symbol": "BLBD"
+    }
+  },
+  {
+    "name": "Blue Star",
+    "result": {
+      "symbol": "BUSC"
+    }
+  },
+  {
+    "name": "Bodycote",
+    "result": {
+      "symbol": "21T.F"
+    }
+  },
+  {
+    "name": "BOLSA MEXICANA DE VALORES SAB DE CV",
+    "result": {
+      "symbol": "BC51.SG"
+    }
+  },
+  {
+    "name": "Booz Allen Hamilton Holding Corporation",
+    "result": {
+      "symbol": "BAH"
+    }
+  },
+  {
+    "name": "BORA PHARMACEUTICALS CO LTD",
+    "result": {
+      "symbol": "6472.TW"
+    }
+  },
+  {
+    "name": "BORREGAARD",
+    "result": {
+      "symbol": "BO4.F"
+    }
+  },
+  {
+    "name": "Bowhead Specialty Holdings Inc.",
+    "result": {
+      "symbol": "BOW"
+    }
+  },
+  {
+    "name": "Boyd Gaming",
+    "result": {
+      "symbol": "BYD"
+    }
+  },
+  {
+    "name": "BRASILAGRO ON NM",
+    "result": {
+      "symbol": "AGRO3.SA"
+    }
+  },
+  {
+    "name": "Brederode",
+    "result": {
+      "symbol": "BREB.BR"
+    }
+  },
+  {
+    "name": "brembo",
+    "result": {
+      "symbol": "BRE2.VI"
+    }
+  },
+  {
+    "name": "BREVILLE GROUP LIMITED",
+    "result": {
+      "symbol": "BRG.AX"
+    }
+  },
+  {
+    "name": "Brown & Brown, Inc.",
+    "result": {
+      "symbol": "BRO"
+    }
+  },
+  {
+    "name": "BTS GROUP AB SER. B",
+    "result": {
+      "symbol": "BTS-B.ST"
+    }
+  },
+  {
+    "name": "Bufab",
+    "result": {
+      "symbol": "29B0.F"
+    }
+  },
+  {
+    "name": "Bucher Industries",
+    "result": {
+      "symbol": "BUCN.SW"
+    }
+  },
+  {
+    "name": "BUREAU VERITAS",
+    "result": {
+      "symbol": "4BV.F"
+    }
+  },
+  {
+    "name": "buzzi",
+    "result": {
+      "symbol": "BZU.MI"
+    }
+  },
+  {
+    "name": "BWX Technologies, Inc.",
+    "result": {
+      "symbol": "BWXT"
+    }
+  },
+  {
+    "name": "C Rad",
+    "result": {
+      "symbol": "24C.F"
+    }
+  },
+  {
+    "name": "C&C International",
+    "result": {
+      "symbol": "CCEL"
+    }
+  },
+  {
+    "name": "Cadre Holdings",
+    "result": {
+      "symbol": "CDRE"
+    }
+  },
+  {
+    "name": "Calian",
+    "result": {
+      "symbol": "74L.F"
+    }
+  },
+  {
+    "name": "California Resources Corporation",
+    "result": {
+      "symbol": "CRC"
+    }
+  },
+  {
+    "name": "Camtek Ltd.",
+    "result": {
+      "symbol": "CAMT"
+    }
+  },
+  {
+    "name": "Camurus",
+    "result": {
+      "symbol": "7CA.F"
+    }
+  },
+  {
+    "name": "Canadian Pacific Kansas",
+    "result": {
+      "symbol": "CP"
+    }
+  },
+  {
+    "name": "Capcom",
+    "result": {
+      "symbol": "9697.T"
+    }
+  },
+  {
+    "name": "Capital Bancorp, Inc.",
+    "result": {
+      "symbol": "CBNK"
+    }
+  },
+  {
+    "name": "Capital City Bank Group",
+    "result": {
+      "symbol": "CCBG"
+    }
+  },
+  {
+    "name": "CAPITEC BANK HLDGS LTD",
+    "result": {
+      "symbol": "CPI.JO"
+    }
+  },
+  {
+    "name": "CAPRICORN METALS LTD",
+    "result": {
+      "symbol": "CRNLF"
+    }
+  },
+  {
+    "name": "Car",
+    "result": {
+      "symbol": "CAR"
+    }
+  },
+  {
+    "name": "Carlo Gavazzi",
+    "result": {
+      "symbol": "GAV.SW"
+    }
+  },
+  {
+    "name": "Carpenter Technology Corporation",
+    "result": {
+      "symbol": "CRS"
+    }
+  },
+  {
+    "name": "Catalyst Pharmaceuticals, Inc.",
+    "result": {
+      "symbol": "CPRX"
+    }
+  },
+  {
+    "name": "CBIZ",
+    "result": {
+      "symbol": "CBZ"
+    }
+  },
+  {
+    "name": "ccep",
+    "result": {
+      "symbol": "CCEP"
+    }
+  },
+  {
+    "name": "ccj",
+    "result": {
+      "symbol": "CCJ"
+    }
+  },
+  {
+    "name": "CCL INDUSTRIES INC",
+    "result": {
+      "symbol": "1C9.F"
+    }
+  },
+  {
+    "name": "CECO Environmental",
+    "result": {
+      "symbol": "CECO"
+    }
+  },
+  {
+    "name": "CELLAVISION AB",
+    "result": {
+      "symbol": "C26.F"
+    }
+  },
+  {
+    "name": "CENERGY",
+    "result": {
+      "symbol": "CENER.AT"
+    }
+  },
+  {
+    "name": "Cenit",
+    "result": {
+      "symbol": "CSH.F"
+    }
+  },
+  {
+    "name": "Central Automotive Products",
+    "result": {
+      "symbol": "8117.T"
+    }
+  },
+  {
+    "name": "Centrus Energy Corp.",
+    "result": {
+      "symbol": "LEU"
+    }
+  },
+  {
+    "name": "Centurion",
+    "result": {
+      "symbol": "605398.SS"
+    }
+  },
+  {
+    "name": "CICOR TECH",
+    "result": {
+      "symbol": "CRLN.F"
+    }
+  },
+  {
+    "name": "Cicor Technologies",
+    "result": {
+      "symbol": "CRLN.F"
+    }
+  },
+  {
+    "name": "Ciena",
+    "result": {
+      "symbol": "CIEN"
+    }
+  },
+  {
+    "name": "Cimpress plc",
+    "result": {
+      "symbol": "CMPR"
+    }
+  },
+  {
+    "name": "cl",
+    "result": {
+      "symbol": "CL"
+    }
+  },
+  {
+    "name": "Clarkson",
+    "result": {
+      "symbol": "1DH.F"
+    }
+  },
+  {
+    "name": "CLAS OHLSON AB SER. B",
+    "result": {
+      "symbol": "CLAS-B.ST"
+    }
+  },
+  {
+    "name": "Clinuvel Pharmaceuticals",
+    "result": {
+      "symbol": "UR9.F"
+    }
+  },
+  {
+    "name": "Clio Cosmetics",
+    "result": {
+      "symbol": "237880.KQ"
+    }
+  },
+  {
+    "name": "clmb",
+    "result": {
+      "symbol": "CLMB"
+    }
+  },
+  {
+    "name": "Coastal Financial Corporation",
+    "result": {
+      "symbol": "CCB"
+    }
+  },
+  {
+    "name": "Coca Cola HBC",
+    "result": {
+      "symbol": "CCKC.F"
+    }
+  },
+  {
+    "name": "Coca-Cola Femsa S.A.B. de C.V.",
+    "result": {
+      "symbol": "KOF"
+    }
+  },
+  {
+    "name": "CODAN LIMITED",
+    "result": {
+      "symbol": "CDA.AX"
+    }
+  },
+  {
+    "name": "Cohen & Steers Inc",
+    "result": {
+      "symbol": "CNS"
+    }
+  },
+  {
+    "name": "Comer Industries",
+    "result": {
+      "symbol": "X5Q.F"
+    }
+  },
+  {
+    "name": "Comfort Systems Usa",
+    "result": {
+      "symbol": "FIX"
+    }
+  },
+  {
+    "name": "COMM BK OF DUBAI",
+    "result": {
+      "symbol": "CBD.AE"
+    }
+  },
+  {
+    "name": "COMMERCIAL INTERNATIONAL BANK-EGYPT (CIB)",
+    "result": {
+      "symbol": "CMGGF"
+    }
+  },
+  {
+    "name": "Community Trust Bancorp, Inc.",
+    "result": {
+      "symbol": "CTBI"
+    }
+  },
+  {
+    "name": "Compania de Distribucion Integral Logista Holdings, S.A.",
+    "result": {
+      "symbol": "5CI.MU"
+    }
+  },
+  {
+    "name": "CompuGroup",
+    "result": {
+      "symbol": "COP2.VI"
+    }
+  },
+  {
+    "name": "Comture",
+    "result": {
+      "symbol": "CMTUF"
+    }
+  },
+  {
+    "name": "Constellation brands",
+    "result": {
+      "symbol": "STZ"
+    }
+  },
+  {
+    "name": "CONSTELLATION SOFTWARE INC",
+    "result": {
+      "symbol": "CSU.TO"
+    }
+  },
+  {
+    "name": "Construction Partners",
+    "result": {
+      "symbol": "ROAD"
+    }
+  },
+  {
+    "name": "ContextVision",
+    "result": {
+      "symbol": "CONTXO.OL"
+    }
+  },
+  {
+    "name": "CONTINENTAL SAB DE CV",
+    "result": {
+      "symbol": "EMBVF"
+    }
+  },
+  {
+    "name": "copart",
+    "result": {
+      "symbol": "CPRT"
+    }
+  },
+  {
+    "name": "Corcept Therapeutics Incorporated",
+    "result": {
+      "symbol": "CORT"
+    }
+  },
+  {
+    "name": "Core & Main, Inc.",
+    "result": {
+      "symbol": "CNM"
+    }
+  },
+  {
+    "name": "Corporate Travel Management",
+    "result": {
+      "symbol": "CTMLF"
+    }
+  },
+  {
+    "name": "CORPORATIVA FRAGUA",
+    "result": {
+      "symbol": "FRAGUAB.MX"
+    }
+  },
+  {
+    "name": "Cosel Co",
+    "result": {
+      "symbol": "6905.T"
+    }
+  },
+  {
+    "name": "COSMAX, INC.D",
+    "result": {
+      "symbol": "2CF.F"
+    }
+  },
+  {
+    "name": "Cosmecca Korea",
+    "result": {
+      "symbol": "241710.KQ"
+    }
+  },
+  {
+    "name": "CoStar Group",
+    "result": {
+      "symbol": "CSGP"
+    }
+  },
+  {
+    "name": "CRA International, Inc.",
+    "result": {
+      "symbol": "CRAI"
+    }
+  },
+  {
+    "name": "Crane Company",
+    "result": {
+      "symbol": "CR"
+    }
+  },
+  {
+    "name": "Creek & River",
+    "result": {
+      "symbol": "4763.T"
+    }
+  },
+  {
+    "name": "CSW Industrials",
+    "result": {
+      "symbol": "UCI.F"
+    }
+  },
+  {
+    "name": "CTS Eventim AG & Co. KGaA",
+    "result": {
+      "symbol": "EVD.F"
+    }
+  },
+  {
+    "name": "Curtiss-Wright",
+    "result": {
+      "symbol": "CW"
+    }
+  },
+  {
+    "name": "cvco",
+    "result": {
+      "symbol": "CVCO"
+    }
+  },
+  {
+    "name": "CWCO",
+    "result": {
+      "symbol": "CWCO"
+    }
+  },
+  {
+    "name": "Cyber Security Cloud",
+    "result": {
+      "symbol": "4493.T"
+    }
+  },
+  {
+    "name": "CYBERFLKS",
+    "result": {
+      "symbol": "CBF.WA"
+    }
+  },
+  {
+    "name": "Cyberoo",
+    "result": {
+      "symbol": "K97.F"
+    }
+  },
+  {
+    "name": "DAEJOO ELECTRONIC MATERIALS CO., LTD.D",
+    "result": {
+      "symbol": "078600.KQ"
+    }
+  },
+  {
+    "name": "Daiseki",
+    "result": {
+      "symbol": "9793.T"
+    }
+  },
+  {
+    "name": "Daiseki Eco Solution",
+    "result": {
+      "symbol": "1712.T"
+    }
+  },
+  {
+    "name": "dampskibsselskabet Norden A/S",
+    "result": {
+      "symbol": "DNORD.CO"
+    }
+  },
+  {
+    "name": "DASSAULT AVIATION",
+    "result": {
+      "symbol": "AMP.XC"
+    }
+  },
+  {
+    "name": "Data#3",
+    "result": {
+      "symbol": "20Y.F"
+    }
+  },
+  {
+    "name": "DBS",
+    "result": {
+      "symbol": "D05.SI"
+    }
+  },
+  {
+    "name": "Delfingen Industr",
+    "result": {
+      "symbol": "HBS.SG"
+    }
+  },
+  {
+    "name": "Delta Electronics",
+    "result": {
+      "symbol": "NVAW.F"
+    }
+  },
+  {
+    "name": "DEME GROUP",
+    "result": {
+      "symbol": "DEME.BR"
+    }
+  },
+  {
+    "name": "Dentsu Soken",
+    "result": {
+      "symbol": "ISW.F"
+    }
+  },
+  {
+    "name": "Descartes Systems",
+    "result": {
+      "symbol": "DSG.TO"
+    }
+  },
+  {
+    "name": "DEUTSCHE BOERSE AG",
+    "result": {
+      "symbol": "DB1.DE"
+    }
+  },
+  {
+    "name": "Digi International",
+    "result": {
+      "symbol": "DGII"
+    }
+  },
+  {
+    "name": "Digital Arts",
+    "result": {
+      "symbol": "2326.T"
+    }
+  },
+  {
+    "name": "Digital Value",
+    "result": {
+      "symbol": "DGVM.XD"
+    }
+  },
+  {
+    "name": "DO & CO AG",
+    "result": {
+      "symbol": "0E64.IL"
+    }
+  },
+  {
+    "name": "DOCEBO INC",
+    "result": {
+      "symbol": "061.MU"
+    }
+  },
+  {
+    "name": "Dollarama",
+    "result": {
+      "symbol": "DOL.TO"
+    }
+  },
+  {
+    "name": "Domino's Pizza Inc",
+    "result": {
+      "symbol": "DPZ"
+    }
+  },
+  {
+    "name": "DONGKOOK PHARMACEUTICAL CO.,LTD.D",
+    "result": {
+      "symbol": "086450.KQ"
+    }
+  },
+  {
+    "name": "DONGSUNG FINETEC CO., LTDD",
+    "result": {
+      "symbol": "033500.KQ"
+    }
+  },
+  {
+    "name": "Doosan Bobcat",
+    "result": {
+      "symbol": "241560.KS"
+    }
+  },
+  {
+    "name": "Dorman Products, Inc.",
+    "result": {
+      "symbol": "DORM"
+    }
+  },
+  {
+    "name": "DoubleDown Interactive Co., Ltd. - American Depository Shares",
+    "result": {
+      "symbol": "DDI"
+    }
+  },
+  {
+    "name": "DoubleVerify Holdings",
+    "result": {
+      "symbol": "DV"
+    }
+  },
+  {
+    "name": "dover",
+    "result": {
+      "symbol": "DOV"
+    }
+  },
+  {
+    "name": "Doximity, Inc.",
+    "result": {
+      "symbol": "DOCS"
+    }
+  },
+  {
+    "name": "Drewloong Precision",
+    "result": {
+      "symbol": "4572.TW"
+    }
+  },
+  {
+    "name": "DUK SAN NEOLUX CO.,LTDD",
+    "result": {
+      "symbol": "213420.KQ"
+    }
+  },
+  {
+    "name": "Dundee Precious Metals",
+    "result": {
+      "symbol": "DPM.TO"
+    }
+  },
+  {
+    "name": "Duratec",
+    "result": {
+      "symbol": "DURCF"
+    }
+  },
+  {
+    "name": "DXP Enterprises",
+    "result": {
+      "symbol": "DXPE"
+    }
+  },
+  {
+    "name": "Dycom Industries",
+    "result": {
+      "symbol": "DY"
+    }
+  },
+  {
+    "name": "Dynavox Group AB",
+    "result": {
+      "symbol": "DYVOX.ST"
+    }
+  },
+  {
+    "name": "Ebara",
+    "result": {
+      "symbol": "6328.T"
+    }
+  },
+  {
+    "name": "EBOS",
+    "result": {
+      "symbol": "EJG.F"
+    }
+  },
+  {
+    "name": "Ebro",
+    "result": {
+      "symbol": "W5B.F"
+    }
+  },
+  {
+    "name": "Eckert & Ziegler SE",
+    "result": {
+      "symbol": "EUZD.XC"
+    }
+  },
+  {
+    "name": "Eclerx Services",
+    "result": {
+      "symbol": "ECLERX.NS"
+    }
+  },
+  {
+    "name": "Edenred",
+    "result": {
+      "symbol": "0MUM.IL"
+    }
+  },
+  {
+    "name": "Einhell Germany AG",
+    "result": {
+      "symbol": "EIN.F"
+    }
+  },
+  {
+    "name": "el en spa",
+    "result": {
+      "symbol": "ELEAF"
+    }
+  },
+  {
+    "name": "EL PUERTO DE LIVERPOOL",
+    "result": {
+      "symbol": "LIVEPOLC-1.MX"
+    }
+  },
+  {
+    "name": "Elecnor",
+    "result": {
+      "symbol": "ELNRF"
+    }
+  },
+  {
+    "name": "Elecon Engineering",
+    "result": {
+      "symbol": "ELECON.BO"
+    }
+  },
+  {
+    "name": "Electrolux Professional",
+    "result": {
+      "symbol": "ECTXF"
+    }
+  },
+  {
+    "name": "Electromed",
+    "result": {
+      "symbol": "ELMD"
+    }
+  },
+  {
+    "name": "Eli Lilly and Company",
+    "result": {
+      "symbol": "LLY"
+    }
+  },
+  {
+    "name": "Elixirr International",
+    "result": {
+      "symbol": "ELXXF"
+    }
+  },
+  {
+    "name": "Elmos Semiconductor",
+    "result": {
+      "symbol": "ELTTF"
+    }
+  },
+  {
+    "name": "Elopak ASA",
+    "result": {
+      "symbol": "ELPKF"
+    }
+  },
+  {
+    "name": "Elswedy Electric",
+    "result": {
+      "symbol": "EGS3G0Z1C014.CA"
+    }
+  },
+  {
+    "name": "eme",
+    "result": {
+      "symbol": "EME"
+    }
+  },
+  {
+    "name": "EMEMORY TECHNOLOGY INC.",
+    "result": {
+      "symbol": "3529.TWO"
+    }
+  },
+  {
+    "name": "Emmi AG",
+    "result": {
+      "symbol": "FV6.F"
+    }
+  },
+  {
+    "name": "Encompass Health Corporation",
+    "result": {
+      "symbol": "EHC"
+    }
+  },
+  {
+    "name": "Ensign",
+    "result": {
+      "symbol": "ENSG"
+    }
+  },
+  {
+    "name": "Environmental",
+    "result": {
+      "symbol": "MEG"
+    }
+  },
+  {
+    "name": "ePlus",
+    "result": {
+      "symbol": "PLUS"
+    }
+  },
+  {
+    "name": "Equasens",
+    "result": {
+      "symbol": "PHF.F"
+    }
+  },
+  {
+    "name": "Erie Indemnity Company",
+    "result": {
+      "symbol": "ERIE"
+    }
+  },
+  {
+    "name": "Esautomotion",
+    "result": {
+      "symbol": "ESAU.MI"
+    }
+  },
+  {
+    "name": "Espec",
+    "result": {
+      "symbol": "6859.T"
+    }
+  },
+  {
+    "name": "EssilorLuxottica SA",
+    "result": {
+      "symbol": "ELP.XD"
+    }
+  },
+  {
+    "name": "EUGENE TECHNOLOGY CO., LTD.D",
+    "result": {
+      "symbol": "084370.KQ"
+    }
+  },
+  {
+    "name": "eurofins",
+    "result": {
+      "symbol": "ERF.PA"
+    }
+  },
+  {
+    "name": "Euronet Worldwide, Inc.",
+    "result": {
+      "symbol": "EEFT.MX"
+    }
+  },
+  {
+    "name": "Evercore Inc.",
+    "result": {
+      "symbol": "EVR"
+    }
+  },
+  {
+    "name": "Evs Broadcast Equipment",
+    "result": {
+      "symbol": "5E1.F"
+    }
+  },
+  {
+    "name": "EVT",
+    "result": {
+      "symbol": "EVT"
+    }
+  },
+  {
+    "name": "Exelixis, Inc.",
+    "result": {
+      "symbol": "EXEL"
+    }
+  },
+  {
+    "name": "exls",
+    "result": {
+      "symbol": "EXLS"
+    }
+  },
+  {
+    "name": "Exlservice Holdings",
+    "result": {
+      "symbol": "EXLS"
+    }
+  },
+  {
+    "name": "exor",
+    "result": {
+      "symbol": "EXXRF"
+    }
+  },
+  {
+    "name": "Expedia Group, Inc.",
+    "result": {
+      "symbol": "EXPE"
+    }
+  },
+  {
+    "name": "Experian PLC Ord USD",
+    "result": {
+      "symbol": "EXPN.L"
+    }
+  },
+  {
+    "name": "extr",
+    "result": {
+      "symbol": "EXTR"
+    }
+  },
+  {
+    "name": "Fabasoft",
+    "result": {
+      "symbol": "FAAD.XD"
+    }
+  },
+  {
+    "name": "Fabrinet",
+    "result": {
+      "symbol": "FN"
+    }
+  },
+  {
+    "name": "Fair Isaac Corporation",
+    "result": {
+      "symbol": "FICO"
+    }
+  },
+  {
+    "name": "FAST",
+    "result": {
+      "symbol": "FAST"
+    }
+  },
+  {
+    "name": "Federal Signal",
+    "result": {
+      "symbol": "FSS"
+    }
+  },
+  {
+    "name": "Ferrari",
+    "result": {
+      "symbol": "RACE"
+    }
+  },
+  {
+    "name": "Ferrovial SE",
+    "result": {
+      "symbol": "FER.MC"
+    }
+  },
+  {
+    "name": "Fibergate",
+    "result": {
+      "symbol": "9450.T"
+    }
+  },
+  {
+    "name": "FinecoBank",
+    "result": {
+      "symbol": "FBK.VI"
+    }
+  },
+  {
+    "name": "Finning International",
+    "result": {
+      "symbol": "FTT.TO"
+    }
+  },
+  {
+    "name": "Five Point Holdings",
+    "result": {
+      "symbol": "FPH"
+    }
+  },
+  {
+    "name": "Fixstars",
+    "result": {
+      "symbol": "3687.T"
+    }
+  },
+  {
+    "name": "FlatexDegiro AG",
+    "result": {
+      "symbol": "FTK.F"
+    }
+  },
+  {
+    "name": "Fluor Corporation",
+    "result": {
+      "symbol": "FLR"
+    }
+  },
+  {
+    "name": "Food Empire Holdings",
+    "result": {
+      "symbol": "F03.SI"
+    }
+  },
+  {
+    "name": "Foraco International",
+    "result": {
+      "symbol": "3F3.F"
+    }
+  },
+  {
+    "name": "Fortec",
+    "result": {
+      "symbol": "FEV.F"
+    }
+  },
+  {
+    "name": "Fortune Electric",
+    "result": {
+      "symbol": "1519.TW"
+    }
+  },
+  {
+    "name": "Fourlis",
+    "result": {
+      "symbol": "2FH.F"
+    }
+  },
+  {
+    "name": "Freelance.com",
+    "result": {
+      "symbol": "9B4.F"
+    }
+  },
+  {
+    "name": "Frequentis AG",
+    "result": {
+      "symbol": "FQT.F"
+    }
+  },
+  {
+    "name": "Fresenius Medical Care AG",
+    "result": {
+      "symbol": "FMS"
+    }
+  },
+  {
+    "name": "Friedrich Vorwerk Group SE",
+    "result": {
+      "symbol": "VH2.F"
+    }
+  },
+  {
+    "name": "Frontdoor, Inc.",
+    "result": {
+      "symbol": "FTDR"
+    }
+  },
+  {
+    "name": "Frp Advisory",
+    "result": {
+      "symbol": "6S6.F"
+    }
+  },
+  {
+    "name": "ftdr",
+    "result": {
+      "symbol": "FTDR"
+    }
+  },
+  {
+    "name": "FTI Consulting",
+    "result": {
+      "symbol": "FCN"
+    }
+  },
+  {
+    "name": "Fugro",
+    "result": {
+      "symbol": "F3DC.F"
+    }
+  },
+  {
+    "name": "fuchs",
+    "result": {
+      "symbol": "FPE3D.XC"
+    }
+  },
+  {
+    "name": "Fuji Kyuko Co",
+    "result": {
+      "symbol": "8V7.F"
+    }
+  },
+  {
+    "name": "Furyu",
+    "result": {
+      "symbol": "6238.T"
+    }
+  },
+  {
+    "name": "Futu Holdings Limited",
+    "result": {
+      "symbol": "FUTU"
+    }
+  },
+  {
+    "name": "G8 Education",
+    "result": {
+      "symbol": "GEM.AX"
+    }
+  },
+  {
+    "name": "Gakujo Co",
+    "result": {
+      "symbol": "2301.T"
+    }
+  },
+  {
+    "name": "Gambling.com Group Limited",
+    "result": {
+      "symbol": "6WH.F"
+    }
+  },
+  {
+    "name": "GCC SAB de CV",
+    "result": {
+      "symbol": "GCWOF"
+    }
+  },
+  {
+    "name": "GE HealthCare Technologies Inc.",
+    "result": {
+      "symbol": "GEHC"
+    }
+  },
+  {
+    "name": "General Dynamics Corporation",
+    "result": {
+      "symbol": "GD"
+    }
+  },
+  {
+    "name": "Generation Development Group Limited",
+    "result": {
+      "symbol": "GDG.AX"
+    }
+  },
+  {
+    "name": "GENESYS LOGIC",
+    "result": {
+      "symbol": "6104.TWO"
+    }
+  },
+  {
+    "name": "Genmab A/S",
+    "result": {
+      "symbol": "GMAB.CO"
+    }
+  },
+  {
+    "name": "Genomma Lab Internacional SAB",
+    "result": {
+      "symbol": "GNMLF"
+    }
+  },
+  {
+    "name": "GenOway S.A.",
+    "result": {
+      "symbol": "JEH.F"
+    }
+  },
+  {
+    "name": "Gentera SAB de CV",
+    "result": {
+      "symbol": "CMPRF"
+    }
+  },
+  {
+    "name": "Gentex",
+    "result": {
+      "symbol": "GNTX"
+    }
+  },
+  {
+    "name": "Genting Singapore",
+    "result": {
+      "symbol": "G13.SI"
+    }
+  },
+  {
+    "name": "GenusPlus Group Ltd",
+    "result": {
+      "symbol": "GNP.AX"
+    }
+  },
+  {
+    "name": "Georg Fischer",
+    "result": {
+      "symbol": "FCHRF"
+    }
+  },
+  {
+    "name": "Gerard Perrier Industrie",
+    "result": {
+      "symbol": "80T.MU"
+    }
+  },
+  {
+    "name": "Gestamp Automocion",
+    "result": {
+      "symbol": "7GA.F"
+    }
+  },
+  {
+    "name": "GIFT Holdings",
+    "result": {
+      "symbol": "9279.T"
+    }
+  },
+  {
+    "name": "Giftee",
+    "result": {
+      "symbol": "4449.T"
+    }
+  },
+  {
+    "name": "GigaCloud Technology Inc",
+    "result": {
+      "symbol": "GCT"
+    }
+  },
+  {
+    "name": "Gilat Satellite Networks",
+    "result": {
+      "symbol": "GILT"
+    }
+  },
+  {
+    "name": "Glanbia",
+    "result": {
+      "symbol": "GL9.SG"
+    }
+  },
+  {
+    "name": "Glenveagh Properties PLC",
+    "result": {
+      "symbol": "IE00BD6JX574.SG"
+    }
+  },
+  {
+    "name": "Global Security Experts",
+    "result": {
+      "symbol": "4417.T"
+    }
+  },
+  {
+    "name": "Global Ship Lease Inc New",
+    "result": {
+      "symbol": "GSL"
+    }
+  },
+  {
+    "name": "Globant",
+    "result": {
+      "symbol": "GLOB"
+    }
+  },
+  {
+    "name": "Globus Medical",
+    "result": {
+      "symbol": "GMED"
+    }
+  },
+  {
+    "name": "Gmm Pfaudler",
+    "result": {
+      "symbol": "GMMPFAUDLR.NS"
+    }
+  },
+  {
+    "name": "Gold Fields Ltd",
+    "result": {
+      "symbol": "GFI"
+    }
+  },
+  {
+    "name": "GOLDEN FRIENDS CO",
+    "result": {
+      "symbol": "4506.TWO"
+    }
+  },
+  {
+    "name": "Goosehead Insurance, Inc.",
+    "result": {
+      "symbol": "GSHD"
+    }
+  },
+  {
+    "name": "Gorman-Rupp Co",
+    "result": {
+      "symbol": "GRC"
+    }
+  },
+  {
+    "name": "GQG Partners Inc.",
+    "result": {
+      "symbol": "6P1.F"
+    }
+  },
+  {
+    "name": "Grand Canyon Education, Inc.",
+    "result": {
+      "symbol": "LOPE"
+    }
+  },
+  {
+    "name": "Greencore",
+    "result": {
+      "symbol": "GCG.F"
+    }
+  },
+  {
+    "name": "Grenevia",
+    "result": {
+      "symbol": "8MF.F"
+    }
+  },
+  {
+    "name": "Group 1 Automotive",
+    "result": {
+      "symbol": "GPI"
+    }
+  },
+  {
+    "name": "Gruma SAB de CV",
+    "result": {
+      "symbol": "3G3B.SG"
+    }
+  },
+  {
+    "name": "Grupo Aeroportuario",
+    "result": {
+      "symbol": "G7AB.F"
+    }
+  },
+  {
+    "name": "Grupo Catalana Occidente, S.A.",
+    "result": {
+      "symbol": "OCZA.F"
+    }
+  },
+  {
+    "name": "Grupo Empresarial San Jose, S.A.",
+    "result": {
+      "symbol": "80E.F"
+    }
+  },
+  {
+    "name": "GRUPO HERDEZ",
+    "result": {
+      "symbol": "HERDEZ.MX"
+    }
+  },
+  {
+    "name": "Grupo Supervielle S.A.",
+    "result": {
+      "symbol": "SUPV"
+    }
+  },
+  {
+    "name": "GUD Holdings",
+    "result": {
+      "symbol": "8308.HK"
+    }
+  },
+  {
+    "name": "Haemonetics",
+    "result": {
+      "symbol": "HAE"
+    }
+  },
+  {
+    "name": "Halows Co",
+    "result": {
+      "symbol": "2742.T"
+    }
+  },
+  {
+    "name": "Halozyme Therapeutics, Inc.",
+    "result": {
+      "symbol": "HALO"
+    }
+  },
+  {
+    "name": "Hammond Power Solutions",
+    "result": {
+      "symbol": "T11.F"
+    }
+  },
+  {
+    "name": "Hancock Whitney Corporation",
+    "result": {
+      "symbol": "HWC"
+    }
+  },
+  {
+    "name": "Hannover Rueck SE",
+    "result": {
+      "symbol": "HNR1.DE"
+    }
+  },
+  {
+    "name": "Hanover Insurance Group Inc",
+    "result": {
+      "symbol": "THG"
+    }
+  },
+  {
+    "name": "Happinet",
+    "result": {
+      "symbol": "7552.T"
+    }
+  },
+  {
+    "name": "Harmony Biosciences Holdings, Inc.",
+    "result": {
+      "symbol": "HRMY"
+    }
+  },
+  {
+    "name": "Hawkins, Inc.",
+    "result": {
+      "symbol": "HWKN"
+    }
+  },
+  {
+    "name": "HCI Group, Inc.",
+    "result": {
+      "symbol": "HCI"
+    }
+  },
+  {
+    "name": "Headwater Exploration Inc.",
+    "result": {
+      "symbol": "C6V.F"
+    }
+  },
+  {
+    "name": "Heritage Insurance Holdings, Inc.",
+    "result": {
+      "symbol": "HRTG"
+    }
+  },
+  {
+    "name": "Hibiya Engineering",
+    "result": {
+      "symbol": "1982.T"
+    }
+  },
+  {
+    "name": "Hilton Worldwide Holdings Inc.",
+    "result": {
+      "symbol": "HLT"
+    }
+  },
+  {
+    "name": "Hitit Bilgisayar",
+    "result": {
+      "symbol": "HTTBT.IS"
+    }
+  },
+  {
+    "name": "Horiba",
+    "result": {
+      "symbol": "01H.F"
+    }
+  },
+  {
+    "name": "HOSHIZAKI CORP",
+    "result": {
+      "symbol": "6465.T"
+    }
+  },
+  {
+    "name": "Hosokawa Micron",
+    "result": {
+      "symbol": "6277.T"
+    }
+  },
+  {
+    "name": "Houlihan Lokey, Inc.",
+    "result": {
+      "symbol": "HLI"
+    }
+  },
+  {
+    "name": "Housing & Development Bank",
+    "result": {
+      "symbol": "EGS60301C016.CA"
+    }
+  },
+  {
+    "name": "Howmet Aerospace",
+    "result": {
+      "symbol": "HWM"
+    }
+  },
+  {
+    "name": "HOYA CORPORATION",
+    "result": {
+      "symbol": "HYB.F"
+    }
+  },
+  {
+    "name": "HPSP Co",
+    "result": {
+      "symbol": "403870.KQ"
+    }
+  },
+  {
+    "name": "HUB24 Limited",
+    "result": {
+      "symbol": "HUB.AX"
+    }
+  },
+  {
+    "name": "Hubbell Inc",
+    "result": {
+      "symbol": "HUBB"
+    }
+  },
+  {
+    "name": "Huber+Suhner",
+    "result": {
+      "symbol": "HGUA.MU"
+    }
+  },
+  {
+    "name": "Hugel",
+    "result": {
+      "symbol": "145020.KQ"
+    }
+  },
+  {
+    "name": "HUGEL, INC.D",
+    "result": {
+      "symbol": "145020.KQ"
+    }
+  },
+  {
+    "name": "HUMEDIX CO., LTD.D",
+    "result": {
+      "symbol": "200670.KQ"
+    }
+  },
+  {
+    "name": "Huntington Ingalls Industries,",
+    "result": {
+      "symbol": "HII"
+    }
+  },
+  {
+    "name": "Huons",
+    "result": {
+      "symbol": "243070.KQ"
+    }
+  },
+  {
+    "name": "Huron Consulting Group Inc.",
+    "result": {
+      "symbol": "HURN"
+    }
+  },
+  {
+    "name": "HY-Lok",
+    "result": {
+      "symbol": "013030.KQ"
+    }
+  },
+  {
+    "name": "Hyphens Pharma",
+    "result": {
+      "symbol": "1J5.SI"
+    }
+  },
+  {
+    "name": "Hyundai Autoever",
+    "result": {
+      "symbol": "307950.KS"
+    }
+  },
+  {
+    "name": "Chemed Corp",
+    "result": {
+      "symbol": "CHE"
+    }
+  },
+  {
+    "name": "CHEMOMETEC A/S",
+    "result": {
+      "symbol": "CHEMM.CO"
+    }
+  },
+  {
+    "name": "Chewy, Inc.",
+    "result": {
+      "symbol": "CHWY"
+    }
+  },
+  {
+    "name": "CHIEF TELECOM INC",
+    "result": {
+      "symbol": "6561.TWO"
+    }
+  },
+  {
+    "name": "Chipotle Mexican Grill, Inc.",
+    "result": {
+      "symbol": "CMG"
+    }
+  },
+  {
+    "name": "I Homes, Inc.",
+    "result": {
+      "symbol": "INVH"
+    }
+  },
+  {
+    "name": "IAMGOLD Corp",
+    "result": {
+      "symbol": "IAG"
+    }
+  },
+  {
+    "name": "IBJ",
+    "result": {
+      "symbol": "6071.T"
+    }
+  },
+  {
+    "name": "Ibotta, Inc.",
+    "result": {
+      "symbol": "IBTA"
+    }
+  },
+  {
+    "name": "ICF International",
+    "result": {
+      "symbol": "ICFI"
+    }
+  },
+  {
+    "name": "Idacorp",
+    "result": {
+      "symbol": "IDA"
+    }
+  },
+  {
+    "name": "Idp Education",
+    "result": {
+      "symbol": "03F.F"
+    }
+  },
+  {
+    "name": "IDT Corporation",
+    "result": {
+      "symbol": "IDT"
+    }
+  },
+  {
+    "name": "Immersion Corporation",
+    "result": {
+      "symbol": "IMMR"
+    }
+  },
+  {
+    "name": "Indel",
+    "result": {
+      "symbol": "INDB.MI"
+    }
+  },
+  {
+    "name": "Infomedia",
+    "result": {
+      "symbol": "BGLOBAL.NS"
+    }
+  },
+  {
+    "name": "Infotel",
+    "result": {
+      "symbol": "INF.PA"
+    }
+  },
+  {
+    "name": "Infusystem Holdings",
+    "result": {
+      "symbol": "1TZ.F"
+    }
+  },
+  {
+    "name": "Inghams",
+    "result": {
+      "symbol": "IH1.DU"
+    }
+  },
+  {
+    "name": "Inmode",
+    "result": {
+      "symbol": "INMD"
+    }
+  },
+  {
+    "name": "Innodata Inc.",
+    "result": {
+      "symbol": "INOD"
+    }
+  },
+  {
+    "name": "Insperity",
+    "result": {
+      "symbol": "NSP"
+    }
+  },
+  {
+    "name": "Insurance Australia Group Limited",
+    "result": {
+      "symbol": "IAGPF.AX"
+    }
+  },
+  {
+    "name": "Integer Holdings",
+    "result": {
+      "symbol": "ITGR"
+    }
+  },
+  {
+    "name": "Integral Diagnostics",
+    "result": {
+      "symbol": "IDX.XA"
+    }
+  },
+  {
+    "name": "Inter Action",
+    "result": {
+      "symbol": "7725.T"
+    }
+  },
+  {
+    "name": "Inter Cars SA",
+    "result": {
+      "symbol": "7FZ.DU"
+    }
+  },
+  {
+    "name": "Interactive Brokers Group, Inc.",
+    "result": {
+      "symbol": "IBKR"
+    }
+  },
+  {
+    "name": "INTERNATIONAL GAMES SYSTEM CO",
+    "result": {
+      "symbol": "3293.TWO"
+    }
+  },
+  {
+    "name": "International Seaways",
+    "result": {
+      "symbol": "INSW"
+    }
+  },
+  {
+    "name": "Interparfums, Inc.",
+    "result": {
+      "symbol": "IPAR"
+    }
+  },
+  {
+    "name": "Interpump",
+    "result": {
+      "symbol": "8IG.F"
+    }
+  },
+  {
+    "name": "inTest",
+    "result": {
+      "symbol": "IN9.F"
+    }
+  },
+  {
+    "name": "Intuit Inc.",
+    "result": {
+      "symbol": "INTU"
+    }
+  },
+  {
+    "name": "INVEX Controladora SAB de CV",
+    "result": {
+      "symbol": "INVEXA.MX"
+    }
+  },
+  {
+    "name": "Ipsos",
+    "result": {
+      "symbol": "IPZ.F"
+    }
+  },
+  {
+    "name": "Iradimed",
+    "result": {
+      "symbol": "IRMD"
+    }
+  },
+  {
+    "name": "Irish Continental",
+    "result": {
+      "symbol": "IR5B.F"
+    }
+  },
+  {
+    "name": "Iriso Electronics",
+    "result": {
+      "symbol": "6908.T"
+    }
+  },
+  {
+    "name": "ISS A/S",
+    "result": {
+      "symbol": "QJQ.MU"
+    }
+  },
+  {
+    "name": "Itron, Inc.",
+    "result": {
+      "symbol": "ITRI"
+    }
+  },
+  {
+    "name": "ITT Inc.",
+    "result": {
+      "symbol": "ITT"
+    }
+  },
+  {
+    "name": "J & J Snack Foods",
+    "result": {
+      "symbol": "JJSF"
+    }
+  },
+  {
+    "name": "James Hardie Industries",
+    "result": {
+      "symbol": "JHX"
+    }
+  },
+  {
+    "name": "Janus International",
+    "result": {
+      "symbol": "JBI"
+    }
+  },
+  {
+    "name": "Japan Elevator Service Holdings Co",
+    "result": {
+      "symbol": "6544.T"
+    }
+  },
+  {
+    "name": "Jenoptik AG",
+    "result": {
+      "symbol": "0ZPV.IL"
+    }
+  },
+  {
+    "name": "JENTECH PRECISION INDUSTRIAL",
+    "result": {
+      "symbol": "3653.TW"
+    }
+  },
+  {
+    "name": "Johns Lyng",
+    "result": {
+      "symbol": "JLG.XA"
+    }
+  },
+  {
+    "name": "Joint",
+    "result": {
+      "symbol": "HSBK.IL"
+    }
+  },
+  {
+    "name": "JSE Ltd",
+    "result": {
+      "symbol": "JF6.SG"
+    }
+  },
+  {
+    "name": "Juhayna Food Industries",
+    "result": {
+      "symbol": "EGS30901C010.CA"
+    }
+  },
+  {
+    "name": "Jumbo Interactive Limited",
+    "result": {
+      "symbol": "JIN.AX"
+    }
+  },
+  {
+    "name": "Jungfraubahn Holding",
+    "result": {
+      "symbol": "JFBHF"
+    }
+  },
+  {
+    "name": "JVCkenwood",
+    "result": {
+      "symbol": "6632.T"
+    }
+  },
+  {
+    "name": "JVM Co",
+    "result": {
+      "symbol": "054950.KQ"
+    }
+  },
+  {
+    "name": "Jyothy Labs",
+    "result": {
+      "symbol": "JYOTHYLAB.NS"
+    }
+  },
+  {
+    "name": "JYP Entertainment",
+    "result": {
+      "symbol": "035900.KQ"
+    }
+  },
+  {
+    "name": "K CARD",
+    "result": {
+      "symbol": "KRTA.F"
+    }
+  },
+  {
+    "name": "K-Bro Linen",
+    "result": {
+      "symbol": "74R.F"
+    }
+  },
+  {
+    "name": "Kalbe Farma",
+    "result": {
+      "symbol": "LCLA.F"
+    }
+  },
+  {
+    "name": "Kale Kimyevi Maddeler",
+    "result": {
+      "symbol": "KLKIM.IS"
+    }
+  },
+  {
+    "name": "kambi",
+    "result": {
+      "symbol": "7KB.F"
+    }
+  },
+  {
+    "name": "Kangwon Land",
+    "result": {
+      "symbol": "035250.KS"
+    }
+  },
+  {
+    "name": "Kansai Paint Co",
+    "result": {
+      "symbol": "KAP.F"
+    }
+  },
+  {
+    "name": "Kardex",
+    "result": {
+      "symbol": "KARN.SW"
+    }
+  },
+  {
+    "name": "Kaufman et Broad",
+    "result": {
+      "symbol": "KOF.PA"
+    }
+  },
+  {
+    "name": "KBC Ancora Ord",
+    "result": {
+      "symbol": "KBCA.BR"
+    }
+  },
+  {
+    "name": "KeePer Technical Laboratory",
+    "result": {
+      "symbol": "6036.T"
+    }
+  },
+  {
+    "name": "Kid ASA",
+    "result": {
+      "symbol": "97Q.F"
+    }
+  },
+  {
+    "name": "Kimball Electronics",
+    "result": {
+      "symbol": "KE"
+    }
+  },
+  {
+    "name": "Kinaxis",
+    "result": {
+      "symbol": "9KX.F"
+    }
+  },
+  {
+    "name": "Kingsgate Consolidated Ltd.",
+    "result": {
+      "symbol": "KCN.SG"
+    }
+  },
+  {
+    "name": "Kirby",
+    "result": {
+      "symbol": "KEX"
+    }
+  },
+  {
+    "name": "Kirloskar Brothers",
+    "result": {
+      "symbol": "KIRLOSBROS.BO"
+    }
+  },
+  {
+    "name": "Kitron ASA",
+    "result": {
+      "symbol": "KP5.F"
+    }
+  },
+  {
+    "name": "KLA Corporation",
+    "result": {
+      "symbol": "KLAC"
+    }
+  },
+  {
+    "name": "KNC Laboratories",
+    "result": {
+      "symbol": "6568.T"
+    }
+  },
+  {
+    "name": "KNORR-BREMSE",
+    "result": {
+      "symbol": "US4991801071.SG"
+    }
+  },
+  {
+    "name": "Koei Tecmo Holdings",
+    "result": {
+      "symbol": "85T.F"
+    }
+  },
+  {
+    "name": "Komatsu Wall Industry",
+    "result": {
+      "symbol": "7949.T"
+    }
+  },
+  {
+    "name": "Konecranes",
+    "result": {
+      "symbol": "K34.BE"
+    }
+  },
+  {
+    "name": "Koninklijke Heijmans N.V.",
+    "result": {
+      "symbol": "0M6I.L"
+    }
+  },
+  {
+    "name": "Kontron AG",
+    "result": {
+      "symbol": "KTN.F"
+    }
+  },
+  {
+    "name": "koppers",
+    "result": {
+      "symbol": "KOP"
+    }
+  },
+  {
+    "name": "Korea Electric Terminal",
+    "result": {
+      "symbol": "025540.KS"
+    }
+  },
+  {
+    "name": "Kotobuki Spirits",
+    "result": {
+      "symbol": "2222.T"
+    }
+  },
+  {
+    "name": "KPIT Technologies",
+    "result": {
+      "symbol": "KPITTECH.NS"
+    }
+  },
+  {
+    "name": "Kraken Robotics Inc",
+    "result": {
+      "symbol": "PNG.V"
+    }
+  },
+  {
+    "name": "Krosaki Harima",
+    "result": {
+      "symbol": "5352.T"
+    }
+  },
+  {
+    "name": "KSB SE & Co",
+    "result": {
+      "symbol": "KSBD.XD"
+    }
+  },
+  {
+    "name": "KUO TOONG INTERNATIONAL",
+    "result": {
+      "symbol": "8936.TWO"
+    }
+  },
+  {
+    "name": "L'Air Liquide",
+    "result": {
+      "symbol": "AI.PA"
+    }
+  },
+  {
+    "name": "Laboratorios Farmaceuticos Rovi",
+    "result": {
+      "symbol": "41L.F"
+    }
+  },
+  {
+    "name": "LACOMER SAB DE CV",
+    "result": {
+      "symbol": "LACOMERUBC.MX"
+    }
+  },
+  {
+    "name": "Lagercrantz Group AB Ser B",
+    "result": {
+      "symbol": "LAGR-B.ST"
+    }
+  },
+  {
+    "name": "Leidos Holdings, Inc.",
+    "result": {
+      "symbol": "LDOS"
+    }
+  },
+  {
+    "name": "Lem Holding",
+    "result": {
+      "symbol": "LMHDF"
+    }
+  },
+  {
+    "name": "LeMaitre Vascular, Inc.",
+    "result": {
+      "symbol": "LMAT"
+    }
+  },
+  {
+    "name": "Limbach Holdings, Inc.",
+    "result": {
+      "symbol": "LMB"
+    }
+  },
+  {
+    "name": "Lime Technologies AB",
+    "result": {
+      "symbol": "LTX.F"
+    }
+  },
+  {
+    "name": "Linamar",
+    "result": {
+      "symbol": "LNR.F"
+    }
+  },
+  {
+    "name": "Link and Motivation",
+    "result": {
+      "symbol": "2170.T"
+    }
+  },
+  {
+    "name": "Liquidity Services, Inc.",
+    "result": {
+      "symbol": "LQDT"
+    }
+  },
+  {
+    "name": "Litalico",
+    "result": {
+      "symbol": "7366.T"
+    }
+  },
+  {
+    "name": "Loma Negra Cia Ind Argentina SA",
+    "result": {
+      "symbol": "8LN.DU"
+    }
+  },
+  {
+    "name": "Lorenzo",
+    "result": {
+      "symbol": "SNLGF"
+    }
+  },
+  {
+    "name": "Lovisa Holdings",
+    "result": {
+      "symbol": "LOV.AX"
+    }
+  },
+  {
+    "name": "LPL Financial Holdings Inc.",
+    "result": {
+      "symbol": "LPLA"
+    }
+  },
+  {
+    "name": "Luckin Coffee",
+    "result": {
+      "symbol": "LKNCY"
+    }
+  },
+  {
+    "name": "M-up Holdings",
+    "result": {
+      "symbol": "3661.T"
+    }
+  },
+  {
+    "name": "M&M Holdings PLC",
+    "result": {
+      "symbol": "MSTY.PA"
+    }
+  },
+  {
+    "name": "Macbee Planet",
+    "result": {
+      "symbol": "7095.T"
+    }
+  },
+  {
+    "name": "Macquarie Technology",
+    "result": {
+      "symbol": "MAQ.XA"
+    }
+  },
+  {
+    "name": "Mader Group Limited",
+    "result": {
+      "symbol": "MAD.AX"
+    }
+  },
+  {
+    "name": "Maire",
+    "result": {
+      "symbol": "3OY1.F"
+    }
+  },
+  {
+    "name": "Management Solutions",
+    "result": {
+      "symbol": "7033.T"
+    }
+  },
+  {
+    "name": "Mandalay Resources Corp",
+    "result": {
+      "symbol": "CA5625684025.SG"
+    }
+  },
+  {
+    "name": "Manhattan Associates, Inc.",
+    "result": {
+      "symbol": "MANH"
+    }
+  },
+  {
+    "name": "Mani inc",
+    "result": {
+      "symbol": "MNICF"
+    }
+  },
+  {
+    "name": "Marco Polo Marine",
+    "result": {
+      "symbol": "MRPMF"
+    }
+  },
+  {
+    "name": "MarkLines Co",
+    "result": {
+      "symbol": "3901.T"
+    }
+  },
+  {
+    "name": "Marks and Spencer",
+    "result": {
+      "symbol": "MKS.L"
+    }
+  },
+  {
+    "name": "Marks Electrical",
+    "result": {
+      "symbol": "KV7.F"
+    }
+  },
+  {
+    "name": "Martinrea International",
+    "result": {
+      "symbol": "03M.F"
+    }
+  },
+  {
+    "name": "Matson, Inc.",
+    "result": {
+      "symbol": "MATX"
+    }
+  },
+  {
+    "name": "Maurel et Prom",
+    "result": {
+      "symbol": "ETX.F"
+    }
+  },
+  {
+    "name": "Max Healthcare Institute",
+    "result": {
+      "symbol": "MAXHEALTH.BO"
+    }
+  },
+  {
+    "name": "Max Stock Ltd.",
+    "result": {
+      "symbol": "MAXO.TA"
+    }
+  },
+  {
+    "name": "Mazda Motor",
+    "result": {
+      "symbol": "MZA0.F"
+    }
+  },
+  {
+    "name": "McGrath RentCorp",
+    "result": {
+      "symbol": "MG8.F"
+    }
+  },
+  {
+    "name": "McMillan Shakespeare Limited",
+    "result": {
+      "symbol": "NMN.F"
+    }
+  },
+  {
+    "name": "Mears Group",
+    "result": {
+      "symbol": "MM7.F"
+    }
+  },
+  {
+    "name": "Medacta Group",
+    "result": {
+      "symbol": "6MD.F"
+    }
+  },
+  {
+    "name": "Medical Properties Trust",
+    "result": {
+      "symbol": "MPW"
+    }
+  },
+  {
+    "name": "Medistim",
+    "result": {
+      "symbol": "MEDI.OL"
+    }
+  },
+  {
+    "name": "Medley",
+    "result": {
+      "symbol": "MDLM"
+    }
+  },
+  {
+    "name": "Medpace Holdings",
+    "result": {
+      "symbol": "MEDP"
+    }
+  },
+  {
+    "name": "Meier Tobler",
+    "result": {
+      "symbol": "MTGZ.XC"
+    }
+  },
+  {
+    "name": "Meko AB",
+    "result": {
+      "symbol": "1OM.F"
+    }
+  },
+  {
+    "name": "Melexis NV",
+    "result": {
+      "symbol": "MLXSF"
+    }
+  },
+  {
+    "name": "Merck & Company, Inc.",
+    "result": {
+      "symbol": "MRK"
+    }
+  },
+  {
+    "name": "Mercury General Corporation",
+    "result": {
+      "symbol": "MCY"
+    }
+  },
+  {
+    "name": "Mersen",
+    "result": {
+      "symbol": "CBLNF"
+    }
+  },
+  {
+    "name": "Metropolitan Bank & Trust Co.",
+    "result": {
+      "symbol": "MTPOF"
+    }
+  },
+  {
+    "name": "Micro Systemation",
+    "result": {
+      "symbol": "W98.F"
+    }
+  },
+  {
+    "name": "Microchip Technology",
+    "result": {
+      "symbol": "MCHP"
+    }
+  },
+  {
+    "name": "Military Commercial Joint Stock Bank",
+    "result": {
+      "symbol": "MBB.VN"
+    }
+  },
+  {
+    "name": "Miller Industries, Inc.",
+    "result": {
+      "symbol": "MLR"
+    }
+  },
+  {
+    "name": "Mimaki Engineering",
+    "result": {
+      "symbol": "6638.T"
+    }
+  },
+  {
+    "name": "Mineros S.A.",
+    "result": {
+      "symbol": "MINEROS.CL"
+    }
+  },
+  {
+    "name": "MIPS AB",
+    "result": {
+      "symbol": "MIPS.ST"
+    }
+  },
+  {
+    "name": "Mitek Systems",
+    "result": {
+      "symbol": "MITK"
+    }
+  },
+  {
+    "name": "Mitie Group PLC",
+    "result": {
+      "symbol": "MZ4.F"
+    }
+  },
+  {
+    "name": "MLP Saglik",
+    "result": {
+      "symbol": "MPARK.IS"
+    }
+  },
+  {
+    "name": "Mobile World Investment Corporation",
+    "result": {
+      "symbol": "MWG.VN"
+    }
+  },
+  {
+    "name": "modine",
+    "result": {
+      "symbol": "MOD"
+    }
+  },
+  {
+    "name": "Mold-Tek",
+    "result": {
+      "symbol": "MOLDTECH.BO"
+    }
+  },
+  {
+    "name": "Molina Healthcare Inc",
+    "result": {
+      "symbol": "MOH"
+    }
+  },
+  {
+    "name": "Monolithic Power Systems, Inc.",
+    "result": {
+      "symbol": "MPWR"
+    }
+  },
+  {
+    "name": "Mony Group PLC",
+    "result": {
+      "symbol": "MONYL.XC"
+    }
+  },
+  {
+    "name": "Morningstar, Inc.",
+    "result": {
+      "symbol": "MORN"
+    }
+  },
+  {
+    "name": "Mortgage Advice Bureau (Holdings) PLC",
+    "result": {
+      "symbol": "MAB1.L"
+    }
+  },
+  {
+    "name": "MPI CORPORATION",
+    "result": {
+      "symbol": "6223.TWO"
+    }
+  },
+  {
+    "name": "MPLX LP",
+    "result": {
+      "symbol": "MPLX"
+    }
+  },
+  {
+    "name": "mtch",
+    "result": {
+      "symbol": "MTCH"
+    }
+  },
+  {
+    "name": "Mueller Industries, Inc.",
+    "result": {
+      "symbol": "MLI"
+    }
+  },
+  {
+    "name": "Mueller Water Products",
+    "result": {
+      "symbol": "MWA"
+    }
+  },
+  {
+    "name": "Multi Bintang Indonesia",
+    "result": {
+      "symbol": "MLBI.JK"
+    }
+  },
+  {
+    "name": "Multiconsult ASA",
+    "result": {
+      "symbol": "3MC.F"
+    }
+  },
+  {
+    "name": "Musashi Seimitsu Industry",
+    "result": {
+      "symbol": "7220.T"
+    }
+  },
+  {
+    "name": "Mycronic AB",
+    "result": {
+      "symbol": "MLT0.F"
+    }
+  },
+  {
+    "name": "Myoung Shin Industrial",
+    "result": {
+      "symbol": "009900.KS"
+    }
+  },
+  {
+    "name": "Myrg",
+    "result": {
+      "symbol": "MYRG"
+    }
+  },
+  {
+    "name": "Mytilineos",
+    "result": {
+      "symbol": "MYTHF"
+    }
+  },
+  {
+    "name": "N-Able",
+    "result": {
+      "symbol": "NABL"
+    }
+  },
+  {
+    "name": "Nakanishi",
+    "result": {
+      "symbol": "6SN.F"
+    }
+  },
+  {
+    "name": "Nanosonics",
+    "result": {
+      "symbol": "NAN.AX"
+    }
+  },
+  {
+    "name": "Napco Security Technologies",
+    "result": {
+      "symbol": "NSSC"
+    }
+  },
+  {
+    "name": "Navigator Global Investments Limited",
+    "result": {
+      "symbol": "HVH.F"
+    }
+  },
+  {
+    "name": "NC AB Ser. A",
+    "result": {
+      "symbol": "NCC-A.ST"
+    }
+  },
+  {
+    "name": "Nedbank Group Ltd",
+    "result": {
+      "symbol": "NED.JO"
+    }
+  },
+  {
+    "name": "Nederman Holding",
+    "result": {
+      "symbol": "NMAN.ST"
+    }
+  },
+  {
+    "name": "nemak",
+    "result": {
+      "symbol": "NEMAKA.MX"
+    }
+  },
+  {
+    "name": "Neogen",
+    "result": {
+      "symbol": "NEO"
+    }
+  },
+  {
+    "name": "nesn",
+    "result": {
+      "symbol": "NESN.SW"
+    }
+  },
+  {
+    "name": "NetApp, Inc.",
+    "result": {
+      "symbol": "NTAP"
+    }
+  },
+  {
+    "name": "Netflix, Inc.",
+    "result": {
+      "symbol": "NFLX"
+    }
+  },
+  {
+    "name": "Neuland",
+    "result": {
+      "symbol": "NEULANDLAB.BO"
+    }
+  },
+  {
+    "name": "Neurocrine Biosciences",
+    "result": {
+      "symbol": "NBIX"
+    }
+  },
+  {
+    "name": "Neurones",
+    "result": {
+      "symbol": "NE9.F"
+    }
+  },
+  {
+    "name": "New York Times Company (The)",
+    "result": {
+      "symbol": "NYT"
+    }
+  },
+  {
+    "name": "Newlat Food",
+    "result": {
+      "symbol": "IT0005385213.SG"
+    }
+  },
+  {
+    "name": "Nexteq",
+    "result": {
+      "symbol": "R87.F"
+    }
+  },
+  {
+    "name": "NexTone",
+    "result": {
+      "symbol": "7094.T"
+    }
+  },
+  {
+    "name": "Nexus AG",
+    "result": {
+      "symbol": "NXU.F"
+    }
+  },
+  {
+    "name": "NICE",
+    "result": {
+      "symbol": "NICE"
+    }
+  },
+  {
+    "name": "Nicolet Bankshares Inc.",
+    "result": {
+      "symbol": "NIC"
+    }
+  },
+  {
+    "name": "nintendo",
+    "result": {
+      "symbol": "NTDOY"
+    }
+  },
+  {
+    "name": "Nisso Holdings",
+    "result": {
+      "symbol": "9332.T"
+    }
+  },
+  {
+    "name": "NKT a/s",
+    "result": {
+      "symbol": "NKT.F"
+    }
+  },
+  {
+    "name": "nmfc",
+    "result": {
+      "symbol": "NMFC"
+    }
+  },
+  {
+    "name": "NMI Holdings Inc",
+    "result": {
+      "symbol": "NMIH"
+    }
+  },
+  {
+    "name": "Nomura Micro Science",
+    "result": {
+      "symbol": "6254.T"
+    }
+  },
+  {
+    "name": "NOMURA RESEARCH INSTITUTE",
+    "result": {
+      "symbol": "NR7.F"
+    }
+  },
+  {
+    "name": "Nongshim",
+    "result": {
+      "symbol": "072710.KS"
+    }
+  },
+  {
+    "name": "Norbit ASA",
+    "result": {
+      "symbol": "4NK.F"
+    }
+  },
+  {
+    "name": "Nordnet AB",
+    "result": {
+      "symbol": "SAVE.ST"
+    }
+  },
+  {
+    "name": "Norion Bank AB",
+    "result": {
+      "symbol": "NORIOS.XD"
+    }
+  },
+  {
+    "name": "North American Construction",
+    "result": {
+      "symbol": "N5Z.F"
+    }
+  },
+  {
+    "name": "Northern Oil and Gas, Inc.",
+    "result": {
+      "symbol": "NOG"
+    }
+  },
+  {
+    "name": "Northern Star Resources",
+    "result": {
+      "symbol": "NST.AX"
+    }
+  },
+  {
+    "name": "Northrim BanCorp Inc",
+    "result": {
+      "symbol": "NRIM"
+    }
+  },
+  {
+    "name": "Nova Ltd.",
+    "result": {
+      "symbol": "NVMI"
+    }
+  },
+  {
+    "name": "Novo Nordisk B A/S",
+    "result": {
+      "symbol": "NOVO-B.CO"
+    }
+  },
+  {
+    "name": "NRB Bearings",
+    "result": {
+      "symbol": "NRBBEARING.BO"
+    }
+  },
+  {
+    "name": "NRJ group",
+    "result": {
+      "symbol": "NRGP.XD"
+    }
+  },
+  {
+    "name": "NRW Holdings Limited",
+    "result": {
+      "symbol": "3NR.F"
+    }
+  },
+  {
+    "name": "NVENT ELECTRIC",
+    "result": {
+      "symbol": "NVT"
+    }
+  },
+  {
+    "name": "NVT",
+    "result": {
+      "symbol": "NVT"
+    }
+  },
+  {
+    "name": "O'Reilly Automotive",
+    "result": {
+      "symbol": "ORLY"
+    }
+  },
+  {
+    "name": "OBIC CO",
+    "result": {
+      "symbol": "OBL.F"
+    }
+  },
+  {
+    "name": "Objective Corporation Limited",
+    "result": {
+      "symbol": "OCL.XA"
+    }
+  },
+  {
+    "name": "OCBC Bank",
+    "result": {
+      "symbol": "O39.SI"
+    }
+  },
+  {
+    "name": "Oceanagold Corporation",
+    "result": {
+      "symbol": "OGC.TO"
+    }
+  },
+  {
+    "name": "Oddity Tech Ltd.",
+    "result": {
+      "symbol": "KW7.F"
+    }
+  },
+  {
+    "name": "Odfjell SE",
+    "result": {
+      "symbol": "O7F.F"
+    }
+  },
+  {
+    "name": "Okuma",
+    "result": {
+      "symbol": "6103.T"
+    }
+  },
+  {
+    "name": "Ollie's Bargain Outlet",
+    "result": {
+      "symbol": "OLLI"
+    }
+  },
+  {
+    "name": "One Career",
+    "result": {
+      "symbol": "4377.T"
+    }
+  },
+  {
+    "name": "OneSpaWorld Holdings Limited",
+    "result": {
+      "symbol": "OSW"
+    }
+  },
+  {
+    "name": "Onto Innovation Inc.",
+    "result": {
+      "symbol": "ONTO"
+    }
+  },
+  {
+    "name": "Open Up",
+    "result": {
+      "symbol": "2154.T"
+    }
+  },
+  {
+    "name": "Orezone Gold Corp",
+    "result": {
+      "symbol": "OEX0.F"
+    }
+  },
+  {
+    "name": "Orica",
+    "result": {
+      "symbol": "ICA.F"
+    }
+  },
+  {
+    "name": "ORIENTAL LAND",
+    "result": {
+      "symbol": "OLL.HA"
+    }
+  },
+  {
+    "name": "Orion",
+    "result": {
+      "symbol": "OEC"
+    }
+  },
+  {
+    "name": "Orion Corporation",
+    "result": {
+      "symbol": "ORNBV.HE"
+    }
+  },
+  {
+    "name": "Oshkosh",
+    "result": {
+      "symbol": "OSK"
+    }
+  },
+  {
+    "name": "OSI Systems, Inc.",
+    "result": {
+      "symbol": "OSIS"
+    }
+  },
+  {
+    "name": "Otsuka",
+    "result": {
+      "symbol": "4768.T"
+    }
+  },
+  {
+    "name": "OVB Holding AG",
+    "result": {
+      "symbol": "O4B.F"
+    }
+  },
+  {
+    "name": "Packaging Corporation of America",
+    "result": {
+      "symbol": "PKG"
+    }
+  },
+  {
+    "name": "Palomar Holdings, Inc.",
+    "result": {
+      "symbol": "PLMR"
+    }
+  },
+  {
+    "name": "Pampa Energia S.A.",
+    "result": {
+      "symbol": "PAM"
+    }
+  },
+  {
+    "name": "Pandora A/S",
+    "result": {
+      "symbol": "PNDORA.CO"
+    }
+  },
+  {
+    "name": "Panunited",
+    "result": {
+      "symbol": "P52.SI"
+    }
+  },
+  {
+    "name": "Park24",
+    "result": {
+      "symbol": "4666.T"
+    }
+  },
+  {
+    "name": "Parsons Corporation",
+    "result": {
+      "symbol": "PSN"
+    }
+  },
+  {
+    "name": "Partners Group",
+    "result": {
+      "symbol": "PEYA.F"
+    }
+  },
+  {
+    "name": "pax",
+    "result": {
+      "symbol": "PAX"
+    }
+  },
+  {
+    "name": "Paylocity Holding Corporation",
+    "result": {
+      "symbol": "PCTY"
+    }
+  },
+  {
+    "name": "Paysign",
+    "result": {
+      "symbol": "PAYS"
+    }
+  },
+  {
+    "name": "Pegasystems Inc.",
+    "result": {
+      "symbol": "PEGA"
+    }
+  },
+  {
+    "name": "Pennant",
+    "result": {
+      "symbol": "PFLT"
+    }
+  },
+  {
+    "name": "PEOPLE & TECHNOLOGY, INC.D",
+    "result": {
+      "symbol": "137400.KQ"
+    }
+  },
+  {
+    "name": "pep",
+    "result": {
+      "symbol": "PEP"
+    }
+  },
+  {
+    "name": "PeptiDream",
+    "result": {
+      "symbol": "4587.T"
+    }
+  },
+  {
+    "name": "Perenti",
+    "result": {
+      "symbol": "FWG.F"
+    }
+  },
+  {
+    "name": "Petershill Partners PLC",
+    "result": {
+      "symbol": "9X7.F"
+    }
+  },
+  {
+    "name": "PHA Co",
+    "result": {
+      "symbol": "TAK"
+    }
+  },
+  {
+    "name": "Pharmanutra",
+    "result": {
+      "symbol": "PHN.MI"
+    }
+  },
+  {
+    "name": "PharmaResearch",
+    "result": {
+      "symbol": "214450.KQ"
+    }
+  },
+  {
+    "name": "Pharmasgp Holding SE",
+    "result": {
+      "symbol": "PSGD.XD"
+    }
+  },
+  {
+    "name": "PHISON ELECTRONICS CORP",
+    "result": {
+      "symbol": "8299.TWO"
+    }
+  },
+  {
+    "name": "Pinnacle Investment Management Group Limited",
+    "result": {
+      "symbol": "PNI.AX"
+    }
+  },
+  {
+    "name": "PKOBP",
+    "result": {
+      "symbol": "PKO.WA"
+    }
+  },
+  {
+    "name": "Planet Fitness",
+    "result": {
+      "symbol": "PLNT"
+    }
+  },
+  {
+    "name": "Playway",
+    "result": {
+      "symbol": "6P5.SG"
+    }
+  },
+  {
+    "name": "Plejd AB",
+    "result": {
+      "symbol": "3CA.F"
+    }
+  },
+  {
+    "name": "Plexus",
+    "result": {
+      "symbol": "PLXS"
+    }
+  },
+  {
+    "name": "Plus Alpha Consulting",
+    "result": {
+      "symbol": "4071.T"
+    }
+  },
+  {
+    "name": "Popular, Inc.",
+    "result": {
+      "symbol": "BPOP"
+    }
+  },
+  {
+    "name": "Powell Industries, Inc.",
+    "result": {
+      "symbol": "POWL"
+    }
+  },
+  {
+    "name": "Power Solutions International, Inc.",
+    "result": {
+      "symbol": "PSIX"
+    }
+  },
+  {
+    "name": "POYA INTERNATIONAL CO LTD",
+    "result": {
+      "symbol": "5904.TWO"
+    }
+  },
+  {
+    "name": "Prestige International",
+    "result": {
+      "symbol": "4290.T"
+    }
+  },
+  {
+    "name": "PriceSmart, Inc.",
+    "result": {
+      "symbol": "PSMT"
+    }
+  },
+  {
+    "name": "Primoris Services",
+    "result": {
+      "symbol": "PRIM"
+    }
+  },
+  {
+    "name": "Progressive Corporation (The)",
+    "result": {
+      "symbol": "PGR"
+    }
+  },
+  {
+    "name": "progyny",
+    "result": {
+      "symbol": "PGNY"
+    }
+  },
+  {
+    "name": "Promotora y Operadora de Infraestructura",
+    "result": {
+      "symbol": "AKY.F"
+    }
+  },
+  {
+    "name": "Propel Holdings Inc",
+    "result": {
+      "symbol": "8KO.F"
+    }
+  },
+  {
+    "name": "Protector Forsikring ASA",
+    "result": {
+      "symbol": "PSKRY"
+    }
+  },
+  {
+    "name": "Proto",
+    "result": {
+      "symbol": "PRLB"
+    }
+  },
+  {
+    "name": "PSO",
+    "result": {
+      "symbol": "PSO"
+    }
+  },
+  {
+    "name": "pt mitra adiperkasa",
+    "result": {
+      "symbol": "QGI.F"
+    }
+  },
+  {
+    "name": "PulteGroup, Inc.",
+    "result": {
+      "symbol": "PHM"
+    }
+  },
+  {
+    "name": "Pum Tech Korea",
+    "result": {
+      "symbol": "251970.KQ"
+    }
+  },
+  {
+    "name": "puody",
+    "result": {
+      "symbol": "PUODY"
+    }
+  },
+  {
+    "name": "Puuilo PLC",
+    "result": {
+      "symbol": "8JQ.MU"
+    }
+  },
+  {
+    "name": "pVA Tepla AG",
+    "result": {
+      "symbol": "TPE.F"
+    }
+  },
+  {
+    "name": "PWR Holdings",
+    "result": {
+      "symbol": "PWRHF"
+    }
+  },
+  {
+    "name": "QB Net Holdings",
+    "result": {
+      "symbol": "6571.T"
+    }
+  },
+  {
+    "name": "QBE Insurance Group Limited",
+    "result": {
+      "symbol": "QBEIF"
+    }
+  },
+  {
+    "name": "QT Group OYJ",
+    "result": {
+      "symbol": "2QT.F"
+    }
+  },
+  {
+    "name": "Qube Holdings",
+    "result": {
+      "symbol": "QUBHF"
+    }
+  },
+  {
+    "name": "R&S Group",
+    "result": {
+      "symbol": "RSGN.SW"
+    }
+  },
+  {
+    "name": "Rainbow",
+    "result": {
+      "symbol": "RBW.WA"
+    }
+  },
+  {
+    "name": "Rakus",
+    "result": {
+      "symbol": "3923.T"
+    }
+  },
+  {
+    "name": "Ralph Lauren",
+    "result": {
+      "symbol": "RL"
+    }
+  },
+  {
+    "name": "Ramelius Resources Limited",
+    "result": {
+      "symbol": "RMS.XA"
+    }
+  },
+  {
+    "name": "Raymond James Financial, Inc.",
+    "result": {
+      "symbol": "RJF"
+    }
+  },
+  {
+    "name": "Recordati Ord",
+    "result": {
+      "symbol": "REC.MI"
+    }
+  },
+  {
+    "name": "RECRUIT HOLDINGS",
+    "result": {
+      "symbol": "6098.T"
+    }
+  },
+  {
+    "name": "Red River Bancshares, Inc.",
+    "result": {
+      "symbol": "RRBI"
+    }
+  },
+  {
+    "name": "Regional SAB de CV",
+    "result": {
+      "symbol": "RA.MX"
+    }
+  },
+  {
+    "name": "Rejlers",
+    "result": {
+      "symbol": "3RE.F"
+    }
+  },
+  {
+    "name": "Reliance Worldwide",
+    "result": {
+      "symbol": "0EU.F"
+    }
+  },
+  {
+    "name": "Renta 4 Banco, S.A.",
+    "result": {
+      "symbol": "R4.MC"
+    }
+  },
+  {
+    "name": "Reply",
+    "result": {
+      "symbol": "REJA.F"
+    }
+  },
+  {
+    "name": "ReposiTrak, Inc.",
+    "result": {
+      "symbol": "TRAK"
+    }
+  },
+  {
+    "name": "Republic Services",
+    "result": {
+      "symbol": "RSG"
+    }
+  },
+  {
+    "name": "ResMed Inc.",
+    "result": {
+      "symbol": "RMD"
+    }
+  },
+  {
+    "name": "Revolve Group, Inc.",
+    "result": {
+      "symbol": "RVLV"
+    }
+  },
+  {
+    "name": "Rheinmetall",
+    "result": {
+      "symbol": "RHM.DE"
+    }
+  },
+  {
+    "name": "RIVERSTONE",
+    "result": {
+      "symbol": "RIY.MU"
+    }
+  },
+  {
+    "name": "Robertet",
+    "result": {
+      "symbol": "0R7.F"
+    }
+  },
+  {
+    "name": "Rockwool A/S Ser. A",
+    "result": {
+      "symbol": "ROCK-A.CO"
+    }
+  },
+  {
+    "name": "Rohto Pharmaceutical",
+    "result": {
+      "symbol": "UC1.F"
+    }
+  },
+  {
+    "name": "Rollins, Inc.",
+    "result": {
+      "symbol": "ROL"
+    }
+  },
+  {
+    "name": "Royal Caribbean Cruises Ltd.",
+    "result": {
+      "symbol": "RCL"
+    }
+  },
+  {
+    "name": "Royal Gold, Inc.",
+    "result": {
+      "symbol": "RGLD"
+    }
+  },
+  {
+    "name": "Royal Unibrew A/S",
+    "result": {
+      "symbol": "0R1.F"
+    }
+  },
+  {
+    "name": "SAAB AB Ser. B",
+    "result": {
+      "symbol": "SAAB-B.ST"
+    }
+  },
+  {
+    "name": "Saf-Holland Se",
+    "result": {
+      "symbol": "SFQ.F"
+    }
+  },
+  {
+    "name": "SALESFORCE",
+    "result": {
+      "symbol": "CRM"
+    }
+  },
+  {
+    "name": "Samwha Capacitor",
+    "result": {
+      "symbol": "001820.KS"
+    }
+  },
+  {
+    "name": "Sandhar",
+    "result": {
+      "symbol": "SANDHAR.NS"
+    }
+  },
+  {
+    "name": "SandRidge Energy, Inc.",
+    "result": {
+      "symbol": "SD"
+    }
+  },
+  {
+    "name": "Sanken Electric",
+    "result": {
+      "symbol": "SANJF"
+    }
+  },
+  {
+    "name": "Sanlorenzo",
+    "result": {
+      "symbol": "6SZA.MU"
+    }
+  },
+  {
+    "name": "Sanrio Co",
+    "result": {
+      "symbol": "SJ8.F"
+    }
+  },
+  {
+    "name": "Santam Limited",
+    "result": {
+      "symbol": "SNT.JO"
+    }
+  },
+  {
+    "name": "Sanwa Holdings",
+    "result": {
+      "symbol": "5929.T"
+    }
+  },
+  {
+    "name": "Saunders International",
+    "result": {
+      "symbol": "SND.XA"
+    }
+  },
+  {
+    "name": "Scanfil",
+    "result": {
+      "symbol": "S0A.F"
+    }
+  },
+  {
+    "name": "Scout24 SE",
+    "result": {
+      "symbol": "G24D.XD"
+    }
+  },
+  {
+    "name": "SCSK CORP",
+    "result": {
+      "symbol": "QSU.F"
+    }
+  },
+  {
+    "name": "Sdiptech",
+    "result": {
+      "symbol": "938.F"
+    }
+  },
+  {
+    "name": "Sega Sammy Holdings",
+    "result": {
+      "symbol": "RYU.F"
+    }
+  },
+  {
+    "name": "SEI Investments Company",
+    "result": {
+      "symbol": "SEIC"
+    }
+  },
+  {
+    "name": "select medical",
+    "result": {
+      "symbol": "SEM"
+    }
+  },
+  {
+    "name": "Semler Scientific",
+    "result": {
+      "symbol": "SMLR"
+    }
+  },
+  {
+    "name": "Seraku Co",
+    "result": {
+      "symbol": "6199.T"
+    }
+  },
+  {
+    "name": "Sercomm",
+    "result": {
+      "symbol": "5388.TW"
+    }
+  },
+  {
+    "name": "SharkNinja, Inc.",
+    "result": {
+      "symbol": "SN"
+    }
+  },
+  {
+    "name": "Shibaura",
+    "result": {
+      "symbol": "6104.T"
+    }
+  },
+  {
+    "name": "Shibaura Machine",
+    "result": {
+      "symbol": "6104.T"
+    }
+  },
+  {
+    "name": "Shift",
+    "result": {
+      "symbol": "FOUR"
+    }
+  },
+  {
+    "name": "Shimadzu",
+    "result": {
+      "symbol": "HDZ.F"
+    }
+  },
+  {
+    "name": "Shin Maint Holdings Co",
+    "result": {
+      "symbol": "6086.T"
+    }
+  },
+  {
+    "name": "Shopper",
+    "result": {
+      "symbol": "1F0.SI"
+    }
+  },
+  {
+    "name": "Siegfried",
+    "result": {
+      "symbol": "SQG0.F"
+    }
+  },
+  {
+    "name": "Sigmaxyz Holdings",
+    "result": {
+      "symbol": "6088.T"
+    }
+  },
+  {
+    "name": "SIIX",
+    "result": {
+      "symbol": "7613.T"
+    }
+  },
+  {
+    "name": "Sika",
+    "result": {
+      "symbol": "SKR.BK"
+    }
+  },
+  {
+    "name": "SILICON  CO.,LTD.D",
+    "result": {
+      "symbol": "257720.KQ"
+    }
+  },
+  {
+    "name": "Silicon Motion Technology Corporation",
+    "result": {
+      "symbol": "SIMO"
+    }
+  },
+  {
+    "name": "Simplex Holdings",
+    "result": {
+      "symbol": "4373.T"
+    }
+  },
+  {
+    "name": "Sinbon Electronics",
+    "result": {
+      "symbol": "3023.TW"
+    }
+  },
+  {
+    "name": "Skyward Specialty Insurance Group, Inc.",
+    "result": {
+      "symbol": "SKWD"
+    }
+  },
+  {
+    "name": "SL CORPORATION",
+    "result": {
+      "symbol": "SLM"
+    }
+  },
+  {
+    "name": "Smaregi",
+    "result": {
+      "symbol": "4431.T"
+    }
+  },
+  {
+    "name": "Smart Parking",
+    "result": {
+      "symbol": "E8Q.F"
+    }
+  },
+  {
+    "name": "SmartGroup Corporation Ltd",
+    "result": {
+      "symbol": "SW8.F"
+    }
+  },
+  {
+    "name": "SmartPay Holdings",
+    "result": {
+      "symbol": "SMP.XA"
+    }
+  },
+  {
+    "name": "SMCI",
+    "result": {
+      "symbol": "SMCI"
+    }
+  },
+  {
+    "name": "Smiths Group PLC",
+    "result": {
+      "symbol": "QS2A.F"
+    }
+  },
+  {
+    "name": "SMS CO",
+    "result": {
+      "symbol": "SMSZF"
+    }
+  },
+  {
+    "name": "SNT MOTIV",
+    "result": {
+      "symbol": "064960.KS"
+    }
+  },
+  {
+    "name": "Societe Ldc SA",
+    "result": {
+      "symbol": "LOUPP.XD"
+    }
+  },
+  {
+    "name": "Sol SpA",
+    "result": {
+      "symbol": "QOL.MU"
+    }
+  },
+  {
+    "name": "SOLID, INC.D",
+    "result": {
+      "symbol": "SLDP"
+    }
+  },
+  {
+    "name": "Southern Cross Electrical Engineering Ltd",
+    "result": {
+      "symbol": "4SO.BE"
+    }
+  },
+  {
+    "name": "Southern States Bancshares, Inc.",
+    "result": {
+      "symbol": "GEMI"
+    }
+  },
+  {
+    "name": "SP Group A/S",
+    "result": {
+      "symbol": "SPIR.OL"
+    }
+  },
+  {
+    "name": "Sprouts Farmers Market, Inc.",
+    "result": {
+      "symbol": "SFM"
+    }
+  },
+  {
+    "name": "SPS Commerce",
+    "result": {
+      "symbol": "SPSC"
+    }
+  },
+  {
+    "name": "SPX Technologies, Inc.",
+    "result": {
+      "symbol": "SPXC"
+    }
+  },
+  {
+    "name": "ST Engineering",
+    "result": {
+      "symbol": "S63.SI"
+    }
+  },
+  {
+    "name": "Stef SA",
+    "result": {
+      "symbol": "STF.PA"
+    }
+  },
+  {
+    "name": "Sterling Infrastructure, Inc.",
+    "result": {
+      "symbol": "STRL"
+    }
+  },
+  {
+    "name": "STO SE &",
+    "result": {
+      "symbol": "STO3.F"
+    }
+  },
+  {
+    "name": "Stolt-Nielsen Limited",
+    "result": {
+      "symbol": "SN6.F"
+    }
+  },
+  {
+    "name": "Straumann",
+    "result": {
+      "symbol": "SAUHY"
+    }
+  },
+  {
+    "name": "Stride, Inc.",
+    "result": {
+      "symbol": "LRN"
+    }
+  },
+  {
+    "name": "Strike Co",
+    "result": {
+      "symbol": "6196.T"
+    }
+  },
+  {
+    "name": "Sues Microtec",
+    "result": {
+      "symbol": "SMHN.HA"
+    }
+  },
+  {
+    "name": "Supply Network",
+    "result": {
+      "symbol": "SNL.AX"
+    }
+  },
+  {
+    "name": "Surgical Science Sweden",
+    "result": {
+      "symbol": "4P41.F"
+    }
+  },
+  {
+    "name": "Swedish Orphan Biovitrum",
+    "result": {
+      "symbol": "B6E.F"
+    }
+  },
+  {
+    "name": "Swissquote",
+    "result": {
+      "symbol": "SQNZ.XC"
+    }
+  },
+  {
+    "name": "Synergie SE",
+    "result": {
+      "symbol": "SDG.PA"
+    }
+  },
+  {
+    "name": "SYSCO",
+    "result": {
+      "symbol": "SYY"
+    }
+  },
+  {
+    "name": "System Support",
+    "result": {
+      "symbol": "4396.T"
+    }
+  },
+  {
+    "name": "Systemair",
+    "result": {
+      "symbol": "52SA.F"
+    }
+  },
+  {
+    "name": "T&L CO., LTD.D",
+    "result": {
+      "symbol": "LOVE"
+    }
+  },
+  {
+    "name": "Taiwan semi",
+    "result": {
+      "symbol": "TSM"
+    }
+  },
+  {
+    "name": "TAIWAN UNION TECHNOLOGY CORPORATION",
+    "result": {
+      "symbol": "6274.TWO"
+    }
+  },
+  {
+    "name": "Takeuchi Mfg",
+    "result": {
+      "symbol": "6432.T"
+    }
+  },
+  {
+    "name": "Target Hospitality",
+    "result": {
+      "symbol": "TH"
+    }
+  },
+  {
+    "name": "Tasmea Limited",
+    "result": {
+      "symbol": "TEA.XA"
+    }
+  },
+  {
+    "name": "Taylor Morrison Home Corporation",
+    "result": {
+      "symbol": "TMHC"
+    }
+  },
+  {
+    "name": "TDC Soft",
+    "result": {
+      "symbol": "4687.T"
+    }
+  },
+  {
+    "name": "TeamViewer SE",
+    "result": {
+      "symbol": "TMV.F"
+    }
+  },
+  {
+    "name": "Tecnoglass",
+    "result": {
+      "symbol": "TGLS"
+    }
+  },
+  {
+    "name": "Technip Energies N.V.",
+    "result": {
+      "symbol": "68F.DU"
+    }
+  },
+  {
+    "name": "Technogym",
+    "result": {
+      "symbol": "TGYM.MI"
+    }
+  },
+  {
+    "name": "TECHNOLOGY CORPORATION",
+    "result": {
+      "symbol": "SIMO"
+    }
+  },
+  {
+    "name": "Teikoku Electric",
+    "result": {
+      "symbol": "6333.T"
+    }
+  },
+  {
+    "name": "Telecom Egypt",
+    "result": {
+      "symbol": "EGS48031C016.CA"
+    }
+  },
+  {
+    "name": "Tennant Co",
+    "result": {
+      "symbol": "TNC"
+    }
+  },
+  {
+    "name": "teqnion",
+    "result": {
+      "symbol": "M45.MU"
+    }
+  },
+  {
+    "name": "Teradyne, Inc.",
+    "result": {
+      "symbol": "TER"
+    }
+  },
+  {
+    "name": "terex",
+    "result": {
+      "symbol": "TEX"
+    }
+  },
+  {
+    "name": "Terravest Industries Inc",
+    "result": {
+      "symbol": "TRRVF"
+    }
+  },
+  {
+    "name": "TERUMO CORP",
+    "result": {
+      "symbol": "TUO.F"
+    }
+  },
+  {
+    "name": "Tetra Tech",
+    "result": {
+      "symbol": "TTI"
+    }
+  },
+  {
+    "name": "Tetragon Financial Group",
+    "result": {
+      "symbol": "TFG.L"
+    }
+  },
+  {
+    "name": "Texas Roadhouse, Inc.",
+    "result": {
+      "symbol": "TXRH"
+    }
+  },
+  {
+    "name": "TF Bank AB",
+    "result": {
+      "symbol": "0RHM.L"
+    }
+  },
+  {
+    "name": "The Bancorp, Inc.",
+    "result": {
+      "symbol": "TBBK"
+    }
+  },
+  {
+    "name": "The Hartford Insurance Group, Inc.",
+    "result": {
+      "symbol": "HIG"
+    }
+  },
+  {
+    "name": "The Sage Group PLC",
+    "result": {
+      "symbol": "SGPYY"
+    }
+  },
+  {
+    "name": "The Trade Desk, Inc.",
+    "result": {
+      "symbol": "TTD"
+    }
+  },
+  {
+    "name": "The Vita Coco Company, Inc.",
+    "result": {
+      "symbol": "COCO"
+    }
+  },
+  {
+    "name": "Thermon group",
+    "result": {
+      "symbol": "8TG.F"
+    }
+  },
+  {
+    "name": "Tim SA",
+    "result": {
+      "symbol": "TCZ.BE"
+    }
+  },
+  {
+    "name": "TK",
+    "result": {
+      "symbol": "TK"
+    }
+  },
+  {
+    "name": "TKC",
+    "result": {
+      "symbol": "TKC"
+    }
+  },
+  {
+    "name": "Tobii Dynavox AB",
+    "result": {
+      "symbol": "H3Q.BE"
+    }
+  },
+  {
+    "name": "Tokai Carbon Co",
+    "result": {
+      "symbol": "7TC.F"
+    }
+  },
+  {
+    "name": "Topicus Com Inc",
+    "result": {
+      "symbol": "TOI.V"
+    }
+  },
+  {
+    "name": "Toro Company (The)",
+    "result": {
+      "symbol": "TTC"
+    }
+  },
+  {
+    "name": "Toromont Industries",
+    "result": {
+      "symbol": "14T.F"
+    }
+  },
+  {
+    "name": "Toyo Suisan Kaisha",
+    "result": {
+      "symbol": "2875.T"
+    }
+  },
+  {
+    "name": "Toyo Tanso Co",
+    "result": {
+      "symbol": "T9T.F"
+    }
+  },
+  {
+    "name": "Toyoda Gosei",
+    "result": {
+      "symbol": "11T.F"
+    }
+  },
+  {
+    "name": "tpr",
+    "result": {
+      "symbol": "TPR"
+    }
+  },
+  {
+    "name": "Trelleborg",
+    "result": {
+      "symbol": "TBABY"
+    }
+  },
+  {
+    "name": "Trigano",
+    "result": {
+      "symbol": "TRIP.XC"
+    }
+  },
+  {
+    "name": "tRisura Group Ltd",
+    "result": {
+      "symbol": "TRRSF"
+    }
+  },
+  {
+    "name": "Tryg A/S",
+    "result": {
+      "symbol": "T2V1.F"
+    }
+  },
+  {
+    "name": "Tsuburaya Fields Holdings",
+    "result": {
+      "symbol": "2767.T"
+    }
+  },
+  {
+    "name": "TURN CLOUD TECHNOLOGY SERVICE INC",
+    "result": {
+      "symbol": "6870.TWO"
+    }
+  },
+  {
+    "name": "TXT e Solutions SpA",
+    "result": {
+      "symbol": "TXTM.XD"
+    }
+  },
+  {
+    "name": "tyl",
+    "result": {
+      "symbol": "TYL"
+    }
+  },
+  {
+    "name": "Tyro Payments Limited",
+    "result": {
+      "symbol": "TYR.XA"
+    }
+  },
+  {
+    "name": "UFP Technologies, Inc.",
+    "result": {
+      "symbol": "UFPT"
+    }
+  },
+  {
+    "name": "UL Solutions Inc.",
+    "result": {
+      "symbol": "72R.F"
+    }
+  },
+  {
+    "name": "Ulker Biskuvi",
+    "result": {
+      "symbol": "ULKER.IS"
+    }
+  },
+  {
+    "name": "United States Lime & Minerals, Inc.",
+    "result": {
+      "symbol": "USLM"
+    }
+  },
+  {
+    "name": "United Therapeutics Corporation",
+    "result": {
+      "symbol": "UTHR"
+    }
+  },
+  {
+    "name": "Unity Bancorp, Inc.",
+    "result": {
+      "symbol": "UNTY"
+    }
+  },
+  {
+    "name": "Universal Health Services, Inc.",
+    "result": {
+      "symbol": "UHS"
+    }
+  },
+  {
+    "name": "UNIVERSAL MICROWAVE TECHNOLOGY INC",
+    "result": {
+      "symbol": "3491.TWO"
+    }
+  },
+  {
+    "name": "Universal Music Group N.V.",
+    "result": {
+      "symbol": "0VD.F"
+    }
+  },
+  {
+    "name": "Universal Technical Institute Inc",
+    "result": {
+      "symbol": "UTI"
+    }
+  },
+  {
+    "name": "Upwork Inc.",
+    "result": {
+      "symbol": "UPWK"
+    }
+  },
+  {
+    "name": "USEN NEXT HOLDINGS",
+    "result": {
+      "symbol": "USNNF"
+    }
+  },
+  {
+    "name": "Vaisala Corporation",
+    "result": {
+      "symbol": "VAIAS.HE"
+    }
+  },
+  {
+    "name": "Vaisala Oyj",
+    "result": {
+      "symbol": "0GEG.L"
+    }
+  },
+  {
+    "name": "Valvoline Inc.",
+    "result": {
+      "symbol": "VVV"
+    }
+  },
+  {
+    "name": "Van Elle Holdings",
+    "result": {
+      "symbol": "5MH.F"
+    }
+  },
+  {
+    "name": "VAT Group",
+    "result": {
+      "symbol": "VACN.SW"
+    }
+  },
+  {
+    "name": "VC",
+    "result": {
+      "symbol": "VC"
+    }
+  },
+  {
+    "name": "vecima Networks",
+    "result": {
+      "symbol": "VCM.TO"
+    }
+  },
+  {
+    "name": "Veeva Systems",
+    "result": {
+      "symbol": "VEEV"
+    }
+  },
+  {
+    "name": "Veralto Corp",
+    "result": {
+      "symbol": "VLTO"
+    }
+  },
+  {
+    "name": "Vercom",
+    "result": {
+      "symbol": "14W.F"
+    }
+  },
+  {
+    "name": "Vertiv Holdings, LLC",
+    "result": {
+      "symbol": "VRT"
+    }
+  },
+  {
+    "name": "Victory Capital Holdings, Inc. Class A Common Stock",
+    "result": {
+      "symbol": "VCTR"
+    }
+  },
+  {
+    "name": "Vidrala, S.A.",
+    "result": {
+      "symbol": "VIDE.XC"
+    }
+  },
+  {
+    "name": "Viemed Healthcare",
+    "result": {
+      "symbol": "VIJ.F"
+    }
+  },
+  {
+    "name": "Viper Energy, Inc.",
+    "result": {
+      "symbol": "VNOM"
+    }
+  },
+  {
+    "name": "Virbac SA",
+    "result": {
+      "symbol": "VIRP.PA"
+    }
+  },
+  {
+    "name": "Virtra",
+    "result": {
+      "symbol": "VTSI"
+    }
+  },
+  {
+    "name": "Vision",
+    "result": {
+      "symbol": "CLNV"
+    }
+  },
+  {
+    "name": "Visional",
+    "result": {
+      "symbol": "4194.T"
+    }
+  },
+  {
+    "name": "visteon",
+    "result": {
+      "symbol": "VS51.SG"
+    }
+  },
+  {
+    "name": "Vistra Corp.",
+    "result": {
+      "symbol": "VST"
+    }
+  },
+  {
+    "name": "Vita Coco",
+    "result": {
+      "symbol": "COCO"
+    }
+  },
+  {
+    "name": "Vital Farms, Inc.",
+    "result": {
+      "symbol": "VITL"
+    }
+  },
+  {
+    "name": "Vitalhub",
+    "result": {
+      "symbol": "VHI.TO"
+    }
+  },
+  {
+    "name": "Vitrolife",
+    "result": {
+      "symbol": "VTFN.HA"
+    }
+  },
+  {
+    "name": "Vivara S.A. ON NM",
+    "result": {
+      "symbol": "VIVA3.SA"
+    }
+  },
+  {
+    "name": "Volvo AB",
+    "result": {
+      "symbol": "VOLV-B.ST"
+    }
+  },
+  {
+    "name": "vossloh",
+    "result": {
+      "symbol": "VOS.DE"
+    }
+  },
+  {
+    "name": "VOYAGEURS DU MONDE",
+    "result": {
+      "symbol": "8Z4.F"
+    }
+  },
+  {
+    "name": "VT Co",
+    "result": {
+      "symbol": "018290.KQ"
+    }
+  },
+  {
+    "name": "VTD",
+    "result": {
+      "symbol": "VTDRF"
+    }
+  },
+  {
+    "name": "VZ Holding",
+    "result": {
+      "symbol": "VZN.SW"
+    }
+  },
+  {
+    "name": "wab",
+    "result": {
+      "symbol": "WAB"
+    }
+  },
+  {
+    "name": "WACI Worldwide, Inc.",
+    "result": {
+      "symbol": "GEMI"
+    }
+  },
+  {
+    "name": "Warpaint London PLC",
+    "result": {
+      "symbol": "1J2.F"
+    }
+  },
+  {
+    "name": "Waste Management",
+    "result": {
+      "symbol": "WM"
+    }
+  },
+  {
+    "name": "Wavestone SA",
+    "result": {
+      "symbol": "2WSA.SG"
+    }
+  },
+  {
+    "name": "WD-40 Company",
+    "result": {
+      "symbol": "WDFC"
+    }
+  },
+  {
+    "name": "WDB coco Co",
+    "result": {
+      "symbol": "7079.T"
+    }
+  },
+  {
+    "name": "WEG ON NM",
+    "result": {
+      "symbol": "WEGE3.SA"
+    }
+  },
+  {
+    "name": "Weir",
+    "result": {
+      "symbol": "42W.F"
+    }
+  },
+  {
+    "name": "Welspun",
+    "result": {
+      "symbol": "WELSPUNLIV.NS"
+    }
+  },
+  {
+    "name": "West African Resources Limited",
+    "result": {
+      "symbol": "W25.F"
+    }
+  },
+  {
+    "name": "Whitecap Resources Inc",
+    "result": {
+      "symbol": "WCP.TO"
+    }
+  },
+  {
+    "name": "Wilson Bayly Hlm-Ovc Ltd",
+    "result": {
+      "symbol": "WBO.JO"
+    }
+  },
+  {
+    "name": "Wingstop Inc.",
+    "result": {
+      "symbol": "WING"
+    }
+  },
+  {
+    "name": "Wise PLC CLS A Ord GBP",
+    "result": {
+      "symbol": "WISE.L"
+    }
+  },
+  {
+    "name": "Wisetech Global",
+    "result": {
+      "symbol": "17W.F"
+    }
+  },
+  {
+    "name": "WISTRON",
+    "result": {
+      "symbol": "3231.TW"
+    }
+  },
+  {
+    "name": "WNS",
+    "result": {
+      "symbol": "WNS"
+    }
+  },
+  {
+    "name": "Wolters Kluwer",
+    "result": {
+      "symbol": "WKL.AS"
+    }
+  },
+  {
+    "name": "Woodward, Inc.",
+    "result": {
+      "symbol": "WWD"
+    }
+  },
+  {
+    "name": "XP Inc.",
+    "result": {
+      "symbol": "XPEV"
+    }
+  },
+  {
+    "name": "XPS Pensions Group PLC",
+    "result": {
+      "symbol": "406.F"
+    }
+  },
+  {
+    "name": "Yamami Co",
+    "result": {
+      "symbol": "2820.T"
+    }
+  },
+  {
+    "name": "YG Entertainment",
+    "result": {
+      "symbol": "122870.KQ"
+    }
+  },
+  {
+    "name": "YG Plus",
+    "result": {
+      "symbol": "037270.KS"
+    }
+  },
+  {
+    "name": "Yokogawa Bridge Holdings",
+    "result": {
+      "symbol": "5911.T"
+    }
+  },
+  {
+    "name": "Yokogawa Electric",
+    "result": {
+      "symbol": "YKE.F"
+    }
+  },
+  {
+    "name": "York Water Co",
+    "result": {
+      "symbol": "YORW"
+    }
+  },
+  {
+    "name": "YouGov plc",
+    "result": {
+      "symbol": "Y1G.F"
+    }
+  },
+  {
+    "name": "Ypsomed",
+    "result": {
+      "symbol": "OWX.F"
+    }
+  },
+  {
+    "name": "ytl corp",
+    "result": {
+      "symbol": "4677.KL"
+    }
+  },
+  {
+    "name": "Yubico AB",
+    "result": {
+      "symbol": "YUBICO.ST"
+    }
+  },
+  {
+    "name": "ZIGExN Co",
+    "result": {
+      "symbol": "ZGE.F"
+    }
+  },
+  {
+    "name": "Zoom Communications, Inc.",
+    "result": {
+      "symbol": "ZM"
+    }
+  },
+  {
+    "name": "zts",
+    "result": {
+      "symbol": "ZTS"
+    }
+  },
+  {
+    "name": "Zurn Elkay Water Solutions",
+    "result": {
+      "symbol": "ZWS"
+    }
+  }
+]
+/**
+ * Fetch ROIC for a ticker symbol from FMP
+ * @param {string} symbol
+ */
+async function getROIC(symbol) {
+  const url = `https://api.roic.ai/v2/fundamental/ratios/profitability/${symbol}?apikey=${API_KEY}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  const data = await res.json();
+
+  console.log("API response for", symbol, data); // 👈 debug
+
+  // Case 1: API returns array
+  if (Array.isArray(data) && data.length > 0 && "roic" in data[0]) {
+    return data[0].roic;
+  }
+
+  // Case 2: API returns object with roic
+  if (data && typeof data === "object" && "roic" in data) {
+    return data.roic;
+  }
+
+  // If no usable data, return null
+  return null;
+}
+
+
+/**
+ * Filter companies by ROIC < 10%
+ * @param {Array} companies - array of {name, result:{symbol}}
+ */
+async function filterLowROIC(companies) {
+  const results = [];
+  for (const company of companies) {
+    if (!company.result?.symbol) continue;
+    const roic = await getROIC(company.result.symbol);
+    if (roic !== null && roic < 0.10) { // 0.10 = 10%
+      results.push({ ...company, roic });
+    }
+  }
+  return results;
+}
+
+// Example run
+(async () => {
+  const lowROIC = await filterLowROIC(tickers);
+  console.log("Companies with ROIC < 10%:", lowROIC);
+})();
+</script>
+
+</html>

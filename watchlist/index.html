@@ -1,120 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Prices</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        a{color: black;}
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .red-text {
-            color: red;
-        }
-    </style>
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-</link>
-
-
-
-
-    <!-- Include the jQuery library -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="frontend.js" defer></script>
+    <meta charset="UTF-8" />
+    <title>title</title>
 </head>
 <body>
-   <a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
     
-    <button id="fetchButton">Update Stock Prices</button>
-    <table id="stockTable">
-        <thead>
-            <tr>
-                <th>Company</th>
-                <th>Stock Price</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Stock data will be inserted here -->
-        </tbody>
-    </table>
-    
-    <script>
-        // Fixed array of tickers
-        const tickers = [];
-        const companyValues = {
-            "GOOG": 237,
-            "MELI": 1840,
-            "TEP.PA": 143.97,
-            "DNP.WA": 420.96,
-            
-        
-        };
+</body>
+<script type="module">
+import fetch from "node-fetch";
+import * as cheerio from "cheerio";
 
-        // Function to fetch and populate stock prices
-        function fetchStockPrices() {
-            const tableBody = document.getElementById('stockTable').querySelector('tbody');
-            tableBody.innerHTML = ''; // Clear previous results
+async function getROICFromYahoo(ticker) {
+  const url = `https://finance.yahoo.com/quote/${ticker}/`;
 
-            tickers.forEach(symbol => {
-                if (symbol) {
-                    $.ajax({
-                        method: 'GET',
-                        url: 'https://api.api-ninjas.com/v1/stockprice?ticker=' + symbol,
-                        headers: { 'X-Api-Key': '2KtDXSGKL7Brvz5J3HBxLQ==SFFICGm8qI47lYJo' },
-                        contentType: 'application/json',
-                        success: function(result) {
-                            const value = companyValues[symbol.toUpperCase()] || "N/A";
-                            const rowClass = result.price > value ? 'red-text' : '';
-                            const row = `<tr>
-                                <td class="${rowClass}">${symbol}</td>
-                                <td>${result.price}</td>
-                                <td>${value}</td>
-                            </tr>`;
-                            tableBody.insertAdjacentHTML('beforeend', row);
-                        },
-                        error: function ajaxError(jqXHR) {
-                            console.error('Error for ticker ' + symbol + ':', jqXHR.responseText);
-                            const value = companyValues[symbol.toUpperCase()] || "N/A";
-                            const row = `<tr>
-                                <td>${symbol}</td>
-                                <td>Error fetching data</td>
-                                <td>${value}</td>
-                            </tr>`;
-                            tableBody.insertAdjacentHTML('beforeend', row);
-                        }
-                    });
-                }
-            });
-        }
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  const html = await res.text();
 
-        // Fetch stock prices initially when the page loads
-        window.addEventListener('load', fetchStockPrices);
+  const $ = cheerio.load(html);
 
-        // Update stock prices when the button is clicked
-        document.getElementById('fetchButton').addEventListener('click', fetchStockPrices);
+  // Example: get some table cell containing ROIC (you’ll need to inspect Yahoo page carefully)
+  const roicText = $('td:contains("Return on Invested Capital")')
+    .next()
+    .text()
+    .trim();
 
+  return roicText || null;
+}
 
-
-       
+(async () => {
+  console.log(await getROICFromYahoo("AAPL"));
+})();
 
 </script>
-
-</body>
 </html>
