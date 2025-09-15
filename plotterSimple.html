@@ -108,8 +108,12 @@ td {
     </style>
 </head>
 <body>
-    <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
-    <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
+    <input 
+      type="text" 
+      id="triggerInput" 
+      placeholder="Type here to trigger replace…" 
+      style="padding:10px; font-size:16px; width:300px;"
+    />
 
     <div id="tableContainer"></div>
 </body>
@@ -480,8 +484,8 @@ document.addEventListener('scroll', removeContextMenu);
 
 
 
-// --- inside Replace button click ---
-document.getElementById('btnSubmit').addEventListener('click', async () => {
+// --- Replace logic triggered on input field change ---
+document.getElementById('triggerInput').addEventListener('input', async () => {
   const tableData = await readClipboardAndProcess();
   if (tableData) {
     const originalCount = tableData.length;
