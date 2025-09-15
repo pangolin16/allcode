@@ -58,10 +58,15 @@
   <p>Pure JavaScript QR code decoding library.</p>
   <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
-  <div id="output" hidden>
-    <div id="outputMessage">No QR code detected.</div>
-    <div hidden><b>Data:</b> <span id="outputData"></span></div>
+ <div id="output" hidden>
+  <div id="outputMessage">No QR code detected.</div>
+  <div hidden>
+    <b>Data:</b>
+    <pre id="outputData"></pre> <!-- use <pre> for preserving spacing -->
+    <textarea id="outputField" rows="6" style="width:100%; margin-top:10px;"></textarea>
   </div>
+</div>
+
   <script>
     var video = document.createElement("video");
     var canvasElement = document.getElementById("canvas");
@@ -102,21 +107,29 @@
         var code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: "dontInvert",
         });
-        if (code) {
-          drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-          outputMessage.hidden = true;
-          outputData.parentElement.hidden = false;
-          outputData.innerText = code.data;
-        } else {
-          outputMessage.hidden = false;
-          outputData.parentElement.hidden = true;
-        }
+     if (code) {
+  drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+  drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+  drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+  drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+  outputMessage.hidden = true;
+  outputData.parentElement.hidden = false;
+
+  // preserve formatting
+  outputData.textContent = code.data;
+
+  // also update the input field
+  document.getElementById("outputField").value = code.data;
+} else {
+  outputMessage.hidden = false;
+  outputData.parentElement.hidden = true;
+}
+
       }
       requestAnimationFrame(tick);
     }
   </script>
 </body>
 </html>
+
+
