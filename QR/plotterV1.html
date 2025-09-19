@@ -462,13 +462,52 @@ function renderTable(tableData) {
   container.appendChild(table);
 }
 
+function parseTabSeparatedData(text) {
+  const rows = [];
+  let currentRow = [];
+  let cellContent = '';
+  let inQuotedCell = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === '"') {
+      // Toggle quoted state unless it's a double quote inside quoted cell
+      if (inQuotedCell && text[i + 1] === '"') {
+        cellContent += '"';
+        i++; // skip escaped quote
+      } else {
+        inQuotedCell = !inQuotedCell;
+      }
+    } else if (char === '\t' && !inQuotedCell) {
+      currentRow.push(cellContent);
+      cellContent = '';
+    } else if ((char === '\n' || char === '\r') && !inQuotedCell) {
+      if (cellContent !== '' || currentRow.length > 0) {
+        currentRow.push(cellContent);
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      cellContent = '';
+      if (char === '\r' && text[i + 1] === '\n') i++; // handle CRLF
+    } else {
+      cellContent += char;
+    }
+  }
+
+  // Push the last cell/row
+  if (cellContent !== '' || currentRow.length > 0) {
+    currentRow.push(cellContent);
+    rows.push(currentRow);
+  }
+
+  return rows;
+}
+
 async function readClipboardAndProcess() {
   try {
     const text = await navigator.clipboard.readText();
-    const rows = text
-      .split(/\r?\n/)
-      .map(row => row.split(/\t/).map(cell => cell.trim()))
-      .filter(row => row.length > 0);
+    const rows = parseTabSeparatedData(text);
 
     const fullData = rows;
 
@@ -485,6 +524,7 @@ async function readClipboardAndProcess() {
     return null;
   }
 }
+
 
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);

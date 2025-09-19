@@ -608,22 +608,53 @@ document.addEventListener('scroll', removeContextMenu);
 
 
 
-// --- Replace logic triggered on input field change ---
-document.getElementById('triggerInput').addEventListener('input', async () => {
-  const tableData = await readClipboardAndProcess();
-  if (tableData) {
-    const originalCount = tableData.length;
-    currentTableData = tableData; 
-    originalRowCount = currentTableData.length; 
-    
-    const duplicateCount = originalCount - currentTableData.length;
-    if (duplicateCount > 0) {
-      alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-    }
+// Global state for trigger input persistence
+let lastInputValue = "";
 
-    renderTable(currentTableData);
+const triggerInput = document.getElementById('triggerInput');
+
+triggerInput.addEventListener('input', async (e) => {
+  const newVal = e.target.value;
+
+  // Only trigger replace if the value is actually new
+  if (newVal !== lastInputValue) {
+    lastInputValue = newVal;
+
+    const tableData = await readClipboardAndProcess();
+    if (tableData) {
+      const originalCount = tableData.length;
+      currentTableData = tableData;
+      originalRowCount = currentTableData.length;
+
+      const duplicateCount = originalCount - currentTableData.length;
+      if (duplicateCount > 0) {
+        alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
+      }
+
+      renderTable(currentTableData);
+    }
   }
 });
+
+// --- QR scanner section update ---
+// When new QR code data arrives, also update triggerInput only if it's different
+if (code) {
+  outputMessage.hidden = true;
+  outputData.parentElement.hidden = false;
+
+  // preserve formatting
+  outputData.textContent = code.data;
+
+  // update textarea
+  document.getElementById("outputField").value = code.data;
+
+  // ✅ keep triggerInput persistent
+  if (triggerInput.value !== code.data) {
+    triggerInput.value = code.data;
+    lastInputValue = code.data;
+  }
+}
+
 
 // --- inside Append button click ---
 document.getElementById('btnAppend').addEventListener('click', async () => {
