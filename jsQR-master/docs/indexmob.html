@@ -610,18 +610,15 @@ document.addEventListener('scroll', removeContextMenu);
 
 // Global state for trigger input persistence
 let lastInputValue = "";
-let inputLocked = false;  // 🚨 new flag
 
-const triggerInput = document.getElementById('triggerInput');
+const triggerInput = document.getElementById("outputMessage");
 
 triggerInput.addEventListener('input', async (e) => {
-  if (inputLocked) return;  // 🚨 ignore further changes
-
   const newVal = e.target.value;
 
-  if (newVal && newVal !== lastInputValue) {
+  // Only trigger replace if the value is actually new
+  if (newVal !== lastInputValue) {
     lastInputValue = newVal;
-    inputLocked = true;  // 🚨 lock after first input
 
     const tableData = await readClipboardAndProcess();
     if (tableData) {
@@ -640,6 +637,7 @@ triggerInput.addEventListener('input', async (e) => {
 });
 
 // --- QR scanner section update ---
+// When new QR code data arrives, also update triggerInput only if it's different
 if (code) {
   outputMessage.hidden = true;
   outputData.parentElement.hidden = false;
@@ -650,11 +648,10 @@ if (code) {
   // update textarea
   document.getElementById("outputField").value = code.data;
 
-  // ✅ keep triggerInput persistent but only allow first update
-  if (!inputLocked && triggerInput.value !== code.data) {
+  // ✅ keep triggerInput persistent
+  if (triggerInput.value !== code.data) {
     triggerInput.value = code.data;
     lastInputValue = code.data;
-    inputLocked = true; // 🚨 lock after first QR value
   }
 }
 
