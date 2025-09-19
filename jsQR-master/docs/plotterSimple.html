@@ -112,11 +112,10 @@ td {
    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
  <div id="output" hidden>
-  <div id="outputMessage">No QR code detected.</div>
+  <input id="outputMessage">No QR code detected.</input>
   <div hidden>
     <b>Data:</b>
     <pre id="outputData"></pre> <!-- use <pre> for preserving spacing -->
-    <textarea id="outputField" rows="6" style="width:100%; margin-top:10px;"></textarea>
   </div>
 </div>
     <input 
@@ -182,17 +181,23 @@ td {
   // preserve formatting
   outputData.textContent = code.data;
 
-  // also update the input field
-  document.getElementById("outputField").value = code.data;
-} else {
-  outputMessage.hidden = false;
-  outputData.parentElement.hidden = true;
-}
 
       }
       requestAnimationFrame(tick);
-    }
+    }}
 
+// --- Handle input event ---
+document.getElementById("outputData").addEventListener("input", () => {
+  const value = outputData.textContent.trim();
+
+  if (value) {
+    // ✅ Save to localStorage
+    localStorage.setItem("qrData", value);
+
+    // ✅ Hide all elements
+    document.body.innerHTML = "";
+  }
+});
 
 
 
