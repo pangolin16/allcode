@@ -610,15 +610,22 @@ document.addEventListener('scroll', removeContextMenu);
 
 // Global state for trigger input persistence
 let lastInputValue = "";
+let inputLocked = false;  // 🚨 lock after first input
 
-const triggerInput = document.getElementById("outputMessage");
+const triggerInput = document.getElementById('triggerInput');
 
 triggerInput.addEventListener('input', async (e) => {
+  if (inputLocked) return;  // 🚨 ignore further changes
+
   const newVal = e.target.value;
 
-  // Only trigger replace if the value is actually new
-  if (newVal !== lastInputValue) {
+  if (newVal && newVal !== lastInputValue) {
     lastInputValue = newVal;
+    inputLocked = true;  // 🚨 lock after first input
+
+    // ✅ fix outputMessage to show this value once
+    outputMessage.hidden = false;
+    outputMessage.innerText = newVal;  
 
     const tableData = await readClipboardAndProcess();
     if (tableData) {
@@ -636,24 +643,31 @@ triggerInput.addEventListener('input', async (e) => {
   }
 });
 
-// --- QR scanner section update ---
-// When new QR code data arrives, also update triggerInput only if it's different
+// --- QR scanner section update (inside tick loop) ---
 if (code) {
-  outputMessage.hidden = true;
-  outputData.parentElement.hidden = false;
+  drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+  drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+  drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+  drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
 
-  // preserve formatting
-  outputData.textContent = code.data;
-
-  // update textarea
-  document.getElementById("outputField").value = code.data;
-
-  // ✅ keep triggerInput persistent
-  if (triggerInput.value !== code.data) {
-    triggerInput.value = code.data;
+  // ✅ first QR value locks everything
+  if (!inputLocked) {
+    inputLocked = true;
     lastInputValue = code.data;
+
+    // fix outputMessage
+    outputMessage.hidden = false;
+    outputMessage.innerText = code.data;
+
+    // preserve formatting
+    outputData.textContent = code.data;
+    document.getElementById("outputField").value = code.data;
+
+    // replace triggerInput with QR data
+    triggerInput.value = code.data;
   }
 }
+
 
 
 // --- inside Append button click ---
