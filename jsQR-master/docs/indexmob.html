@@ -608,65 +608,67 @@ document.addEventListener('scroll', removeContextMenu);
 
 
 
-// Global state for trigger input persistence
-let lastInputValue = "";
-let inputLocked = false;  // 🚨 lock after first input
+  // --- Global state ---
+  let inputLocked = false;
+  const triggerInput = document.getElementById("triggerInput");
+  const outputMessage = document.getElementById("outputMessage");
+  const outputData = document.getElementById("outputData");
+  const outputField = document.getElementById("outputField");
 
-const triggerInput = document.getElementById('triggerInput');
+  /**
+   * Lock the system with the first detected value.
+   * Updates triggerInput, outputMessage, outputData, outputField
+   */
+  function lockInput(value) {
+    if (inputLocked) return; // ignore further calls
 
-triggerInput.addEventListener('input', async (e) => {
-  if (inputLocked) return;  // 🚨 ignore further changes
-
-  const newVal = e.target.value;
-
-  if (newVal && newVal !== lastInputValue) {
-    lastInputValue = newVal;
-    inputLocked = true;  // 🚨 lock after first input
-
-    // ✅ fix outputMessage to show this value once
-    outputMessage.hidden = false;
-    outputMessage.innerText = newVal;  
-
-    const tableData = await readClipboardAndProcess();
-    if (tableData) {
-      const originalCount = tableData.length;
-      currentTableData = tableData;
-      originalRowCount = currentTableData.length;
-
-      const duplicateCount = originalCount - currentTableData.length;
-      if (duplicateCount > 0) {
-        alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-      }
-
-      renderTable(currentTableData);
-    }
-  }
-});
-
-// --- QR scanner section update (inside tick loop) ---
-if (code) {
-  drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-  drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-  drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-  drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-
-  // ✅ first QR value locks everything
-  if (!inputLocked) {
     inputLocked = true;
-    lastInputValue = code.data;
 
-    // fix outputMessage
+    // Update UI consistently
+    triggerInput.value = value;
     outputMessage.hidden = false;
-    outputMessage.innerText = code.data;
+    outputMessage.innerText = value;
 
-    // preserve formatting
-    outputData.textContent = code.data;
-    document.getElementById("outputField").value = code.data;
-
-    // replace triggerInput with QR data
-    triggerInput.value = code.data;
+    outputData.textContent = value;  // keep formatting
+    outputField.value = value;       // textarea
   }
-}
+
+  // --- QR Scanner section ---
+  function tick() {
+    loadingMessage.innerText = "⌛ Loading video...";
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      loadingMessage.hidden = true;
+      canvasElement.hidden = false;
+      outputContainer.hidden = false;
+
+      canvasElement.height = video.videoHeight;
+      canvasElement.width = video.videoWidth;
+      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+      const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (code) {
+        drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+        drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+        drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+        drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+
+        // ✅ First QR locks everything
+        lockInput(code.data);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // --- Manual input section ---
+  triggerInput.addEventListener("input", (e) => {
+    if (!inputLocked && e.target.value.trim() !== "") {
+      lockInput(e.target.value.trim());
+    }
+  });
 
 
 
