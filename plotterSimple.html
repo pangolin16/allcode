@@ -501,29 +501,28 @@ document.getElementById('triggerInput').addEventListener('input', async () => {
   }
 });
 
-// --- inside Append button click ---
-document.getElementById('btnAppend').addEventListener('click', async () => {
-  const newTableData = await readClipboardAndProcess();
-  if (newTableData) {
-    const existingRowSignatures = new Set(
-      currentTableData.map(row => JSON.stringify(row))
-    );
-    
-    const uniqueNewRows = newTableData.filter(row => {
-      const rowSignature = JSON.stringify(row);
-      return !existingRowSignatures.has(rowSignature);
-    });
-    
-    const duplicateCount = newTableData.length - uniqueNewRows.length;
-    if (duplicateCount > 0) {
-      alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
+
+
+function addSwipeHandlers(rowElement) {
+  let touchStartX = 0;
+
+  rowElement.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  });
+
+  rowElement.addEventListener("touchend", (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
+
+    if (diffX < -50) {
+      // ✅ Swipe left deletes the row
+      rowElement.remove();
     }
-    
-    currentTableData = currentTableData.concat(uniqueNewRows);
-    renderTable(currentTableData);
-  }
-});
-addSwipeHandlers(tr);
+  });
+}
+
+
+
 
 </script>
 
