@@ -204,22 +204,31 @@ function createUIElements() {
   document.body.appendChild(textArea);
   document.body.appendChild(tableContainer);
 
-  // If you need to re-attach input event handlers:
-  textArea.addEventListener('input', async () => {
-    const tableData = await readClipboardAndProcess();
-    if (tableData) {
-      const originalCount = tableData.length;
-      currentTableData = tableData; 
-      originalRowCount = currentTableData.length; 
-      
-      const duplicateCount = originalCount - currentTableData.length;
-      if (duplicateCount > 0) {
-        alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-      }
+  // --- Use the value in textarea as the data source ---
+  // When the input field is created, use its value directly, don't use clipboard.
+  // If you want to parse the textarea for table data:
+  updateTableFromInput();
 
-      renderTable(currentTableData);
-    }
+  // If you want table to update on further edits, you can keep the handler below:
+  textArea.addEventListener('input', updateTableFromInput);
+}
+
+function updateTableFromInput() {
+  const inputValue = document.getElementById('triggerInput').value;
+  // For demonstration, let's split input into rows by line breaks,
+  // and columns by tabs
+  const rows = inputValue.split('\n').map(line => line.split('\t'));
+  // Take columns [0], [1], [21] (if present), as in your previous code
+  const tableData = rows.map(row => {
+    const col0 = row[1] !== undefined ? row[1] : '';
+    const col1 = row[2] !== undefined ? row[2] : '';
+    const col21 = row[23] !== undefined ? row[23] : '';
+    return [col0, col1, col21];
   });
+  const processedData = processTableData(tableData);
+  currentTableData = processedData;
+  originalRowCount = processedData.length;
+  renderTable(processedData);
 }
 
 
