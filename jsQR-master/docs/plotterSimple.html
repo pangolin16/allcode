@@ -115,7 +115,7 @@ td {
   <input id="outputMessage">No QR code detected.</input>
   <div hidden>
     <b>Data:</b>
-    <pre id="outputData"></pre> <!-- use <pre> for preserving spacing -->
+    <pre id="outputData"></pre>
   </div>
 </div>
     <input 
@@ -130,6 +130,7 @@ td {
 
 
 <script>
+
   var video = document.createElement("video");
   var canvasElement = document.getElementById("canvas");
   var canvas = canvasElement.getContext("2d");
@@ -138,7 +139,7 @@ td {
   var outputMessage = document.getElementById("outputMessage");
   var outputData = document.getElementById("outputData");
 
-  let saved = false; // 🚨 to prevent saving multiple times
+  let saved = false;
 
   function drawLine(begin, end, color) {
     canvas.beginPath();
@@ -149,10 +150,9 @@ td {
     canvas.stroke();
   }
 
-  // Use facingMode: environment to attempt to get the back camera
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
     video.srcObject = stream;
-    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+    video.setAttribute("playsinline", true);
     video.play();
     requestAnimationFrame(tick);
   });
@@ -179,14 +179,13 @@ td {
         drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
         outputMessage.hidden = true;
         outputData.parentElement.hidden = false;
-
-        // preserve formatting
         outputData.textContent = code.data;
 
-        // ✅ Save once and clear screen
+        // Save once and show new input field
         if (!saved) {
           localStorage.setItem("qrData", code.data.trim());
           document.body.innerHTML = ""; // clear everything
+          createInputField();
           saved = true;
         }
       }
@@ -194,33 +193,15 @@ td {
     requestAnimationFrame(tick);
   }
 
-
-// --- Handle input event ---
-document.getElementById("outputData").addEventListener("input", () => {
-  const value = outputData.textContent.trim();
-
-  if (value) {
-    // ✅ Save to localStorage
-    localStorage.setItem("qrData", value);
-
-    // ✅ Hide all elements
-    document.body.innerHTML = "";
-
-    // Create and append the input field with value from localStorage
-    createInputField();
+  function createInputField() {
+    const inputElement = document.createElement('input');
+    inputElement.id = "field";
+    inputElement.value = localStorage.getItem("qrData") || "";
+    inputElement.style.padding = "10px";
+    inputElement.style.fontSize = "18px";
+    inputElement.style.width = "300px";
+    document.body.appendChild(inputElement);
   }
-});
-
-function createInputField() {
-  // 1. Create the <input> element
-  const inputElement = document.createElement('input');
-  inputElement.id = "field";
-  inputElement.value = localStorage.getItem("qrData") || "";
-
-  // 2. Append to body
-  document.body.appendChild(inputElement);
-}
-
 
 
 
