@@ -5473,54 +5473,16 @@ const tickers = [
     }
   }
 ]
-/**
- * Fetch ROIC for a ticker symbol from FMP
- * @param {string} symbol
- */
-async function getROIC(symbol) {
-  const url = `https://api.roic.ai/v2/fundamental/ratios/profitability/${symbol}?apikey=${API_KEY}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-  const data = await res.json();
-
-  console.log("API response for", symbol, data); // 👈 debug
-
-  // Case 1: API returns array
-  if (Array.isArray(data) && data.length > 0 && "roic" in data[0]) {
-    return data[0].roic;
-  }
-
-  // Case 2: API returns object with roic
-  if (data && typeof data === "object" && "roic" in data) {
-    return data.roic;
-  }
-
-  // If no usable data, return null
-  return null;
+function extractSymbols(data) {
+  // Use the .map() method to iterate over each object and return the 'symbol' value.
+  return data.map(ticker => ticker.result.symbol);
 }
 
+// Call the function and store the resulting array.
+const symbols = extractSymbols(tickers);
 
-/**
- * Filter companies by ROIC < 10%
- * @param {Array} companies - array of {name, result:{symbol}}
- */
-async function filterLowROIC(companies) {
-  const results = [];
-  for (const company of companies) {
-    if (!company.result?.symbol) continue;
-    const roic = await getROIC(company.result.symbol);
-    if (roic !== null && roic < 0.10) { // 0.10 = 10%
-      results.push({ ...company, roic });
-    }
-  }
-  return results;
-}
-
-// Example run
-(async () => {
-  const lowROIC = await filterLowROIC(tickers);
-  console.log("Companies with ROIC < 10%:", lowROIC);
-})();
+// Log the new array to the console.
+console.log(symbols);
 </script>
 
 </html>

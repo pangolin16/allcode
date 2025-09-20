@@ -56,7 +56,7 @@ tr:hover td {
 td {
   border: 1px solid #eee;
   padding: 8px 14px;
-  font-size: 20px;
+  font-size: 40px;
   border-radius: 4px;
   transition: background 0.2s;
   vertical-align: middle;
@@ -470,17 +470,7 @@ function renderTable(tableData) {
       tr.appendChild(td);
     });
     
-    // Add scissors emoji cell for original rows only
-    const scissorsTd = document.createElement('td');
-    if (rowIdx < originalRowCount) {
-      scissorsTd.textContent = '✂️';
-    }
-    scissorsTd.style.border = '1px solid #ccc';
-    scissorsTd.style.padding = '4px 8px';
-    scissorsTd.style.textAlign = 'center';
-    tr.appendChild(scissorsTd);
-    
-    table.appendChild(tr);
+ 
   });
 
   const container = document.getElementById('tableContainer');

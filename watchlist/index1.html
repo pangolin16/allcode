@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>title</title>
+</head>
+<body>
+<script type="module">
+async function getElementFromYahoo(ticker) {
+  const url = `https://www.tipranks.com/stocks/${ticker}/statistics#`;
+
+
+
+
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  const html = await res.text();
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  // Select element by XPath
+  const xpath = '/html/body/div[2]/div[2]/div[4]/div[3]/div/div[1]/div[3]/div/div[2]/div[1]/div[3]/div[2]/div[2]/div[2]/div[2]/div[3]/span[1]';
+  const result = doc.evaluate(
+    xpath,
+    doc,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  );
+
+  const element = result.singleNodeValue;
+  const text = element ? element.textContent.trim() : null;
+  return text;
+}
+
+(async () => {
+  console.log(await getElementFromYahoo("AAPL"));
+})();
+</script>
+</body>
+</html>
