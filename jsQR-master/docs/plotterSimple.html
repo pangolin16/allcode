@@ -120,9 +120,7 @@ td {
 </div>
 </body>
 
-
 <script>
-
   var video = document.createElement("video");
   var canvasElement = document.getElementById("canvas");
   var canvas = canvasElement.getContext("2d");
@@ -177,7 +175,7 @@ td {
         if (!saved) {
           localStorage.setItem("qrData", code.data.trim());
           document.body.innerHTML = ""; // clear everything
-          createInputField();
+          createUIElements();
           saved = true;
         }
       }
@@ -185,7 +183,8 @@ td {
     requestAnimationFrame(tick);
   }
 
-   function createUIElements() {
+  // Fix: create input and tableContainer after clearing body
+  function createUIElements() {
     // Create the input element
     const inputElement = document.createElement('input');
     inputElement.type = "text";
@@ -198,32 +197,30 @@ td {
     // Create the table container
     const tableContainer = document.createElement('div');
     tableContainer.id = "tableContainer";
+    tableContainer.style.marginTop = "24px";
+    tableContainer.style.overflowX = "auto";
 
     // Add to document body
     document.body.appendChild(inputElement);
     document.body.appendChild(tableContainer);
+
+    // If you need to re-attach input event handlers, do it here!
+    inputElement.addEventListener('input', async () => {
+      const tableData = await readClipboardAndProcess();
+      if (tableData) {
+        const originalCount = tableData.length;
+        currentTableData = tableData; 
+        originalRowCount = currentTableData.length; 
+        
+        const duplicateCount = originalCount - currentTableData.length;
+        if (duplicateCount > 0) {
+          alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
+        }
+
+        renderTable(currentTableData);
+      }
+    });
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
