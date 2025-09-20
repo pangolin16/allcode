@@ -206,21 +206,20 @@ document.getElementById("outputData").addEventListener("input", () => {
     // ✅ Hide all elements
     document.body.innerHTML = "";
 
-
+    // Create and append the input field with value from localStorage
+    createInputField();
+  }
+});
 
 function createInputField() {
   // 1. Create the <input> element
-  const inputElement = document.createElement('input'); // Changed 'field' to 'input'
-  inputElement.id = "field"; // Set the ID for the input element
-  inputElement.value = localStorage.getItem("qrData") || ""; // Use quotes around "qrData"
+  const inputElement = document.createElement('input');
+  inputElement.id = "field";
+  inputElement.value = localStorage.getItem("qrData") || "";
 
-  // 2. Append the input element to the body (or any other desired parent)
+  // 2. Append to body
   document.body.appendChild(inputElement);
 }
-
-
-  }
-});
 
 
 
