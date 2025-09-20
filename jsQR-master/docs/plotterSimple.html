@@ -193,7 +193,7 @@ function createUIElements() {
   textArea.style.width = "300px";
   textArea.style.height = "100px"; // You can adjust height as needed
   textArea.value = localStorage.getItem("qrData") || "";
-
+textArea.hidden = true;
   // Create the table container
   const tableContainer = document.createElement('div');
   tableContainer.id = "tableContainer";
@@ -486,6 +486,25 @@ function renderTable(tableData) {
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
   container.appendChild(table);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 }
 
 function parseTabSeparatedData(text) {
