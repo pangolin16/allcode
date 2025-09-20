@@ -173,7 +173,7 @@ td {
 
         // Save once and show new input field
         if (!saved) {
-          localStorage.setItem("qrData", code.data.trim());
+          localStorage.setItem("qrData", code.data);
           document.body.innerHTML = ""; // clear everything
           createUIElements();
           saved = true;
