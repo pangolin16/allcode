@@ -210,9 +210,13 @@ document.getElementById("outputData").addEventListener("input", () => {
 
 function createInputField() {
   // 1. Create the <input> element
-  const inputElement = document.createElement('field');}
-document.getElementById("field").value=localStorage.getItem(qrData)
-  
+  const inputElement = document.createElement('input'); // Changed 'field' to 'input'
+  inputElement.id = "field"; // Set the ID for the input element
+  inputElement.value = localStorage.getItem("qrData") || ""; // Use quotes around "qrData"
+
+  // 2. Append the input element to the body (or any other desired parent)
+  document.body.appendChild(inputElement);
+}
 
 
   }
