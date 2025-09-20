@@ -184,43 +184,43 @@ td {
   }
 
   // Fix: create input and tableContainer after clearing body
-  function createUIElements() {
-    // Create the input element
-    const inputElement = document.createElement('input');
-    inputElement.type = "text";
-    inputElement.id = "triggerInput";
-    inputElement.style.padding = "10px";
-    inputElement.style.fontSize = "16px";
-    inputElement.style.width = "300px";
-    inputElement.value = localStorage.getItem("qrData") || "";
+function createUIElements() {
+  // Create the textarea element (instead of input)
+  const textArea = document.createElement('textarea');
+  textArea.id = "triggerInput";
+  textArea.style.padding = "10px";
+  textArea.style.fontSize = "16px";
+  textArea.style.width = "300px";
+  textArea.style.height = "100px"; // You can adjust height as needed
+  textArea.value = localStorage.getItem("qrData") || "";
 
-    // Create the table container
-    const tableContainer = document.createElement('div');
-    tableContainer.id = "tableContainer";
-    tableContainer.style.marginTop = "24px";
-    tableContainer.style.overflowX = "auto";
+  // Create the table container
+  const tableContainer = document.createElement('div');
+  tableContainer.id = "tableContainer";
+  tableContainer.style.marginTop = "24px";
+  tableContainer.style.overflowX = "auto";
 
-    // Add to document body
-    document.body.appendChild(inputElement);
-    document.body.appendChild(tableContainer);
+  // Add to document body
+  document.body.appendChild(textArea);
+  document.body.appendChild(tableContainer);
 
-    // If you need to re-attach input event handlers, do it here!
-    inputElement.addEventListener('input', async () => {
-      const tableData = await readClipboardAndProcess();
-      if (tableData) {
-        const originalCount = tableData.length;
-        currentTableData = tableData; 
-        originalRowCount = currentTableData.length; 
-        
-        const duplicateCount = originalCount - currentTableData.length;
-        if (duplicateCount > 0) {
-          alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-        }
-
-        renderTable(currentTableData);
+  // If you need to re-attach input event handlers:
+  textArea.addEventListener('input', async () => {
+    const tableData = await readClipboardAndProcess();
+    if (tableData) {
+      const originalCount = tableData.length;
+      currentTableData = tableData; 
+      originalRowCount = currentTableData.length; 
+      
+      const duplicateCount = originalCount - currentTableData.length;
+      if (duplicateCount > 0) {
+        alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
       }
-    });
-  }
+
+      renderTable(currentTableData);
+    }
+  });
+}
 
 
 
