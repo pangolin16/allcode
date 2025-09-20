@@ -118,14 +118,6 @@ td {
     <pre id="outputData"></pre>
   </div>
 </div>
-    <input 
-      type="text" 
-      id="triggerInput" 
-      placeholder="Type here to trigger replace…" 
-      style="padding:10px; font-size:16px; width:300px;"
-    />
-
-    <div id="tableContainer"></div>
 </body>
 
 
@@ -193,16 +185,24 @@ td {
     requestAnimationFrame(tick);
   }
 
-  function createInputField() {
+   function createUIElements() {
+    // Create the input element
     const inputElement = document.createElement('input');
-    inputElement.id = "field";
-    inputElement.value = localStorage.getItem("qrData") || "";
+    inputElement.type = "text";
+    inputElement.id = "triggerInput";
     inputElement.style.padding = "10px";
-    inputElement.style.fontSize = "18px";
+    inputElement.style.fontSize = "16px";
     inputElement.style.width = "300px";
-    document.body.appendChild(inputElement);
-  }
+    inputElement.value = localStorage.getItem("qrData") || "";
 
+    // Create the table container
+    const tableContainer = document.createElement('div');
+    tableContainer.id = "tableContainer";
+
+    // Add to document body
+    document.body.appendChild(inputElement);
+    document.body.appendChild(tableContainer);
+  }
 
 
 
