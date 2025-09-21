@@ -163,9 +163,22 @@ table, td, tr {
       loadingMessage.hidden = true;
       canvasElement.hidden = false;
       outputContainer.hidden = false;
+// --- Responsive canvas size ---
+    // Limit size to window dimensions
+    const maxWidth = window.innerWidth;
+    const maxHeight = window.innerHeight;
 
-      canvasElement.height = video.videoHeight;
-      canvasElement.width = video.videoWidth;
+    // Maintain aspect ratio of the video
+    let aspect = video.videoWidth / video.videoHeight;
+    let width = maxWidth;
+    let height = maxWidth / aspect;
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = maxHeight * aspect;
+    }
+
+    canvasElement.width = width;
+    canvasElement.height = height;
       canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
       var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
       var code = jsQR(imageData.data, imageData.width, imageData.height, {
