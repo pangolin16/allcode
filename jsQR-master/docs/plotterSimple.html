@@ -164,9 +164,9 @@ table, td, tr {
       canvasElement.hidden = false;
       outputContainer.hidden = false;
 // --- Responsive canvas size ---
-    // Limit size to window dimensions
-    const maxWidth = window.innerWidth;
-    const maxHeight = window.innerHeight;
+   // --- Responsive canvas size: 80% of viewport ---
+    const maxWidth = window.innerWidth * 0.8;
+    const maxHeight = window.innerHeight * 0.8;
 
     // Maintain aspect ratio of the video
     let aspect = video.videoWidth / video.videoHeight;
