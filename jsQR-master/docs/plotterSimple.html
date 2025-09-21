@@ -56,7 +56,7 @@ tr:hover td {
 td {
   border: 1px solid #eee;
   padding: 8px 14px;
-  font-size: 20px;
+  font-size: 40px;
   border-radius: 4px;
   transition: background 0.2s;
   vertical-align: middle;
@@ -193,7 +193,7 @@ function createUIElements() {
   textArea.style.width = "300px";
   textArea.style.height = "100px"; // You can adjust height as needed
   textArea.value = localStorage.getItem("qrData") || "";
-
+textArea.hidden = true; // Hide the input field
   // Create the table container
   const tableContainer = document.createElement('div');
   tableContainer.id = "tableContainer";
@@ -482,6 +482,43 @@ function renderTable(tableData) {
     
     table.appendChild(tr);
   });
+
+
+
+
+
+
+
+
+
+
+
+
+  // Swipe-to-delete functionality
+    let touchStartX = null;
+    tr.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+      }
+    });
+    tr.addEventListener('touchend', function(e) {
+      if (touchStartX !== null && e.changedTouches.length === 1) {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) { // Swipe left threshold (px)
+          tableData.splice(rowIdx, 1);
+          renderTable(tableData);
+        }
+        touchStartX = null;
+      }
+    });
+
+    table.appendChild(tr);
+ 
+
+
+
+
+
 
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
