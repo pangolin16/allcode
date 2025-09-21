@@ -494,32 +494,15 @@ function renderTable(tableData) {
 
 
 
-  // Swipe-to-delete functionality
-    let touchStartX = null;
-    tr.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-      }
-    });
-    tr.addEventListener('touchend', function(e) {
-      if (touchStartX !== null && e.changedTouches.length === 1) {
-        const touchEndX = e.changedTouches[0].clientX;
-        if (touchStartX - touchEndX > 50) { // Swipe left threshold (px)
-          tableData.splice(rowIdx, 1);
-          renderTable(tableData);
-        }
-        touchStartX = null;
-      }
-    });
-
-    table.appendChild(tr);
- 
 
 
 
 
 
 
+
+
+  
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
   container.appendChild(table);
