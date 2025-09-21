@@ -56,7 +56,7 @@ tr:hover td {
 td {
   border: 1px solid #eee;
   padding: 8px 14px;
-  font-size: 40px;
+  font-size: 20px;
   border-radius: 4px;
   transition: background 0.2s;
   vertical-align: middle;
@@ -193,7 +193,6 @@ function createUIElements() {
   textArea.style.width = "300px";
   textArea.style.height = "100px"; // You can adjust height as needed
   textArea.value = localStorage.getItem("qrData") || "";
-  textArea.hidden = true; // Hide the input field
 
   // Create the table container
   const tableContainer = document.createElement('div');
@@ -232,8 +231,14 @@ function updateTableFromInput() {
   renderTable(processedData);
 }
 
-// --- matData and matLookup ---
-// ... (unchanged) ...
+
+
+
+
+
+
+
+
 // --- matData and matLookup ---
 let matData = [
   ["M300015", "Pěna 23/10"],
@@ -343,6 +348,65 @@ let matLookup = {};
 matData.forEach(([code, value]) => {
   matLookup[code] = value;
 });
+
+// Global variable to store current table data
+let currentTableData = [];
+let originalRowCount = 0;
+
+function getColor(index) {
+  const palette = [
+    "#c9f1fc", "#d4f8c4", "#ffe0ac", "#f9c6c7", "#d6c6f9", "#ffc6e0",
+    "#c6ffe0", "#f6f7d7", "#e6e6fa", "#cef6e3", "#ffd6d6", "#d6fffa"
+  ];
+  if (index < palette.length) return palette[index];
+  return `hsl(${(index * 47) % 360}, 70%, 80%)`;
+}
+
+function removeContextMenu() {
+  const menu = document.querySelector('.custom-context-menu');
+  if (menu) menu.remove();
+}
+
+function removeDuplicateRows(tableData) {
+  const uniqueRows = [];
+  const seenRowSignatures = new Set();
+  
+  tableData.forEach(row => {
+    const rowSignature = JSON.stringify(row);
+    if (!seenRowSignatures.has(rowSignature)) {
+      seenRowSignatures.add(rowSignature);
+      uniqueRows.push(row);
+    }
+  });
+  
+  return uniqueRows;
+}
+
+function processTableData(rawTableData) {
+  // Replace 2nd column cell value if found in matLookup
+  rawTableData.forEach(rowData => {
+    if (rowData.length > 1) {
+      const lookupValue = matLookup[rowData[1]];
+      if (lookupValue !== undefined) {
+        rowData[1] = lookupValue;
+      }
+    }
+    
+    // Convert 3rd column date format from DD.MM.YY to DD.MM.
+    if (rowData.length > 2 && rowData[2]) {
+      // Match DD.MM.YY format (where YY can be 2 or 4 digits)
+      const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+      if (dateMatch) {
+        const [, day, month] = dateMatch;
+        rowData[2] = `${day}.${month}.`;
+      }
+    }
+  });
+  
+  // Remove duplicate rows
+  return removeDuplicateRows(rawTableData);
+}
+
 function renderTable(tableData) {
   // Count occurrences of each value in the 2nd column
   const valueCounts = {};
@@ -405,25 +469,17 @@ function renderTable(tableData) {
       }
       tr.appendChild(td);
     });
-
-    // Swipe-to-delete functionality
-    let touchStartX = null;
-    tr.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-      }
-    });
-    tr.addEventListener('touchend', function(e) {
-      if (touchStartX !== null && e.changedTouches.length === 1) {
-        const touchEndX = e.changedTouches[0].clientX;
-        if (touchStartX - touchEndX > 50) { // Swipe left threshold (px)
-          tableData.splice(rowIdx, 1);
-          renderTable(tableData);
-        }
-        touchStartX = null;
-      }
-    });
-
+    
+    // Add scissors emoji cell for original rows only
+    const scissorsTd = document.createElement('td');
+    if (rowIdx < originalRowCount) {
+      scissorsTd.textContent = '✂️';
+    }
+    scissorsTd.style.border = '1px solid #ccc';
+    scissorsTd.style.padding = '4px 8px';
+    scissorsTd.style.textAlign = 'center';
+    tr.appendChild(scissorsTd);
+    
     table.appendChild(tr);
   });
 
@@ -432,7 +488,6 @@ function renderTable(tableData) {
   container.appendChild(table);
 }
 
-// ... rest of your code unchanged ...
 function parseTabSeparatedData(text) {
   const lines = text.split(/\r?\n/);
   const rows = [];
@@ -552,6 +607,9 @@ document.getElementById('btnAppend').addEventListener('click', async () => {
   }
 });
 addSwipeHandlers(tr);
+
+
+
 
 
 </script>
