@@ -59,7 +59,7 @@ td {
   border-radius: 4px;
   transition: background 0.2s;
   vertical-align: middle;
-  white-space: nowrap;
+  white-space: pre-line; /* <-- This is the change */
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -316,8 +316,8 @@ function renderTable(tableData) {
     const tr = document.createElement('tr');
     rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
-      const cleanedData = (cellData || '').split(/\r?\n/)[0];
-      td.textContent = cleanedData;
+      const cleanedData = (cellData || '').replace(/\r?\n/g, '<br>');
+      td.innerHTML = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
       if (colIdx === 1 && valueColorMap[cleanedData]) {
