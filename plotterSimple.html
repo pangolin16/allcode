@@ -6,7 +6,6 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -63,6 +62,12 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.comment-cell {
+  background: #ffffcc !important;
+  font-style: italic;
+  color: #444;
+  min-width: 80px;
+}
 .highlight-first-col {
   background: #fff59d !important;
   transition: background 0.2s;
@@ -114,160 +119,27 @@ td {
       placeholder="Type here to trigger replace…" 
       style="padding:10px; font-size:16px; width:300px;"
     />
-
+    <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
     <div id="tableContainer"></div>
 </body>
 
-
 <script>
-  function addSwipeHandlers(rowElement) {
-  let touchStartX = 0;
-
-  rowElement.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].clientX;
-  });
-
-  rowElement.addEventListener('touchend', (e) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const diffX = touchEndX - touchStartX;
-
-    // Swipe right
-    if (diffX > 50) {
-      // Remove existing editable cell if present
-      const lastCell = rowElement.querySelector('.editable-cell');
-      if (!lastCell) {
-        const td = document.createElement('td');
-        td.className = 'editable-cell';
-        td.contentEditable = 'true';
-        td.style.border = '1px solid #ccc';
-        td.style.padding = '4px 8px';
-        td.style.background = '#ffffcc';
-        rowElement.appendChild(td);
-      }
-    }
-
-    // Swipe left
-    if (diffX < -50) {
-      const lastCell = rowElement.querySelector('.editable-cell');
-      if (lastCell) {
-        rowElement.removeChild(lastCell);
-      }
-    }
-  });
-}
-
 // --- matData and matLookup ---
 let matData = [
-  ["M300015", "Pěna 23/10"],
-  ["M300013", "Pěna 23/20"],
-  ["M300014", "Pěna 23/30"],
-  ["M300010", "Pěna 23/40"],
-  ["M300011", "Pěna 23/50"],
-  ["M300012", "Pěna 24/60"],
-  ["M300057", "Pěna 28/70"],
-  ["M300066", "Pěna 28/10"],
-  ["M300024", "Pěna 35/20"],
-  ["M300025", "Pěna 35/50"],
-  ["M300086", "Pěna 65/40"],
-  ["M300114", "Pěna 24/25"],
-  ["M300022", "Pěna 35/30"],
-  ["M102780", "2.31 BE"],
-  ["M103226", "2.35 BE"],
-  ["M105367", "2.41 BE"],
-    ["M107881", "2.41 BE"],
-  ["M101447", "2.31 BE"],
-  ["M107869", "2.31 BE"],
-  ["M104281", "3.90 AAC"],
-  ["M103469", "3.91 AAC"],
-  ["M104730", "3.92 AAC"],
-   ["M107880", "3.92 AAC"],
-  ["M102476", "3.95 AAC"],
-    ["M101450", "3.95 AAC"],
-  ["M104188", "3.96 AAC"],
-  ["M200009", "CP 2mm"],
-  ["M200043", "CP 2,5mm"],
-  ["M200034", "CP 3mm"],
-  ["M200001", "CP 3,5mm"],
-  ["M200004", "CP 5mm"],
-  ["M200014", "CP 5mm"],
-  ["M102112", "2.03 BC"],
-   ["M107877", "2.03 BC"],
-  ["M101446", "2.30 BC"],
-  ["M106269", "2.30 BC"],
-  ["M107862", "2.30 BC"],
-  ["M100197", "2.31 BC"],
-  ["M100446", "2.31 BC"],
-  ["M102338", "2.31 BC"],
-    ["M107860", "2.31 BC"],
-  ["M103231", "2.35 BC N2"],
-  ["M107883", "2.35 BC N2"],
-  ["M101765", "2.40 BC N2"],
-  ["M100554", "2.40 BC N2"],
-  ["M101538", "2.41 BC"],
-   ["M107873", "2.41 BC"],
-  ["M101455", "2.50 BC N2"],
-  ["M107868", "2.50 BC N2"],
-  ["M101539", "2.51 BC"],
-    ["M107875", "2.51 BC"],
-  ["M103225", "2.60 BC N2"],
-  ["M103223", "2.70 BC N2"],
-  ["M101448", "2.71 BC"],
-  ["M102036", "2.71 BC"],
-   ["M107863", "2.71 BC"],
-  ["M101989", "2.90 BC"],
-  ["M105705", "2.90 BC"],
-  ["M107876", "2.90 BC"],
-  ["M101990", "2.91 BC"],
-  ["M101449", "2.91 BC"],
-    ["M107864", "2.91 BC"],
-  ["M102035", "2.91 AC"],
-  ["M107879", "2.91 AC"],
-  ["M103945", "2.92 AC"],
-  ["M101588", "1.20 B"],
-    ["M101441", "1.20 B"],
-      ["M107861", "1.20 B"],
-  ["M103229", "1.25 B"],
-   ["M107871", "1.25 B"],
-  ["M100187", "1.30 B"],
-  ["M101454", "1.30 B"],
-  ["M107867", "1.30 B"],
-  ["M100062", "1,37 B"],
-    ["M101442", "1,37 B"],
-      ["M107870", "1,37 B"],
-  ["M102964", "1.31 B"],
-   ["M107874", "1.31 B"],
-  ["M102425", "1.41 B"],
-  ["M101443", "1.41 B"],
-  ["M107665", "1.41 B N1"],
- ["M107859", "1.41 B"],
- ["M107878", "1.41 B N1"],
-  ["M103232", "1.20 C"],
-  ["M101764", "1.30 C"],
-  ["M107872", "1.30 C"],
-  ["M101444", "1.31 C"],
-  ["M102086", "1.31 C"],
-  ["M107866", "1.31 C"],
-  ["M100198", "1.41 C"],
-  ["M101445", "1.41 C"],
-  ["M107865", "1.41 C"],
-  ["M100012", "1.21 E"],
-  ["M102364", "1.25 E"], 
-   ["M100013", "1.25 E"]
 ];
-
 let valueToCodes = {};
 matData.forEach(([code, value]) => {
   if (!valueToCodes[value]) valueToCodes[value] = [];
   valueToCodes[value].push(code);
 });
-
 let matLookup = {};
 matData.forEach(([code, value]) => {
   matLookup[code] = value;
 });
 
-// Global variable to store current table data
+// Global variable to store current table data and row comments
 let currentTableData = [];
+let rowComments = [];  // Array parallel to currentTableData storing 1 comment (string) per row, empty string if no comment
 let originalRowCount = 0;
 
 function getColor(index) {
@@ -287,7 +159,6 @@ function removeContextMenu() {
 function removeDuplicateRows(tableData) {
   const uniqueRows = [];
   const seenRowSignatures = new Set();
-  
   tableData.forEach(row => {
     const rowSignature = JSON.stringify(row);
     if (!seenRowSignatures.has(rowSignature)) {
@@ -295,7 +166,6 @@ function removeDuplicateRows(tableData) {
       uniqueRows.push(row);
     }
   });
-  
   return uniqueRows;
 }
 
@@ -308,7 +178,6 @@ function processTableData(rawTableData) {
         rowData[1] = lookupValue;
       }
     }
-    
     // Convert 3rd column date format from DD.MM.YY to DD.MM.
     if (rowData.length > 2 && rowData[2]) {
       // Match DD.MM.YY format (where YY can be 2 or 4 digits)
@@ -319,7 +188,6 @@ function processTableData(rawTableData) {
       }
     }
   });
-  
   // Remove duplicate rows
   return removeDuplicateRows(rawTableData);
 }
@@ -349,7 +217,7 @@ function renderTable(tableData) {
     rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
       // Remove line breaks from cell data and take only the first line
-      const cleanedData = cellData.split(/\r?\n/)[0];
+      const cleanedData = (cellData || '').split(/\r?\n/)[0];
       td.textContent = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
@@ -386,7 +254,17 @@ function renderTable(tableData) {
       }
       tr.appendChild(td);
     });
-    
+
+    // --- COMMENT CELL ---
+    // Render the comment cell, if any
+    const comment = rowComments[rowIdx] || "";
+    const commentTd = document.createElement('td');
+    commentTd.className = "comment-cell";
+    commentTd.textContent = comment;
+    commentTd.style.border = '1px solid #ccc';
+    commentTd.style.padding = '4px 8px';
+    tr.appendChild(commentTd);
+
     // Add scissors emoji cell for original rows only
     const scissorsTd = document.createElement('td');
     if (rowIdx < originalRowCount) {
@@ -396,7 +274,10 @@ function renderTable(tableData) {
     scissorsTd.style.padding = '4px 8px';
     scissorsTd.style.textAlign = 'center';
     tr.appendChild(scissorsTd);
-    
+
+    // Add swipe handlers for row comments
+    addSwipeHandlers(tr, rowIdx);
+
     table.appendChild(tr);
   });
 
@@ -405,20 +286,58 @@ function renderTable(tableData) {
   container.appendChild(table);
 }
 
+/**
+ * Adds swipe gesture logic to a table row element.
+ * Right swipe: prompts for comment. Left swipe: removes comment or row.
+ */
+function addSwipeHandlers(rowElement, rowIdx) {
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  rowElement.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  });
+
+  rowElement.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
+    // Swipe right: add/replace comment
+    if (diffX > 50) {
+      // Prompt for comment, update rowComments, rerender
+      const currentComment = rowComments[rowIdx] || "";
+      const newComment = prompt("Add a comment to this row:", currentComment);
+      if (newComment !== null) {
+        rowComments[rowIdx] = newComment.trim();
+        renderTable(currentTableData);
+      }
+    }
+    // Swipe left: remove comment or remove row
+    else if (diffX < -50) {
+      if (rowComments[rowIdx]) {
+        // Remove only comment
+        rowComments[rowIdx] = "";
+        renderTable(currentTableData);
+      } else {
+        // Remove the row entirely (and keep comments array in sync)
+        currentTableData.splice(rowIdx, 1);
+        rowComments.splice(rowIdx, 1);
+        renderTable(currentTableData);
+      }
+    }
+  });
+}
+
 function parseTabSeparatedData(text) {
   const lines = text.split(/\r?\n/);
   const rows = [];
   let currentRow = [];
   let cellContent = '';
   let inQuotedCell = false;
-  
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     let j = 0;
-    
     while (j < line.length) {
       const char = line[j];
-      
       if (!inQuotedCell && char === '\t') {
         // End of cell
         currentRow.push(cellContent);
@@ -432,7 +351,6 @@ function parseTabSeparatedData(text) {
       }
       j++;
     }
-    
     // Check if we're at the end of a row (not in a quoted cell)
     if (!inQuotedCell) {
       // Add the last cell of the row
@@ -445,32 +363,26 @@ function parseTabSeparatedData(text) {
       cellContent += '\n';
     }
   }
-  
   // Add any remaining row if we ended in the middle of one
   if (currentRow.length > 0 || cellContent) {
     currentRow.push(cellContent);
     rows.push(currentRow);
   }
-  
   return rows.filter(row => row.some(cell => cell.trim() !== ''));
 }
 
 async function readClipboardAndProcess() {
   try {
     const text = await navigator.clipboard.readText();
-    
     // Parse the tab-separated data properly handling multi-line cells
     const rows = parseTabSeparatedData(text);
-
-    // Take columns [0], [1], and [21] only
-const tableData = rows.map(row => {
-  const col0 = row[1] !== undefined ? row[1] : '';
-  const col1 = row[2] !== undefined ? row[2] : '';
-  const col21 = row[23] !== undefined ? row[23] : '';
-  return [col0, col1, col21];
-});
-
-
+    // Take columns [1], [2], and [23] only
+    const tableData = rows.map(row => {
+      const col0 = row[1] !== undefined ? row[1] : '';
+      const col1 = row[2] !== undefined ? row[2] : '';
+      const col21 = row[23] !== undefined ? row[23] : '';
+      return [col0, col1, col21];
+    });
     return processTableData(tableData);
   } catch (err) {
     alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
@@ -482,53 +394,42 @@ const tableData = rows.map(row => {
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
 
-
-
 // --- Replace logic triggered on input field change ---
 document.getElementById('triggerInput').addEventListener('input', async () => {
   const tableData = await readClipboardAndProcess();
   if (tableData) {
     const originalCount = tableData.length;
-    currentTableData = tableData; 
-    originalRowCount = currentTableData.length; 
-    
+    currentTableData = tableData;
+    originalRowCount = currentTableData.length;
+    rowComments = new Array(currentTableData.length).fill(""); // reset comments array
     const duplicateCount = originalCount - currentTableData.length;
     if (duplicateCount > 0) {
       alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
     }
-
     renderTable(currentTableData);
   }
 });
 
-// --- inside Append button click ---
+// --- Append button click ---
 document.getElementById('btnAppend').addEventListener('click', async () => {
   const newTableData = await readClipboardAndProcess();
   if (newTableData) {
     const existingRowSignatures = new Set(
       currentTableData.map(row => JSON.stringify(row))
     );
-    
     const uniqueNewRows = newTableData.filter(row => {
       const rowSignature = JSON.stringify(row);
       return !existingRowSignatures.has(rowSignature);
     });
-    
     const duplicateCount = newTableData.length - uniqueNewRows.length;
     if (duplicateCount > 0) {
       alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
     }
-    
+    // Add empty comments for new rows
+    rowComments = rowComments.concat(new Array(uniqueNewRows.length).fill(""));
     currentTableData = currentTableData.concat(uniqueNewRows);
     renderTable(currentTableData);
   }
 });
-addSwipeHandlers(tr);
-
-
-
-
-
 </script>
-
 </html>

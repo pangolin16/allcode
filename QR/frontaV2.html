@@ -309,57 +309,59 @@ function renderTable(tableData) {
     valueColorMap[val] = getColor(i);
   });
 
-  const table = document.createElement('table');
-  table.style.borderCollapse = 'collapse';
+ const table = document.createElement('table');
+table.style.borderCollapse = 'collapse';
 
-  tableData.forEach((rowData, rowIdx) => {
-    const tr = document.createElement('tr');
-    rowData.forEach((cellData, colIdx) => {
-      const td = document.createElement('td');
-      const cleanedData = (cellData || '').replace(/\r?\n/g, '<br>');
-      td.innerHTML = cleanedData;
-      td.style.border = '1px solid #ccc';
-      td.style.padding = '4px 8px';
-      if (colIdx === 1 && valueColorMap[cleanedData]) {
-        td.style.background = valueColorMap[cleanedData];
-      }
-      if (colIdx === 1) {
-        td.addEventListener('contextmenu', function(e) {
-          e.preventDefault();
-          removeContextMenu();
-          const codes = valueToCodes[cleanedData];
-          if (!codes || codes.length === 0) return;
-          const menu = document.createElement('div');
-          menu.className = 'custom-context-menu';
-          const ul = document.createElement('ul');
-          codes.forEach(code => {
-            const li = document.createElement('li');
-            li.textContent = code;
-            ul.appendChild(li);
-          });
-          menu.appendChild(ul);
-          document.body.appendChild(menu);
-          menu.style.left = `${e.pageX}px`;
-          menu.style.top = `${e.pageY}px`;
-        });
-      }
-      if (colIdx === 0) {
-        td.addEventListener('click', function() {
-          td.classList.toggle('highlight-first-col');
-        });
-      }
-      tr.appendChild(td);
-    });
-    const scissorsTd = document.createElement('td');
-    if (rowIdx < originalRowCount) {
-      scissorsTd.textContent = '✂️';
+tableData.forEach((rowData, rowIdx) => {
+  const tr = document.createElement('tr');
+  rowData.forEach((cellData, colIdx) => {
+    const td = document.createElement('td');
+    // Use plainText for lookup, cleanedData for display
+    const plainText = cellData || '';
+    const cleanedData = plainText.replace(/\r?\n/g, '<br>');
+    td.innerHTML = cleanedData;
+    td.style.border = '1px solid #ccc';
+    td.style.padding = '4px 8px';
+    if (colIdx === 1 && valueColorMap[plainText]) {
+      td.style.background = valueColorMap[plainText];
     }
-    scissorsTd.style.border = '1px solid #ccc';
-    scissorsTd.style.padding = '4px 8px';
-    scissorsTd.style.textAlign = 'center';
-    tr.appendChild(scissorsTd);
-    table.appendChild(tr);
+    if (colIdx === 1) {
+      td.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        removeContextMenu();
+        const codes = valueToCodes[plainText];
+        if (!codes || codes.length === 0) return;
+        const menu = document.createElement('div');
+        menu.className = 'custom-context-menu';
+        const ul = document.createElement('ul');
+        codes.forEach(code => {
+          const li = document.createElement('li');
+          li.textContent = code;
+          ul.appendChild(li);
+        });
+        menu.appendChild(ul);
+        document.body.appendChild(menu);
+        menu.style.left = `${e.pageX}px`;
+        menu.style.top = `${e.pageY}px`;
+      });
+    }
+    if (colIdx === 0) {
+      td.addEventListener('click', function() {
+        td.classList.toggle('highlight-first-col');
+      });
+    }
+    tr.appendChild(td);
   });
+  const scissorsTd = document.createElement('td');
+  if (rowIdx < originalRowCount) {
+    scissorsTd.textContent = '✂️';
+  }
+  scissorsTd.style.border = '1px solid #ccc';
+  scissorsTd.style.padding = '4px 8px';
+  scissorsTd.style.textAlign = 'center';
+  tr.appendChild(scissorsTd);
+  table.appendChild(tr);
+});
 
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
