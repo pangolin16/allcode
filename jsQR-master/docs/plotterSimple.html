@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fronta práce</title>
-    <script src="./jsQR.js"></script>
+      <script src="./jsQR.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -44,9 +45,11 @@ table {
   border-collapse: collapse;
   background: #fff;
 }
+
 tr {
   border-bottom: 1px solid #eee;
 }
+
 td {
   font-size: 18px;
   padding: 12px 8px;
@@ -57,6 +60,7 @@ td {
   max-width: 160px;
   text-overflow: ellipsis;
 }
+
 tr:nth-child(even) td {
   background: #f9f9f9;
 }
@@ -64,6 +68,8 @@ tr:hover td {
   background: #e3f2fd;
   transition: background 0.2s;
 }
+
+/* Remove border-radius and box-shadow for mobile simplicity */
 table, td, tr {
   border-radius: 0;
   box-shadow: none;
@@ -71,12 +77,6 @@ table, td, tr {
 .highlight-first-col {
   background: #fff59d !important;
   transition: background 0.2s;
-}
-.comment-cell {
-  background: #ffffcc !important;
-  font-style: italic;
-  color: #444;
-  min-width: 80px;
 }
 .custom-context-menu {
   border-radius: 8px;
@@ -95,6 +95,7 @@ table, td, tr {
         position: absolute;
         background: #fff;
         border: 1px solid #ccc;
+      
         z-index: 9999;
         min-width: 120px;
         padding: 0;
@@ -114,19 +115,21 @@ table, td, tr {
       .custom-context-menu li:hover {
         background: #e6e6fa;
       }
+
     </style>
 </head>
 <body>
    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
  <div id="output" hidden>
-  <input id="outputMessage" value="No QR code detected.">
+  <input id="outputMessage">No QR code detected.</input>
   <div hidden>
     <b>Data:</b>
     <pre id="outputData"></pre>
   </div>
 </div>
 </body>
+
 <script>
   var video = document.createElement("video");
   var canvasElement = document.getElementById("canvas");
@@ -160,18 +163,22 @@ table, td, tr {
       loadingMessage.hidden = true;
       canvasElement.hidden = false;
       outputContainer.hidden = false;
-      // --- Responsive canvas size: 80% of viewport ---
-      const maxWidth = window.innerWidth * 0.8;
-      const maxHeight = window.innerHeight * 0.8;
-      let aspect = video.videoWidth / video.videoHeight;
-      let width = maxWidth;
-      let height = maxWidth / aspect;
-      if (height > maxHeight) {
-        height = maxHeight;
-        width = maxHeight * aspect;
-      }
-      canvasElement.width = width;
-      canvasElement.height = height;
+// --- Responsive canvas size ---
+   // --- Responsive canvas size: 80% of viewport ---
+    const maxWidth = window.innerWidth * 0.8;
+    const maxHeight = window.innerHeight * 0.8;
+
+    // Maintain aspect ratio of the video
+    let aspect = video.videoWidth / video.videoHeight;
+    let width = maxWidth;
+    let height = maxWidth / aspect;
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = maxHeight * aspect;
+    }
+
+    canvasElement.width = width;
+    canvasElement.height = height;
       canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
       var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
       var code = jsQR(imageData.data, imageData.width, imageData.height, {
@@ -200,312 +207,385 @@ table, td, tr {
   }
 
   // Fix: create input and tableContainer after clearing body
-  function createUIElements() {
-    // Create the textarea element (instead of input)
-    const textArea = document.createElement('textarea');
-    textArea.id = "triggerInput";
-    textArea.style.padding = "10px";
-    textArea.style.fontSize = "16px";
-    textArea.style.width = "300px";
-    textArea.style.height = "100px"; // You can adjust height as needed
-    textArea.value = localStorage.getItem("qrData") || "";
-    textArea.hidden = true; // Hide the input field
+function createUIElements() {
+  // Create the textarea element (instead of input)
+  const textArea = document.createElement('textarea');
+  textArea.id = "triggerInput";
+  textArea.style.padding = "10px";
+  textArea.style.fontSize = "16px";
+  textArea.style.width = "300px";
+  textArea.style.height = "100px"; // You can adjust height as needed
+  textArea.value = localStorage.getItem("qrData") || "";
+textArea.hidden = true; // Hide the input field
+  // Create the table container
+  const tableContainer = document.createElement('div');
+  tableContainer.id = "tableContainer";
+  tableContainer.style.marginTop = "24px";
+  tableContainer.style.overflowX = "auto";
 
-    // Create the table container
-    const tableContainer = document.createElement('div');
-    tableContainer.id = "tableContainer";
-    tableContainer.style.marginTop = "24px";
-    tableContainer.style.overflowX = "auto";
+  // Add to document body
+  document.body.appendChild(textArea);
+  document.body.appendChild(tableContainer);
 
-    // Add to document body
-    document.body.appendChild(textArea);
-    document.body.appendChild(tableContainer);
+  // --- Use the value in textarea as the data source ---
+  // When the input field is created, use its value directly, don't use clipboard.
+  // If you want to parse the textarea for table data:
+  updateTableFromInput();
 
-    // --- Use the value in textarea as the data source ---
-    updateTableFromInput();
+  // If you want table to update on further edits, you can keep the handler below:
+  textArea.addEventListener('input', updateTableFromInput);
+}
 
-    // If you want table to update on further edits, you can keep the handler below:
-    textArea.addEventListener('input', updateTableFromInput);
-  }
-
-  function updateTableFromInput() {
-    const inputValue = document.getElementById('triggerInput').value;
-    const rows = inputValue.split('\n').map(line => line.split('\t'));
-    // Take columns [1], [2], [23] (as per previous code)
-    const tableData = rows.map(row => {
-      const col0 = row[1] !== undefined ? row[1] : '';
-      const col1 = row[2] !== undefined ? row[2] : '';
-      const col21 = row[23] !== undefined ? row[23] : '';
-      return [col0, col1, col21];
-    });
-    const processedData = processTableData(tableData);
-    currentTableData = processedData;
-    originalRowCount = processedData.length;
-    if (!Array.isArray(rowComments) || rowComments.length !== processedData.length) {
-      // Reset or resize comment array if needed
-      rowComments = new Array(processedData.length).fill("");
-    }
-    renderTable(processedData);
-  }
-
-  // --- Comment and swipe logic additions below ---
-
-  // For comment storage
-  let rowComments = [];
-
-  // --- matData, valueToCodes, matLookup ---
-  let matData = [];
-  let valueToCodes = {};
-  matData.forEach(([code, value]) => {
-    if (!valueToCodes[value]) valueToCodes[value] = [];
-    valueToCodes[value].push(code);
+function updateTableFromInput() {
+  const inputValue = document.getElementById('triggerInput').value;
+  // For demonstration, let's split input into rows by line breaks,
+  // and columns by tabs
+  const rows = inputValue.split('\n').map(line => line.split('\t'));
+  // Take columns [0], [1], [21] (if present), as in your previous code
+  const tableData = rows.map(row => {
+    const col0 = row[1] !== undefined ? row[1] : '';
+    const col1 = row[2] !== undefined ? row[2] : '';
+    const col21 = row[23] !== undefined ? row[23] : '';
+    return [col0, col1, col21];
   });
-  let matLookup = {};
-  matData.forEach(([code, value]) => {
-    matLookup[code] = value;
+  const processedData = processTableData(tableData);
+  currentTableData = processedData;
+  originalRowCount = processedData.length;
+  renderTable(processedData);
+}
+
+
+
+
+
+
+
+
+
+// --- matData and matLookup ---
+let matData = [];
+
+let valueToCodes = {};
+matData.forEach(([code, value]) => {
+  if (!valueToCodes[value]) valueToCodes[value] = [];
+  valueToCodes[value].push(code);
+});
+
+let matLookup = {};
+matData.forEach(([code, value]) => {
+  matLookup[code] = value;
+});
+
+// Global variable to store current table data
+let currentTableData = [];
+let originalRowCount = 0;
+
+function getColor(index) {
+  const palette = [
+    "#c9f1fc", "#d4f8c4", "#ffe0ac", "#f9c6c7", "#d6c6f9", "#ffc6e0",
+    "#c6ffe0", "#f6f7d7", "#e6e6fa", "#cef6e3", "#ffd6d6", "#d6fffa"
+  ];
+  if (index < palette.length) return palette[index];
+  return `hsl(${(index * 47) % 360}, 70%, 80%)`;
+}
+
+function removeContextMenu() {
+  const menu = document.querySelector('.custom-context-menu');
+  if (menu) menu.remove();
+}
+
+function removeDuplicateRows(tableData) {
+  const uniqueRows = [];
+  const seenRowSignatures = new Set();
+  
+  tableData.forEach(row => {
+    const rowSignature = JSON.stringify(row);
+    if (!seenRowSignatures.has(rowSignature)) {
+      seenRowSignatures.add(rowSignature);
+      uniqueRows.push(row);
+    }
+  });
+  
+  return uniqueRows;
+}
+
+function processTableData(rawTableData) {
+  // Replace 2nd column cell value if found in matLookup
+  rawTableData.forEach(rowData => {
+    if (rowData.length > 1) {
+      const lookupValue = matLookup[rowData[1]];
+      if (lookupValue !== undefined) {
+        rowData[1] = lookupValue;
+      }
+    }
+    
+    // Convert 3rd column date format from DD.MM.YY to DD.MM.
+    if (rowData.length > 2 && rowData[2]) {
+      // Match DD.MM.YY format (where YY can be 2 or 4 digits)
+      const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+      if (dateMatch) {
+        const [, day, month] = dateMatch;
+        rowData[2] = `${day}.${month}.`;
+      }
+    }
+  });
+  
+  // Remove duplicate rows
+  return removeDuplicateRows(rawTableData);
+}
+
+function renderTable(tableData) {
+  // Count occurrences of each value in the 2nd column
+  const valueCounts = {};
+  tableData.forEach(row => {
+    if (row.length > 1 && row[1]) {
+      valueCounts[row[1]] = (valueCounts[row[1]] || 0) + 1;
+    }
   });
 
-  // Global variable to store current table data
-  let currentTableData = [];
-  let originalRowCount = 0;
+  const frequentValues = Object.keys(valueCounts).filter(val => valueCounts[val] > 1);
+  const valueColorMap = {};
+  frequentValues.forEach((val, i) => {
+    valueColorMap[val] = getColor(i);
+  });
 
-  function getColor(index) {
-    const palette = [
-      "#c9f1fc", "#d4f8c4", "#ffe0ac", "#f9c6c7", "#d6c6f9", "#ffc6e0",
-      "#c6ffe0", "#f6f7d7", "#e6e6fa", "#cef6e3", "#ffd6d6", "#d6fffa"
-    ];
-    if (index < palette.length) return palette[index];
-    return `hsl(${(index * 47) % 360}, 70%, 80%)`;
-  }
+  // Create table without header, and only columns 0, 1, 21
+  const table = document.createElement('table');
+  table.style.borderCollapse = 'collapse';
 
-  function removeContextMenu() {
-    const menu = document.querySelector('.custom-context-menu');
-    if (menu) menu.remove();
-  }
-
-  function removeDuplicateRows(tableData) {
-    const uniqueRows = [];
-    const seenRowSignatures = new Set();
-    tableData.forEach(row => {
-      const rowSignature = JSON.stringify(row);
-      if (!seenRowSignatures.has(rowSignature)) {
-        seenRowSignatures.add(rowSignature);
-        uniqueRows.push(row);
+  tableData.forEach((rowData, rowIdx) => {
+    const tr = document.createElement('tr');
+    // Add columns 0, 1, and 2 (which correspond to orig 0, 1, 21)
+    rowData.forEach((cellData, colIdx) => {
+      const td = document.createElement('td');
+      // Remove line breaks from cell data and take only the first line
+      const cleanedData = cellData.split(/\r?\n/)[0];
+      td.textContent = cleanedData;
+      td.style.border = '1px solid #ccc';
+      td.style.padding = '4px 8px';
+      // Only color 2nd column if its value occurs more than once
+      if (colIdx === 1 && valueColorMap[cleanedData]) {
+        td.style.background = valueColorMap[cleanedData];
       }
-    });
-    return uniqueRows;
-  }
-
-  function processTableData(rawTableData) {
-    rawTableData.forEach(rowData => {
-      if (rowData.length > 1) {
-        const lookupValue = matLookup[rowData[1]];
-        if (lookupValue !== undefined) {
-          rowData[1] = lookupValue;
-        }
-      }
-      if (rowData.length > 2 && rowData[2]) {
-        const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
-        if (dateMatch) {
-          const [, day, month] = dateMatch;
-          rowData[2] = `${day}.${month}.`;
-        }
-      }
-    });
-    return removeDuplicateRows(rawTableData);
-  }
-
-  function renderTable(tableData) {
-    // Update rowComments length if needed
-    if (!Array.isArray(rowComments) || rowComments.length !== tableData.length) {
-      rowComments = new Array(tableData.length).fill("");
-    }
-    // Count occurrences of each value in the 2nd column
-    const valueCounts = {};
-    tableData.forEach(row => {
-      if (row.length > 1 && row[1]) {
-        valueCounts[row[1]] = (valueCounts[row[1]] || 0) + 1;
-      }
-    });
-
-    const frequentValues = Object.keys(valueCounts).filter(val => valueCounts[val] > 1);
-    const valueColorMap = {};
-    frequentValues.forEach((val, i) => {
-      valueColorMap[val] = getColor(i);
-    });
-
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-
-    tableData.forEach((rowData, rowIdx) => {
-      const tr = document.createElement('tr');
-      rowData.forEach((cellData, colIdx) => {
-        const td = document.createElement('td');
-        const cleanedData = (cellData || '').split(/\r?\n/)[0];
-        td.textContent = cleanedData;
-        td.style.border = '1px solid #ccc';
-        td.style.padding = '4px 8px';
-        if (colIdx === 1 && valueColorMap[cleanedData]) {
-          td.style.background = valueColorMap[cleanedData];
-        }
-        if (colIdx === 1) {
-          td.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            removeContextMenu();
-            const codes = valueToCodes[cleanedData];
-            if (!codes || codes.length === 0) return;
-            const menu = document.createElement('div');
-            menu.className = 'custom-context-menu';
-            const ul = document.createElement('ul');
-            codes.forEach(code => {
-              const li = document.createElement('li');
-              li.textContent = code;
-              ul.appendChild(li);
-            });
-            menu.appendChild(ul);
-            document.body.appendChild(menu);
-            menu.style.left = `${e.pageX}px`;
-            menu.style.top = `${e.pageY}px`;
+      // Context menu for 2nd column
+      if (colIdx === 1) {
+        td.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          removeContextMenu();
+          const codes = valueToCodes[cleanedData];
+          if (!codes || codes.length === 0) return;
+          const menu = document.createElement('div');
+          menu.className = 'custom-context-menu';
+          const ul = document.createElement('ul');
+          codes.forEach(code => {
+            const li = document.createElement('li');
+            li.textContent = code;
+            ul.appendChild(li);
           });
-        }
-        if (colIdx === 0) {
-          td.addEventListener('click', function() {
-            td.classList.toggle('highlight-first-col');
-          });
-        }
-        tr.appendChild(td);
-      });
-
-      // --- COMMENT CELL ---
-      // Render the comment cell, if any
-      const comment = rowComments[rowIdx] || "";
-      const commentTd = document.createElement('td');
-      commentTd.className = "comment-cell";
-      commentTd.textContent = comment;
-      commentTd.style.border = '1px solid #ccc';
-      commentTd.style.padding = '4px 8px';
-      tr.appendChild(commentTd);
-
-      // Add swipe gesture logic for comment per row
-      addSwipeHandlers(tr, rowIdx);
-
-      table.appendChild(tr);
-    });
-
-    const container = document.getElementById('tableContainer');
-    container.innerHTML = '';
-    container.appendChild(table);
-  }
-
-  // Swipe handler: right = add comment, left = remove comment or row
-  function addSwipeHandlers(rowElement, rowIdx) {
-    let touchStartX = 0, touchEndX = 0;
-    rowElement.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].clientX;
-    });
-    rowElement.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].clientX;
-      const diffX = touchEndX - touchStartX;
-      // Swipe right: add/replace comment
-      if (diffX > 50) {
-        const currentComment = rowComments[rowIdx] || "";
-        const newComment = prompt("Add a comment to this row:", currentComment);
-        if (newComment !== null) {
-          rowComments[rowIdx] = newComment.trim();
-          renderTable(currentTableData);
-        }
+          menu.appendChild(ul);
+          document.body.appendChild(menu);
+          menu.style.left = `${e.pageX}px`;
+          menu.style.top = `${e.pageY}px`;
+        });
       }
-      // Swipe left: remove comment or remove row
-      else if (diffX < -50) {
-        if (rowComments[rowIdx]) {
-          // Remove only comment
-          rowComments[rowIdx] = "";
-          renderTable(currentTableData);
-        } else {
-          // Remove the row entirely (and keep comments array in sync)
-          currentTableData.splice(rowIdx, 1);
-          rowComments.splice(rowIdx, 1);
-          renderTable(currentTableData);
-        }
+      // Highlight first column cell on click
+      if (colIdx === 0) {
+        td.addEventListener('click', function() {
+          td.classList.toggle('highlight-first-col');
+        });
+      }
+      tr.appendChild(td);
+    });
+    
+
+  // Swipe-to-delete functionality
+    let touchStartX = null;
+    tr.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
       }
     });
-  }
-
-  function parseTabSeparatedData(text) {
-    const lines = text.split(/\r?\n/);
-    const rows = [];
-    let currentRow = [];
-    let cellContent = '';
-    let inQuotedCell = false;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      let j = 0;
-      while (j < line.length) {
-        const char = line[j];
-        if (!inQuotedCell && char === '\t') {
-          currentRow.push(cellContent);
-          cellContent = '';
-        } else if (char === '"') {
-          inQuotedCell = !inQuotedCell;
-        } else {
-          cellContent += char;
+    tr.addEventListener('touchend', function(e) {
+      if (touchStartX !== null && e.changedTouches.length === 1) {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) { // Swipe left threshold (px)
+          tableData.splice(rowIdx, 1);
+          renderTable(tableData);
         }
-        j++;
+        touchStartX = null;
       }
-      if (!inQuotedCell) {
+    });
+
+    table.appendChild(tr);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  const container = document.getElementById('tableContainer');
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+function parseTabSeparatedData(text) {
+  const lines = text.split(/\r?\n/);
+  const rows = [];
+  let currentRow = [];
+  let cellContent = '';
+  let inQuotedCell = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    let j = 0;
+    
+    while (j < line.length) {
+      const char = line[j];
+      
+      if (!inQuotedCell && char === '\t') {
+        // End of cell
         currentRow.push(cellContent);
-        rows.push(currentRow);
-        currentRow = [];
         cellContent = '';
+      } else if (char === '"') {
+        // Toggle quoted cell state
+        inQuotedCell = !inQuotedCell;
       } else {
-        cellContent += '\n';
+        // Add character to current cell content
+        cellContent += char;
       }
+      j++;
     }
-    if (currentRow.length > 0 || cellContent) {
+    
+    // Check if we're at the end of a row (not in a quoted cell)
+    if (!inQuotedCell) {
+      // Add the last cell of the row
       currentRow.push(cellContent);
       rows.push(currentRow);
-    }
-    return rows.filter(row => row.some(cell => cell.trim() !== ''));
-  }
-
-  async function readClipboardAndProcess() {
-    try {
-      const text = await navigator.clipboard.readText();
-      const rows = parseTabSeparatedData(text);
-      const tableData = rows.map(row => {
-        const col0 = row[1] !== undefined ? row[1] : '';
-        const col1 = row[2] !== undefined ? row[2] : '';
-        const col21 = row[23] !== undefined ? row[23] : '';
-        return [col0, col1, col21];
-      });
-      return processTableData(tableData);
-    } catch (err) {
-      alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
-      console.error(err);
-      return null;
+      currentRow = [];
+      cellContent = '';
+    } else {
+      // We're in a multi-line quoted cell, add a newline and continue
+      cellContent += '\n';
     }
   }
+  
+  // Add any remaining row if we ended in the middle of one
+  if (currentRow.length > 0 || cellContent) {
+    currentRow.push(cellContent);
+    rows.push(currentRow);
+  }
+  
+  return rows.filter(row => row.some(cell => cell.trim() !== ''));
+}
 
-  document.addEventListener('click', removeContextMenu);
-  document.addEventListener('scroll', removeContextMenu);
+async function readClipboardAndProcess() {
+  try {
+    const text = await navigator.clipboard.readText();
+    
+    // Parse the tab-separated data properly handling multi-line cells
+    const rows = parseTabSeparatedData(text);
 
-  // --- Replace logic triggered on input field change ---
-  // (not used in mobile QR, but left for completeness)
-  if (document.getElementById('triggerInput')) {
-    document.getElementById('triggerInput').addEventListener('input', async () => {
-      const tableData = await readClipboardAndProcess();
-      if (tableData) {
-        const originalCount = tableData.length;
-        currentTableData = tableData;
-        originalRowCount = currentTableData.length;
-        rowComments = new Array(currentTableData.length).fill(""); // reset comments array
-        const duplicateCount = originalCount - currentTableData.length;
-        if (duplicateCount > 0) {
-          alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
-        }
-        renderTable(currentTableData);
-      }
+    // Take columns [0], [1], and [21] only
+const tableData = rows.map(row => {
+  const col0 = row[1] !== undefined ? row[1] : '';
+  const col1 = row[2] !== undefined ? row[2] : '';
+  const col21 = row[23] !== undefined ? row[23] : '';
+  return [col0, col1, col21];
+});
+
+
+    return processTableData(tableData);
+  } catch (err) {
+    alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
+    console.error(err);
+    return null;
+  }
+}
+
+document.addEventListener('click', removeContextMenu);
+document.addEventListener('scroll', removeContextMenu);
+
+
+
+// --- Replace logic triggered on input field change ---
+document.getElementById('triggerInput').addEventListener('input', async () => {
+  const tableData = await readClipboardAndProcess();
+  if (tableData) {
+    const originalCount = tableData.length;
+    currentTableData = tableData; 
+    originalRowCount = currentTableData.length; 
+    
+    const duplicateCount = originalCount - currentTableData.length;
+    if (duplicateCount > 0) {
+      alert(`${duplicateCount} duplicate row(s) were removed. Showing ${currentTableData.length} unique row(s).`);
+    }
+
+    renderTable(currentTableData);
+  }
+});
+
+// --- inside Append button click ---
+document.getElementById('btnAppend').addEventListener('click', async () => {
+  const newTableData = await readClipboardAndProcess();
+  if (newTableData) {
+    const existingRowSignatures = new Set(
+      currentTableData.map(row => JSON.stringify(row))
+    );
+    
+    const uniqueNewRows = newTableData.filter(row => {
+      const rowSignature = JSON.stringify(row);
+      return !existingRowSignatures.has(rowSignature);
     });
+    
+    const duplicateCount = newTableData.length - uniqueNewRows.length;
+    if (duplicateCount > 0) {
+      alert(`${duplicateCount} duplicate row(s) were filtered out. Adding ${uniqueNewRows.length} new row(s).`);
+    }
+    
+    currentTableData = currentTableData.concat(uniqueNewRows);
+    renderTable(currentTableData);
   }
+});
+addSwipeHandlers(tr);
+
+
+
+
+
 </script>
+
 </html>

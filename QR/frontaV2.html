@@ -441,7 +441,7 @@ function updateInputField(fullData) {
   // To track duplicates
   const seen = new Set();
 
-  const text = fullData.map(row => {
+  const text = fullData.map((row, idx) => {
     const col1 = row[1] !== undefined ? row[1] : '';
     const col2 = row[2] !== undefined ? row[2] : '';
     let col23 = row[23] !== undefined ? row[23] : '';
@@ -458,6 +458,14 @@ function updateInputField(fullData) {
     rowArr.push(col1, col2);            // 2 data cols
     rowArr.push(...Array(20).fill('')); // 20 empty cols
     rowArr.push(col23);                 // last col (date)
+
+    // Add a column at the end: 'i' if this row has scissors emoji, else ''
+    const rowIdx = idx;
+    if (rowIdx < originalRowCount) {
+      rowArr.push('i');
+    } else {
+      rowArr.push('');
+    }
 
     return rowArr.join('\t');
   }).filter(rowStr => {
