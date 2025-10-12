@@ -8,6 +8,7 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -58,12 +59,13 @@ td {
   white-space: pre-line;
   max-width: 160px;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
-tr:nth-child(even) td {
+tr:nth-child(even) td:not(.highlight-first-col) {
   background: #f9f9f9;
 }
-tr:hover td {
+tr:hover td:not(.highlight-first-col) {
   background: #e3f2fd;
   transition: background 0.2s;
 }
@@ -76,58 +78,50 @@ table, td, tr {
 .highlight-first-col {
   background: #fff59d !important;
   transition: background 0.2s;
+  font-weight: bold;
 }
 .custom-context-menu {
   border-radius: 8px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.18);
   animation: fadeIn 0.2s;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  z-index: 9999;
+  min-width: 120px;
+  padding: 0;
+  margin: 0;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px);}
   to { opacity: 1; transform: translateY(0);}
 }
-      .custom-context-menu {
-          border-radius: 8px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-  animation: fadeIn 0.2s;
-
-        position: absolute;
-        background: #fff;
-        border: 1px solid #ccc;
-      
-        z-index: 9999;
-        min-width: 120px;
-        padding: 0;
-        margin: 0;
-      }
-      .custom-context-menu ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .custom-context-menu li {
-        padding: 8px 16px;
-        cursor: pointer;
-        font-size: 15px;
-        transition: background 0.2s;
-      }
-      .custom-context-menu li:hover {
-        background: #e6e6fa;
-      }
-
+.custom-context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.custom-context-menu li {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.custom-context-menu li:hover {
+  background: #e6e6fa;
+}
     </style>
 </head>
 <body>
    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
  <div id="output" hidden>
-  <input id="outputMessage" value="No QR code detected.">
+  <input id="outputMessage">No QR code detected.</input>
   <div hidden>
     <b>Data:</b>
     <pre id="outputData"></pre>
   </div>
 </div>
-</body>
 
 <script>
   var video = document.createElement("video");
@@ -162,9 +156,9 @@ table, td, tr {
       loadingMessage.hidden = true;
       canvasElement.hidden = false;
       outputContainer.hidden = false;
-      // --- Responsive canvas size: 80% of viewport ---
       const maxWidth = window.innerWidth * 0.8;
       const maxHeight = window.innerHeight * 0.8;
+
       let aspect = video.videoWidth / video.videoHeight;
       let width = maxWidth;
       let height = maxWidth / aspect;
@@ -172,6 +166,7 @@ table, td, tr {
         height = maxHeight;
         width = maxHeight * aspect;
       }
+
       canvasElement.width = width;
       canvasElement.height = height;
       canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
@@ -189,10 +184,9 @@ table, td, tr {
         outputData.parentElement.hidden = false;
         outputData.textContent = code.data;
 
-        // Save once and show new input field
         if (!saved) {
           localStorage.setItem("qrData", code.data);
-          document.body.innerHTML = ""; // clear everything
+          document.body.innerHTML = "";
           createUIElements();
           saved = true;
         }
@@ -201,48 +195,37 @@ table, td, tr {
     requestAnimationFrame(tick);
   }
 
-  // Fix: create input and tableContainer after clearing body
 function createUIElements() {
-  // Create the textarea element (instead of input)
   const textArea = document.createElement('textarea');
   textArea.id = "triggerInput";
   textArea.style.padding = "10px";
   textArea.style.fontSize = "16px";
   textArea.style.width = "300px";
-  textArea.style.height = "100px"; // You can adjust height as needed
+  textArea.style.height = "100px";
   textArea.value = localStorage.getItem("qrData") || "";
-  textArea.hidden = true; // Hide the input field
-
-  // Create the table container
+  textArea.hidden = true;
+  
   const tableContainer = document.createElement('div');
   tableContainer.id = "tableContainer";
   tableContainer.style.marginTop = "24px";
   tableContainer.style.overflowX = "auto";
 
-  // Add to document body
   document.body.appendChild(textArea);
   document.body.appendChild(tableContainer);
 
-  // --- Use the value in textarea as the data source ---
   updateTableFromInput();
-
-  // Table updates on further edits
   textArea.addEventListener('input', updateTableFromInput);
 }
 
 function updateTableFromInput() {
   const inputValue = document.getElementById('triggerInput').value;
-  // Split input into rows by line breaks, columns by tabs
   const rows = inputValue.split('\n').map(line => line.split('\t'));
-  // Take columns [1], [2], [23] (if present), and all other columns including an optional last column for scissors marker
-  // If there is an additional last column, include it!
   const tableData = rows.map(row => {
     const col0 = row[1] !== undefined ? row[1] : '';
     const col1 = row[2] !== undefined ? row[2] : '';
     const col21 = row[23] !== undefined ? row[23] : '';
-    // If there are more columns, keep the last one (scissors marker)
-    const extra = row.length > 24 ? row[row.length - 1] : '';
-    return [col0, col1, col21, extra];
+    const col22 = row[24] !== undefined ? row[24] : '';
+    return [col0, col1, col21, col22];
   });
   const processedData = processTableData(tableData);
   currentTableData = processedData;
@@ -250,9 +233,7 @@ function updateTableFromInput() {
   renderTable(processedData);
 }
 
-// --- matData and matLookup ---
 let matData = [];
-
 let valueToCodes = {};
 matData.forEach(([code, value]) => {
   if (!valueToCodes[value]) valueToCodes[value] = [];
@@ -264,7 +245,6 @@ matData.forEach(([code, value]) => {
   matLookup[code] = value;
 });
 
-// Global variable to store current table data
 let currentTableData = [];
 let originalRowCount = 0;
 
@@ -287,7 +267,9 @@ function removeDuplicateRows(tableData) {
   const seenRowSignatures = new Set();
   
   tableData.forEach(row => {
-    const rowSignature = JSON.stringify(row);
+    // Only compare first 3 columns for duplicate detection (ignore the 4th column with "i")
+    const rowForComparison = [row[0], row[1], row[2]];
+    const rowSignature = JSON.stringify(rowForComparison);
     if (!seenRowSignatures.has(rowSignature)) {
       seenRowSignatures.add(rowSignature);
       uniqueRows.push(row);
@@ -298,7 +280,6 @@ function removeDuplicateRows(tableData) {
 }
 
 function processTableData(rawTableData) {
-  // Replace 2nd column cell value if found in matLookup
   rawTableData.forEach(rowData => {
     if (rowData.length > 1) {
       const lookupValue = matLookup[rowData[1]];
@@ -307,7 +288,6 @@ function processTableData(rawTableData) {
       }
     }
     
-    // Convert 3rd column date format from DD.MM.YY to DD.MM.
     if (rowData.length > 2 && rowData[2]) {
       const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
       if (dateMatch) {
@@ -321,7 +301,6 @@ function processTableData(rawTableData) {
 }
 
 function renderTable(tableData) {
-  // Count occurrences of each value in the 2nd column
   const valueCounts = {};
   tableData.forEach(row => {
     if (row.length > 1 && row[1]) {
@@ -338,24 +317,32 @@ function renderTable(tableData) {
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
 
+  // Track consecutive scissors rows for merging
+  let scissorsStartIdx = -1;
+  let scissorsCount = 0;
+
   tableData.forEach((rowData, rowIdx) => {
     const tr = document.createElement('tr');
-    // Render all columns except the last one (which we'll handle separately)
-    for (let colIdx = 0; colIdx < rowData.length - 1; colIdx++) {
-      const cellData = rowData[colIdx];
+    const lastCell = rowData[3];
+    const hasScissors = lastCell === 'i';
+    
+    for (let colIdx = 0; colIdx < 3 && colIdx < rowData.length; colIdx++) {
       const td = document.createElement('td');
-      const cleanedData = (cellData || '').replace(/\r?\n/g, '<br>');
-      td.innerHTML = cleanedData;
+      const cellData = rowData[colIdx];
+      const cleanedData = cellData.split(/\r?\n/)[0];
+      td.textContent = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
-      if (colIdx === 1 && valueColorMap[cellData]) {
-        td.style.background = valueColorMap[cellData];
+      
+      if (colIdx === 1 && valueColorMap[cleanedData]) {
+        td.style.background = valueColorMap[cleanedData];
       }
+      
       if (colIdx === 1) {
         td.addEventListener('contextmenu', function(e) {
           e.preventDefault();
           removeContextMenu();
-          const codes = valueToCodes[cellData];
+          const codes = valueToCodes[cleanedData];
           if (!codes || codes.length === 0) return;
           const menu = document.createElement('div');
           menu.className = 'custom-context-menu';
@@ -371,27 +358,54 @@ function renderTable(tableData) {
           menu.style.top = `${e.pageY}px`;
         });
       }
-      if (colIdx === 0) {
-        td.addEventListener('click', function() {
-          td.classList.toggle('highlight-first-col');
-        });
-      }
+      
+      td.addEventListener('click', function(e) {
+        e.stopPropagation();
+        td.classList.toggle('highlight-first-col');
+      });
+      
       tr.appendChild(td);
     }
-    // Now handle the last column: if it is "i", display scissors emoji
-    const lastCell = rowData[rowData.length - 1];
+    
+    // Handle the last column with merging logic
     const lastTd = document.createElement('td');
     lastTd.style.border = '1px solid #ccc';
     lastTd.style.padding = '4px 8px';
     lastTd.style.textAlign = 'center';
-    if (lastCell === 'i') {
-      lastTd.textContent = '✂️';
+    lastTd.style.verticalAlign = 'middle';
+    
+    if (hasScissors) {
+      // Start or continue a scissors sequence
+      if (scissorsStartIdx === -1) {
+        scissorsStartIdx = rowIdx;
+        scissorsCount = 1;
+        lastTd.textContent = '✂️';
+        lastTd.dataset.scissorsStart = 'true';
+      } else {
+        scissorsCount++;
+        lastTd.style.display = 'none'; // Hide this cell, will be merged
+      }
     } else {
+      // Not a scissors row - finalize any previous scissors merge
+      if (scissorsStartIdx !== -1 && scissorsCount > 1) {
+        // Find the first scissors cell and set rowspan
+        const firstScissorsTr = table.rows[scissorsStartIdx];
+        const firstScissorsTd = firstScissorsTr.cells[firstScissorsTr.cells.length - 1];
+        firstScissorsTd.rowSpan = scissorsCount;
+      }
+      scissorsStartIdx = -1;
+      scissorsCount = 0;
+      
       lastTd.textContent = lastCell || '';
     }
+    
+    lastTd.addEventListener('click', function(e) {
+      e.stopPropagation();
+      lastTd.classList.toggle('highlight-first-col');
+    });
+    
     tr.appendChild(lastTd);
 
-    // Swipe-to-delete functionality
     let touchStartX = null;
     tr.addEventListener('touchstart', function(e) {
       if (e.touches.length === 1) {
@@ -401,7 +415,7 @@ function renderTable(tableData) {
     tr.addEventListener('touchend', function(e) {
       if (touchStartX !== null && e.changedTouches.length === 1) {
         const touchEndX = e.changedTouches[0].clientX;
-        if (touchStartX - touchEndX > 50) { // Swipe left threshold (px)
+        if (touchStartX - touchEndX > 50) {
           tableData.splice(rowIdx, 1);
           renderTable(tableData);
         }
@@ -412,9 +426,82 @@ function renderTable(tableData) {
     table.appendChild(tr);
   });
 
+  // Handle case where table ends with scissors rows
+  if (scissorsStartIdx !== -1 && scissorsCount > 1) {
+    const firstScissorsTr = table.rows[scissorsStartIdx];
+    const firstScissorsTd = firstScissorsTr.cells[firstScissorsTr.cells.length - 1];
+    firstScissorsTd.rowSpan = scissorsCount;
+  }
+
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
   container.appendChild(table);
 }
+
+function parseTabSeparatedData(text) {
+  const lines = text.split(/\r?\n/);
+  const rows = [];
+  let currentRow = [];
+  let cellContent = '';
+  let inQuotedCell = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    let j = 0;
+    
+    while (j < line.length) {
+      const char = line[j];
+      
+      if (!inQuotedCell && char === '\t') {
+        currentRow.push(cellContent);
+        cellContent = '';
+      } else if (char === '"') {
+        inQuotedCell = !inQuotedCell;
+      } else {
+        cellContent += char;
+      }
+      j++;
+    }
+    
+    if (!inQuotedCell) {
+      currentRow.push(cellContent);
+      rows.push(currentRow);
+      currentRow = [];
+      cellContent = '';
+    } else {
+      cellContent += '\n';
+    }
+  }
+  
+  if (currentRow.length > 0 || cellContent) {
+    currentRow.push(cellContent);
+    rows.push(currentRow);
+  }
+  
+  return rows.filter(row => row.some(cell => cell.trim() !== ''));
+}
+
+async function readClipboardAndProcess() {
+  try {
+    const text = await navigator.clipboard.readText();
+    const rows = parseTabSeparatedData(text);
+    const tableData = rows.map(row => {
+      const col0 = row[1] !== undefined ? row[1] : '';
+      const col1 = row[2] !== undefined ? row[2] : '';
+      const col21 = row[23] !== undefined ? row[23] : '';
+      const col22 = row[24] !== undefined ? row[24] : '';
+      return [col0, col1, col21, col22];
+    });
+    return processTableData(tableData);
+  } catch (err) {
+    alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
+    console.error(err);
+    return null;
+  }
+}
+
+document.addEventListener('click', removeContextMenu);
+document.addEventListener('scroll', removeContextMenu);
 </script>
+</body>
 </html>

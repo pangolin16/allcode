@@ -242,11 +242,13 @@ function updateTableFromInput() {
   // and columns by tabs
   const rows = inputValue.split('\n').map(line => line.split('\t'));
   // Take columns [0], [1], [21] (if present), as in your previous code
-  const tableData = rows.map(row => {
-    const col0 = row[1] !== undefined ? row[1] : '';
-    const col1 = row[2] !== undefined ? row[2] : '';
-    const col21 = row[23] !== undefined ? row[23] : '';
-    return [col0, col1, col21];
+ const tableData = rows.map(row => {
+      const col0 = row[1] !== undefined ? row[1] : '';
+      const col1 = row[2] !== undefined ? row[2] : '';
+      const col21 = row[23] !== undefined ? row[23] : '';
+      const col22 = row[24] !== undefined ? row[24] : '';
+      return [col0, col1, col21, col22];
+    
   });
   const processedData = processTableData(tableData);
   currentTableData = processedData;
@@ -520,12 +522,13 @@ async function readClipboardAndProcess() {
     const rows = parseTabSeparatedData(text);
 
     // Take columns [0], [1], and [21] only
-const tableData = rows.map(row => {
-  const col0 = row[1] !== undefined ? row[1] : '';
-  const col1 = row[2] !== undefined ? row[2] : '';
-  const col21 = row[23] !== undefined ? row[23] : '';
-  return [col0, col1, col21];
-});
+ const tableData = rows.map(row => {
+      const col0 = row[1] !== undefined ? row[1] : '';
+      const col1 = row[2] !== undefined ? row[2] : '';
+      const col21 = row[23] !== undefined ? row[23] : '';
+      const col22 = row[24] !== undefined ? row[24] : '';
+      return [col0, col1, col21, col22];
+    });
 
 
     return processTableData(tableData);
