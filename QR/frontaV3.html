@@ -210,13 +210,14 @@ let matData = [
   ["M102364", "1.25 E"], 
    ["M100013", "1.25 E"]
 ];
-
-let valueToCodes = {};
+// Create reverse lookup: code -> list of values
+let codeToValues = {};
 matData.forEach(([code, value]) => {
-  if (!valueToCodes[value]) valueToCodes[value] = [];
-  valueToCodes[value].push(code);
+  if (!codeToValues[code]) codeToValues[code] = [];
+  codeToValues[code].push(value);
 });
 
+// Create lookup for substitution: code -> value
 let matLookup = {};
 matData.forEach(([code, value]) => {
   matLookup[code] = value;
@@ -225,7 +226,7 @@ matData.forEach(([code, value]) => {
 let currentTableData = [];
 let originalRowCount = 0;
 let currentFullData = [];
-let rowMetadata = []; // Store metadata for each row (scissors, gear emojis)
+let rowMetadata = [];
 
 function getColor(index) {
   const palette = [
@@ -258,13 +259,8 @@ function removeDuplicateRows(tableData) {
 
 function processTableData(rawTableData) {
   rawTableData.forEach(rowData => {
-    if (rowData.length > 1) {
-      const lookupValue = matLookup[rowData[1]];
-      if (lookupValue !== undefined) {
-        rowData[1] = lookupValue;
-      }
-    }
-
+    // DON'T substitute the code - keep it as is
+    // Just process the date format
     if (rowData.length > 2 && rowData[2]) {
       const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
       if (dateMatch) {
@@ -310,14 +306,15 @@ function renderTable(tableData) {
         td.addEventListener('contextmenu', function(e) {
           e.preventDefault();
           removeContextMenu();
-          const codes = valueToCodes[plainText];
-          if (!codes || codes.length === 0) return;
+          // Get the material values from the code
+          const values = codeToValues[plainText];
+          if (!values || values.length === 0) return;
           const menu = document.createElement('div');
           menu.className = 'custom-context-menu';
           const ul = document.createElement('ul');
-          codes.forEach(code => {
+          values.forEach(value => {
             const li = document.createElement('li');
-            li.textContent = code;
+            li.textContent = value;
             ul.appendChild(li);
           });
           menu.appendChild(ul);
@@ -416,11 +413,78 @@ async function readClipboardAndProcess() {
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
 
+function updateInputField(fullData) {
+  const textarea = document.getElementById('text-input');
+
+  // To track duplicates
+  const seen = new Set();
+
+  const text = fullData.map(row => {
+    const col1 = row[1] !== undefined ? row[1] : '';
+    const col2 = row[2] !== undefined ? row[2] : '';
+    let col23 = row[23] !== undefined ? row[23] : '';
+
+    // ✅ convert DD.MM.YY → DD.MM.
+    const dateMatch = col23.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+    if (dateMatch) {
+      const [, day, month] = dateMatch;
+      col23 = `${day}.${month}.`;
+    }
+
+    // Build row: empty col + 2 data cols + 20 empties + date col
+    const rowArr = [''];                // 1 empty col
+    rowArr.push(col1, col2);            // 2 data cols
+    rowArr.push(...Array(20).fill('')); // 20 empty cols
+    rowArr.push(col23);                 // last col (date)
+
+    return rowArr.join('\t');
+  }).filter(rowStr => {
+    if (seen.has(rowStr)) return false; // remove duplicate
+    seen.add(rowStr);
+    return true;
+  }).join('\n');
+
+  textarea.value = text;
+}
+
+
+// --- Replace button ---
 document.getElementById('btnSubmit').addEventListener('click', async () => {
   const result = await readClipboardAndProcess();
   if (result) {
     let { fullData, tableData } = result;
 
+
+document.getElementById('btnAppend').addEventListener('click', async () => {
+  const result = await readClipboardAndProcess();
+  if (result) {
+    let { fullData, tableData } = result;
+
+    // ✅ apply matData conversions
+    tableData = processTableData(tableData);
+
+    const existingRowSignatures = new Set(
+      currentTableData.map(row => JSON.stringify(row))
+    );
+
+    const uniqueNewRows = tableData.filter(row => {
+      const rowSignature = JSON.stringify(row);
+      return !existingRowSignatures.has(rowSignature);
+    });
+
+    currentTableData = currentTableData.concat(uniqueNewRows);
+    currentFullData = currentFullData.concat(fullData);
+
+    renderTable(currentTableData);
+    updateInputField(currentFullData);
+  }
+});
+
+
+
+
+
+    // ✅ apply matData conversions
     tableData = processTableData(tableData);
 
     currentTableData = tableData; 
@@ -429,7 +493,8 @@ document.getElementById('btnSubmit').addEventListener('click', async () => {
     
     rowMetadata = currentTableData.map(() => ({ hasScissors: true, hasGear: false }));
 
-    renderTable(currentTableData);
+    renderTable(currentTableData); updateInputField(currentFullData); 
+    
   }
 });
 
@@ -465,8 +530,8 @@ document.getElementById('btnAppend').addEventListener('click', async () => {
       rowMetadata.push({ hasScissors: false, hasGear: true });
     });
 
-    renderTable(currentTableData);
-  }
+    renderTable(currentTableData);   
+     updateInputField(currentFullData);  }
 });
 </script>
 

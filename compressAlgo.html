@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>title</title>
+  <script type="module" >
+  // Example using a hypothetical LZMA-Wasm library (e.g., lzma-js or similar)
+
+import { compress, decompress } from 'lzma-wasm-module';
+
+// Input data should be a binary format (Uint8Array or ArrayBuffer)
+const textEncoder = new TextEncoder();
+const originalData = textEncoder.encode("This is a highly repetitive text string for testing LZMA compression. This is a highly repetitive text string.");
+
+async function processLZMA() {
+    console.log(`Original size: ${originalData.length} bytes`);
+
+    // 1. Compression
+    // The library handles memory management and calling the Wasm module
+    const compressedData = await compress(originalData, {
+        // LZMA specific options
+        level: 9, // Max compression
+        dictSize: 1 << 23 // 8 MB dictionary
+    });
+
+    console.log(`Compressed size: ${compressedData.length} bytes`);
+    console.log(`Compression Ratio: ${(originalData.length / compressedData.length).toFixed(2)}:1`);
+
+    // 2. Decompression
+    const decompressedData = await decompress(compressedData);
+
+    // Convert the decompressed bytes back to a string
+    const textDecoder = new TextDecoder();
+    const resultText = textDecoder.decode(decompressedData);
+
+    console.log(`Decompressed data matches original: ${resultText === textDecoder.decode(originalData)}`);
+}
+
+processLZMA();
+</script>
+</head>
+<body>
+  
+</body>
+</html>
