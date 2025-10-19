@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>LZMA decompress demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
+</head>
+<body>
+  <h1>Decompressed Text:</h1>
+  <pre id="output"></pre>
+<script>
+  function base64ToUint8(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  // Usage after scanning QR:
+  // const scannedBase64=``
+const scannedBase64=`XQAAAAKaAwAAAAAAAAAbDIMAtb/U+vZ54s8W5bV2qDVFQxy3zHesd4YDTi2AQrXDbW2tjxffnM6MKTmIAZu3n/4Uf5nKlsPEU2krkdjtdlI924fPCkGPmsgW8QiRGyooxhlQLb8jBQIjQATQmEIfvvPSS92mU139y2en60uftRhwCl7OnBssSenE4u2kTg1f8DFkUF6CrfW68RWP0K8bl1YzfGq8VXZgyYnifnJDca8T/H/8fIzc`
+  const compressedBytes = base64ToUint8(scannedBase64);
+  LZMA.decompress(Array.from(compressedBytes), function(decompressed) {
+    let originalText = "";
+    if (Array.isArray(decompressed)) {
+      // Try bytes first
+      if (decompressed.every(n => typeof n === "number" && n >= 0 && n <= 255)) {
+        const decoder = new TextDecoder();
+        originalText = decoder.decode(Uint8Array.from(decompressed));
+      } else {
+        // Fallback: Unicode code points
+        originalText = String.fromCharCode(...decompressed);
+      }
+    } else if (typeof decompressed === "string") {
+      originalText = decompressed;
+    } else {
+      originalText = "[Unknown decompressed type]";
+    }
+    document.getElementById("output").textContent = originalText;
+  });
+</script>
+</body>
+</html>

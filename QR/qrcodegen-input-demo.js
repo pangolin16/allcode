@@ -1,25 +1,3 @@
-/*
- * QR Code generator input demo (TypeScript)
- *
- * Copyright (c) Project Nayuki. (MIT License)
- * https://www.nayuki.io/page/qr-code-generator-library
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- * - The above copyright notice and this permission notice shall be included in
- *   all copies or substantial portions of the Software.
- * - The Software is provided "as is", without warranty of any kind, express or
- *   implied, including but not limited to the warranties of merchantability,
- *   fitness for a particular purpose and noninfringement. In no event shall the
- *   authors or copyright holders be liable for any claim, damages or other
- *   liability, whether in an action of contract, tort or otherwise, arising from,
- *   out of or in connection with the Software or the use or other dealings in the
- *   Software.
- */
 "use strict";
 var app;
 (function (app) {
@@ -36,6 +14,16 @@ var app;
             el.onchange = redrawQrCode;
         redrawQrCode();
     }
+
+    // Helper: convert Uint8Array to base64 string
+    function uint8ToBase64(bytes) {
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+
     function redrawQrCode() {
         // Show/hide rows based on bitmap/vector image output
         const bitmapOutput = getInput("output-format-bitmap").checked;
@@ -56,6 +44,7 @@ var app;
         const svg = document.getElementById("qrcode-svg");
         canvas.style.display = "none";
         svg.style.display = "none";
+
         // Returns a QrCode.Ecc object based on the radio buttons in the HTML form.
         function getInputErrorCorrectionLevel() {
             if (getInput("errcorlvl-medium").checked)
@@ -67,84 +56,101 @@ var app;
             else // In case no radio button is depressed
                 return qrcodegen.QrCode.Ecc.LOW;
         }
+
         // Get form inputs and compute QR Code
         const ecl = getInputErrorCorrectionLevel();
-        const text = getElem("text-input").value;
-        const segs = qrcodegen.QrSegment.makeSegments(text);
-        const minVer = parseInt(getInput("version-min-input").value, 10);
-        const maxVer = parseInt(getInput("version-max-input").value, 10);
-        const mask = parseInt(getInput("mask-input").value, 10);
-        const boostEcc = getInput("boost-ecc-input").checked;
-        const qr = qrcodegen.QrCode.encodeSegments(segs, ecl, minVer, maxVer, mask, boostEcc);
-        // Draw image output
-        const border = parseInt(getInput("border-input").value, 10);
-        const lightColor = getInput("light-color-input").value;
-        const darkColor = getInput("dark-color-input").value;
-        if (border < 0 || border > 100)
-            return;
-        if (bitmapOutput) {
-            const scale = parseInt(getInput("scale-input").value, 10);
-            if (scale <= 0 || scale > 30)
+
+        // Gather text input, compress and encode for QR code
+        const text0 = getElem("text-input").value;
+        const inputText = text0.replace(/\n+/g, ' ').trim();
+        const encoder = new TextEncoder();
+        const inputBytes = Array.from(encoder.encode(inputText)); // Array of bytes
+
+        // Asynchronous: generate QR after compression
+        LZMA.compress(inputBytes, 9, function(compressed) {
+            const compressedUint8 = Uint8Array.from(compressed);
+            const text = uint8ToBase64(compressedUint8); // Base64 string
+console.log(text)
+            // Now make QR code as normal, using the base64 string
+            const segs = qrcodegen.QrSegment.makeSegments(text);
+            const minVer = parseInt(getInput("version-min-input").value, 10);
+            const maxVer = parseInt(getInput("version-max-input").value, 10);
+            const mask = parseInt(getInput("mask-input").value, 10);
+            const boostEcc = getInput("boost-ecc-input").checked;
+
+            const qr = qrcodegen.QrCode.encodeSegments(segs, ecl, minVer, maxVer, mask, boostEcc);
+
+            // Draw output, as in your original code...
+            const border = parseInt(getInput("border-input").value, 10);
+            const lightColor = getInput("light-color-input").value;
+            const darkColor = getInput("dark-color-input").value;
+            if (border < 0 || border > 100)
                 return;
-            drawCanvas(qr, scale, border, lightColor, darkColor, canvas);
-            canvas.style.removeProperty("display");
-        }
-        else {
-            const code = toSvgString(qr, border, lightColor, darkColor);
-            const viewBox = / viewBox="([^"]*)"/.exec(code)[1];
-            const pathD = / d="([^"]*)"/.exec(code)[1];
-            svg.setAttribute("viewBox", viewBox);
-            svg.querySelector("path").setAttribute("d", pathD);
-            svg.querySelector("rect").setAttribute("fill", lightColor);
-            svg.querySelector("path").setAttribute("fill", darkColor);
-            svg.style.removeProperty("display");
-            svgXml.value = code;
-        }
-        // Returns a string to describe the given list of segments.
-        function describeSegments(segs) {
-            if (segs.length == 0)
-                return "none";
-            else if (segs.length == 1) {
-                const mode = segs[0].mode;
-                const Mode = qrcodegen.QrSegment.Mode;
-                if (mode == Mode.NUMERIC)
-                    return "numeric";
-                if (mode == Mode.ALPHANUMERIC)
-                    return "alphanumeric";
-                if (mode == Mode.BYTE)
-                    return "byte";
-                if (mode == Mode.KANJI)
-                    return "kanji";
-                return "unknown";
+            if (bitmapOutput) {
+                const scale = parseInt(getInput("scale-input").value, 10);
+                if (scale <= 0 || scale > 30)
+                    return;
+                drawCanvas(qr, scale, border, lightColor, darkColor, canvas);
+                canvas.style.removeProperty("display");
+            } else {
+                const code = toSvgString(qr, border, lightColor, darkColor);
+                const viewBox = / viewBox="([^"]*)"/.exec(code)[1];
+                const pathD = / d="([^"]*)"/.exec(code)[1];
+                svg.setAttribute("viewBox", viewBox);
+                svg.querySelector("path").setAttribute("d", pathD);
+                svg.querySelector("rect").setAttribute("fill", lightColor);
+                svg.querySelector("path").setAttribute("fill", darkColor);
+                svg.style.removeProperty("display");
+                svgXml.value = code;
             }
-            else
-                return "multiple";
-        }
-        // Returns the number of Unicode code points in the given UTF-16 string.
-        function countUnicodeChars(str) {
-            let result = 0;
-            for (let i = 0; i < str.length; i++, result++) {
-                const c = str.charCodeAt(i);
-                if (c < 0xD800 || c >= 0xE000)
-                    continue;
-                else if (0xD800 <= c && c < 0xDC00 && i + 1 < str.length) { // High surrogate
-                    i++;
-                    const d = str.charCodeAt(i);
-                    if (0xDC00 <= d && d < 0xE000) // Low surrogate
-                        continue;
+
+            // Returns a string to describe the given list of segments.
+            function describeSegments(segs) {
+                if (segs.length == 0)
+                    return "none";
+                else if (segs.length == 1) {
+                    const mode = segs[0].mode;
+                    const Mode = qrcodegen.QrSegment.Mode;
+                    if (mode == Mode.NUMERIC)
+                        return "numeric";
+                    if (mode == Mode.ALPHANUMERIC)
+                        return "alphanumeric";
+                    if (mode == Mode.BYTE)
+                        return "byte";
+                    if (mode == Mode.KANJI)
+                        return "kanji";
+                    return "unknown";
                 }
-                throw new RangeError("Invalid UTF-16 string");
+                else
+                    return "multiple";
             }
-            return result;
-        }
-        // Show the QR Code symbol's statistics as a string
-        getElem("statistics-output").textContent = `QR Code version = ${qr.version}, ` +
-            `mask pattern = ${qr.mask}, ` +
-            `character count = ${countUnicodeChars(text)},\n` +
-            `encoding mode = ${describeSegments(segs)}, ` +
-            `error correction = level ${"LMQH".charAt(qr.errorCorrectionLevel.ordinal)}, ` +
-            `data bits = ${qrcodegen.QrSegment.getTotalBits(segs, qr.version)}.`;
+            // Returns the number of Unicode code points in the given UTF-16 string.
+            function countUnicodeChars(str) {
+                let result = 0;
+                for (let i = 0; i < str.length; i++, result++) {
+                    const c = str.charCodeAt(i);
+                    if (c < 0xD800 || c >= 0xE000)
+                        continue;
+                    else if (0xD800 <= c && c < 0xDC00 && i + 1 < str.length) { // High surrogate
+                        i++;
+                        const d = str.charCodeAt(i);
+                        if (0xDC00 <= d && d < 0xE000) // Low surrogate
+                            continue;
+                    }
+                    throw new RangeError("Invalid UTF-16 string");
+                }
+                return result;
+            }
+            // Show the QR Code symbol's statistics as a string
+            getElem("statistics-output").textContent = `QR Code version = ${qr.version}, ` +
+                `mask pattern = ${qr.mask}, ` +
+                `character count = ${countUnicodeChars(text)},\n` +
+                `encoding mode = ${describeSegments(segs)}, ` +
+                `error correction = level ${"LMQH".charAt(qr.errorCorrectionLevel.ordinal)}, ` +
+                `data bits = ${qrcodegen.QrSegment.getTotalBits(segs, qr.version)}.`;
+        });
     }
+
     // Draws the given QR Code, with the given module scale and border modules, onto the given HTML
     // canvas element. The canvas's width and height is resized to (qr.size + border * 2) * scale.
     // The drawn image is purely dark and light, and fully opaque.

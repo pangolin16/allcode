@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fronta práce</title>
     <script src="./jsQR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -115,13 +116,14 @@ table, td, tr {
 <body>
    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
- <div id="output" hidden>
-  <input id="outputMessage">No QR code detected.</input>
-  <div hidden>
-    <b>Data:</b>
-    <pre id="outputData"></pre>
+  <div id="output" hidden>
+    <input id="outputMessage" value="No QR code detected.">
+    <div hidden>
+      <b>Data:</b>
+      <pre id="outputData"></pre>
+      <pre id="outputK"></pre>
+    </div>
   </div>
-</div>
 
 <script>
   var video = document.createElement("video");
@@ -195,43 +197,99 @@ table, td, tr {
     requestAnimationFrame(tick);
   }
 
-function createUIElements() {
-  const textArea = document.createElement('textarea');
-  textArea.id = "triggerInput";
-  textArea.style.padding = "10px";
-  textArea.style.fontSize = "16px";
-  textArea.style.width = "300px";
-  textArea.style.height = "100px";
-  textArea.value = localStorage.getItem("qrData") || "";
-  textArea.hidden = true;
-  
-  const tableContainer = document.createElement('div');
-  tableContainer.id = "tableContainer";
-  tableContainer.style.marginTop = "24px";
-  tableContainer.style.overflowX = "auto";
+  // Helper to decode base64 to Uint8Array
+  function base64ToUint8(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
 
-  document.body.appendChild(textArea);
-  document.body.appendChild(tableContainer);
+  // GLOBAL: to hold the latest decompressed text
+  window.decompressedText = "";
 
-  updateTableFromInput();
-  textArea.addEventListener('input', updateTableFromInput);
-}
+  // Usage after scanning QR:
+  function decompressAndProcess() {
+    const scannedBase64 = document.getElementById('triggerInput').value;
+    
+    if (!scannedBase64) {
+      window.decompressedText = "";
+      updateTableFromInput();
+      return;
+    }
+    const compressedBytes = base64ToUint8(scannedBase64);
+    LZMA.decompress(Array.from(compressedBytes), function(decompressed) {
+      let originalText = "";
+      if (Array.isArray(decompressed)) {
+        if (decompressed.every(n => typeof n === "number" && n >= 0 && n <= 255)) {
+          const decoder = new TextDecoder();
+          originalText = decoder.decode(Uint8Array.from(decompressed));
+        } else {
+          originalText = String.fromCharCode(...decompressed);
+        }
+      } else if (typeof decompressed === "string") {
+        originalText = decompressed;
+      } else {
+        originalText = "[Unknown decompressed type]";
+      }
+      // Store globally
+      window.decompressedText = originalText;
+      // Also show for debugging
+      const outputK = document.getElementById("outputK");
+      if (outputK) outputK.textContent = originalText;
+      updateTableFromInput(); // call after decompression
+    });
+  }
 
-function updateTableFromInput() {
-  const inputValue = document.getElementById('triggerInput').value;
-  const rows = inputValue.split('\n').map(line => line.split('\t'));
-  const tableData = rows.map(row => {
-    const col0 = row[1] !== undefined ? row[1] : '';
-    const col1 = row[2] !== undefined ? row[2] : '';
-    const col21 = row[23] !== undefined ? row[23] : '';
-    const col22 = row[24] !== undefined ? row[24] : '';
-    return [col0, col1, col21, col22];
-  });
-  const processedData = processTableData(tableData);
-  currentTableData = processedData;
-  originalRowCount = processedData.length;
-  renderTable(processedData);
-}
+  // updateTableFromInput uses decompressedText
+  function updateTableFromInput() {
+    const inputValue = window.decompressedText;
+
+    if (!inputValue) {
+      renderTable([]); // clear table if no input
+      return;
+    }
+
+    const rows = inputValue.split('\n').map(line => line.split('\t'));
+    const tableData = rows.map(row => {
+      const col0 = row[1] !== undefined ? row[1] : '';
+      const col1 = row[2] !== undefined ? row[2] : '';
+      const col21 = row[23] !== undefined ? row[23] : '';
+      const col22 = row[24] !== undefined ? row[24] : '';
+      return [col0, col1, col21, col22];
+    });
+    const processedData = processTableData(tableData);
+    currentTableData = processedData;
+    originalRowCount = processedData.length;
+    renderTable(processedData);
+  }
+
+  // After creating the UI elements, call decompressAndProcess
+  function createUIElements() {
+    const textArea = document.createElement('textarea');
+    textArea.id = "triggerInput";
+    textArea.style.padding = "10px";
+    textArea.style.fontSize = "16px";
+    textArea.style.width = "300px";
+    textArea.style.height = "100px";
+    textArea.value = localStorage.getItem("qrData") || "";
+    textArea.hidden = true;
+
+    const tableContainer = document.createElement('div');
+    tableContainer.id = "tableContainer";
+    tableContainer.style.marginTop = "24px";
+    tableContainer.style.overflowX = "auto";
+
+    document.body.appendChild(textArea);
+    document.body.appendChild(tableContainer);
+
+    decompressAndProcess(); // instead of updateTableFromInput
+    textArea.addEventListener('input', decompressAndProcess);
+  }
+
+  // ... (rest of your unchanged matData, matLookup, table rendering, clipboard, etc.)
 
 let matData = [];
 let valueToCodes = {};
@@ -488,9 +546,8 @@ async function readClipboardAndProcess() {
     const tableData = rows.map(row => {
       const col0 = row[1] !== undefined ? row[1] : '';
       const col1 = row[2] !== undefined ? row[2] : '';
-      const col21 = row[23] !== undefined ? row[23] : '';
-      const col22 = row[24] !== undefined ? row[24] : '';
-      return [col0, col1, col21, col22];
+      const col8 = row[8] !== undefined ? row[8] : '';
+      return [col0, col1, col8];
     });
     return processTableData(tableData);
   } catch (err) {

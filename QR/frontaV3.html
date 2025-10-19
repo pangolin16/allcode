@@ -11,6 +11,7 @@
       referrerpolicy="no-referrer"
     />
          <link rel="stylesheet" href="frontaV2.css">
+           <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
 </head>
 <body>
     <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
@@ -422,7 +423,7 @@ function updateInputField(fullData) {
   const text = fullData.map(row => {
     const col1 = row[1] !== undefined ? row[1] : '';
     const col2 = row[2] !== undefined ? row[2] : '';
-    let col23 = row[23] !== undefined ? row[23] : '';
+    let col23 = row[8] !== undefined ? row[8] : '';
 
     // ✅ convert DD.MM.YY → DD.MM.
     const dateMatch = col23.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
@@ -434,7 +435,7 @@ function updateInputField(fullData) {
     // Build row: empty col + 2 data cols + 20 empties + date col
     const rowArr = [''];                // 1 empty col
     rowArr.push(col1, col2);            // 2 data cols
-    rowArr.push(...Array(20).fill('')); // 20 empty cols
+    rowArr.push(...Array(5).fill('')); // 20 empty cols
     rowArr.push(col23);                 // last col (date)
 
     return rowArr.join('\t');
