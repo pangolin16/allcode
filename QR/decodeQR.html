@@ -19,8 +19,8 @@
   }
 
   // Usage after scanning QR:
-  // const scannedBase64=``
-const scannedBase64=`XQAAAAKaAwAAAAAAAAAbDIMAtb/U+vZ54s8W5bV2qDVFQxy3zHesd4YDTi2AQrXDbW2tjxffnM6MKTmIAZu3n/4Uf5nKlsPEU2krkdjtdlI924fPCkGPmsgW8QiRGyooxhlQLb8jBQIjQATQmEIfvvPSS92mU139y2en60uftRhwCl7OnBssSenE4u2kTg1f8DFkUF6CrfW68RWP0K8bl1YzfGq8VXZgyYnifnJDca8T/H/8fIzc`
+   const scannedBase64=`XQAAAAJ6AAAAAAAAAAAbDIMAtb/U+vZ54s8W5bV2qDVFQxy3zHesd4YDTi2AQrXDbW2tjxffnM6MKTmIAZu2/IcLx9/+400A`
+   // const scannedBase64
   const compressedBytes = base64ToUint8(scannedBase64);
   LZMA.decompress(Array.from(compressedBytes), function(decompressed) {
     let originalText = "";

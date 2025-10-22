@@ -273,7 +273,6 @@ function processTableData(rawTableData) {
 
   return removeDuplicateRows(rawTableData);
 }
-
 function renderTable(tableData) {
   const valueCounts = {};
   tableData.forEach(row => {
@@ -293,6 +292,8 @@ function renderTable(tableData) {
 
   tableData.forEach((rowData, rowIdx) => {
     const tr = document.createElement('tr');
+    tr.dataset.rowIndex = rowIdx;
+    
     rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
       const plainText = cellData || '';
@@ -323,6 +324,16 @@ function renderTable(tableData) {
           menu.style.left = `${e.pageX}px`;
           menu.style.top = `${e.pageY}px`;
         });
+      } else {
+        // Right-click on any cell except column 1 to select the row
+        td.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          removeContextMenu();
+          // Remove previous selection
+          document.querySelectorAll('tr.selected-row').forEach(r => r.classList.remove('selected-row'));
+          // Select this row
+          tr.classList.add('selected-row');
+        });
       }
       if (colIdx === 0) {
         td.addEventListener('click', function() {
@@ -331,6 +342,12 @@ function renderTable(tableData) {
       }
       tr.appendChild(td);
     });
+
+
+
+
+
+
     
     const scissorsTd = document.createElement('td');
     const metadata = rowMetadata[rowIdx] || {};
@@ -413,6 +430,24 @@ async function readClipboardAndProcess() {
 
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
+// Handle Delete key to remove selected row
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Delete') {
+    const selectedRow = document.querySelector('tr.selected-row');
+    if (selectedRow) {
+      const rowIndex = parseInt(selectedRow.dataset.rowIndex);
+      
+      // Remove from all data arrays
+      currentTableData.splice(rowIndex, 1);
+      currentFullData.splice(rowIndex, 1);
+      rowMetadata.splice(rowIndex, 1);
+      
+      // Re-render table
+      renderTable(currentTableData);
+      updateInputField(currentFullData);
+    }
+  }
+});
 
 function updateInputField(fullData) {
   const textarea = document.getElementById('text-input');

@@ -103,3 +103,10 @@ td {
             min-height: 100px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
+          .selected-row {
+            background-color: #ffeb3b !important;
+            outline: 2px solid #fbc02d;
+        }
+        .selected-row td {
+            background-color: #f19202 !important;
+        }

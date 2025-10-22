@@ -243,22 +243,15 @@ table, td, tr {
     });
   }
 
-  // updateTableFromInput uses decompressedText
+   const inputValue = document.getElementById('triggerInput').value;
+
   function updateTableFromInput() {
-    const inputValue = window.decompressedText;
-
-    if (!inputValue) {
-      renderTable([]); // clear table if no input
-      return;
-    }
-
     const rows = inputValue.split('\n').map(line => line.split('\t'));
     const tableData = rows.map(row => {
-      const col0 = row[1] !== undefined ? row[1] : '';
+       const col0 = row[1] !== undefined ? row[1] : '';
       const col1 = row[2] !== undefined ? row[2] : '';
-      const col21 = row[23] !== undefined ? row[23] : '';
-      const col22 = row[24] !== undefined ? row[24] : '';
-      return [col0, col1, col21, col22];
+      const col8 = row[8] !== undefined ? row[8] : '';
+      return [col0, col1, col8];
     });
     const processedData = processTableData(tableData);
     currentTableData = processedData;
