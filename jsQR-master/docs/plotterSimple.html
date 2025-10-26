@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fronta práce</title>
     <script src="./jsQR.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -60,18 +60,16 @@ td {
   white-space: pre-line;
   max-width: 160px;
   text-overflow: ellipsis;
-  cursor: pointer;
 }
 
-tr:nth-child(even) td:not(.highlight-first-col) {
+tr:nth-child(even) td {
   background: #f9f9f9;
 }
-tr:hover td:not(.highlight-first-col) {
+tr:hover td {
   background: #e3f2fd;
   transition: background 0.2s;
 }
 
-/* Remove border-radius and box-shadow for mobile simplicity */
 table, td, tr {
   border-radius: 0;
   box-shadow: none;
@@ -79,7 +77,6 @@ table, td, tr {
 .highlight-first-col {
   background: #fff59d !important;
   transition: background 0.2s;
-  font-weight: bold;
 }
 .custom-context-menu {
   border-radius: 8px;
@@ -111,19 +108,26 @@ table, td, tr {
 .custom-context-menu li:hover {
   background: #e6e6fa;
 }
+.selected-row {
+  background-color: #ffeb3b !important;
+  outline: 2px solid #fbc02d;
+}
+.selected-row td {
+  background-color: #ffeb3b !important;
+}
     </style>
 </head>
 <body>
    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
   <canvas id="canvas" hidden></canvas>
-  <div id="output" hidden>
-    <input id="outputMessage" value="No QR code detected.">
-    <div hidden>
-      <b>Data:</b>
-      <pre id="outputData"></pre>
-      <pre id="outputK"></pre>
-    </div>
+ <div id="output" hidden>
+  <input id="outputMessage">No QR code detected.</input>
+  <div hidden>
+    <b>Data:</b>
+    <pre id="outputData"></pre>
   </div>
+</div>
+</body>
 
 <script>
   var video = document.createElement("video");
@@ -158,19 +162,20 @@ table, td, tr {
       loadingMessage.hidden = true;
       canvasElement.hidden = false;
       outputContainer.hidden = false;
-      const maxWidth = window.innerWidth * 0.8;
-      const maxHeight = window.innerHeight * 0.8;
 
-      let aspect = video.videoWidth / video.videoHeight;
-      let width = maxWidth;
-      let height = maxWidth / aspect;
-      if (height > maxHeight) {
-        height = maxHeight;
-        width = maxHeight * aspect;
-      }
+    const maxWidth = window.innerWidth * 0.8;
+    const maxHeight = window.innerHeight * 0.8;
 
-      canvasElement.width = width;
-      canvasElement.height = height;
+    let aspect = video.videoWidth / video.videoHeight;
+    let width = maxWidth;
+    let height = maxWidth / aspect;
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = maxHeight * aspect;
+    }
+
+    canvasElement.width = width;
+    canvasElement.height = height;
       canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
       var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
       var code = jsQR(imageData.data, imageData.width, imageData.height, {
@@ -187,38 +192,26 @@ table, td, tr {
         outputData.textContent = code.data;
 
         if (!saved) {
-          localStorage.setItem("qrData", code.data);
-          document.body.innerHTML = "";
-          createUIElements();
           saved = true;
+          // Decompress the QR data before using it
+          decompressAndCreateUI(code.data);
         }
       }
     }
     requestAnimationFrame(tick);
   }
 
-  // Helper to decode base64 to Uint8Array
+  // Decompression function
   function base64ToUint8(base64) {
     const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
+      bytes[i] = binary.charCodeAt(i);
     }
     return bytes;
   }
 
-  // GLOBAL: to hold the latest decompressed text
-  window.decompressedText = "";
-
-  // Usage after scanning QR:
-  function decompressAndProcess() {
-    const scannedBase64 = document.getElementById('triggerInput').value;
-    
-    if (!scannedBase64) {
-      window.decompressedText = "";
-      updateTableFromInput();
-      return;
-    }
+  function decompressAndCreateUI(scannedBase64) {
     const compressedBytes = base64ToUint8(scannedBase64);
     LZMA.decompress(Array.from(compressedBytes), function(decompressed) {
       let originalText = "";
@@ -234,40 +227,24 @@ table, td, tr {
       } else {
         originalText = "[Unknown decompressed type]";
       }
-      // Store globally
-      window.decompressedText = originalText;
-      // Also show for debugging
-      const outputK = document.getElementById("outputK");
-      if (outputK) outputK.textContent = originalText;
-      updateTableFromInput(); // call after decompression
+      
+      // Convert multiple spaces to tabs for proper formatting
+      const formattedText = originalText.replace(/\s{2,}/g, '\t');
+      
+      // Clear everything and create UI with decompressed data
+      document.body.innerHTML = "";
+      createUIElements(formattedText);
     });
   }
 
-   const inputValue = document.getElementById('triggerInput').value;
-
-  function updateTableFromInput() {
-    const rows = inputValue.split('\n').map(line => line.split('\t'));
-    const tableData = rows.map(row => {
-       const col0 = row[1] !== undefined ? row[1] : '';
-      const col1 = row[2] !== undefined ? row[2] : '';
-      const col8 = row[8] !== undefined ? row[8] : '';
-      return [col0, col1, col8];
-    });
-    const processedData = processTableData(tableData);
-    currentTableData = processedData;
-    originalRowCount = processedData.length;
-    renderTable(processedData);
-  }
-
-  // After creating the UI elements, call decompressAndProcess
-  function createUIElements() {
+  function createUIElements(decompressedData) {
     const textArea = document.createElement('textarea');
     textArea.id = "triggerInput";
     textArea.style.padding = "10px";
     textArea.style.fontSize = "16px";
     textArea.style.width = "300px";
     textArea.style.height = "100px";
-    textArea.value = localStorage.getItem("qrData") || "";
+    textArea.value = decompressedData;
     textArea.hidden = true;
 
     const tableContainer = document.createElement('div');
@@ -275,14 +252,59 @@ table, td, tr {
     tableContainer.style.marginTop = "24px";
     tableContainer.style.overflowX = "auto";
 
+    const rawDataContainer = document.createElement('div');
+    rawDataContainer.id = "rawDataContainer";
+    rawDataContainer.style.marginTop = "24px";
+    rawDataContainer.style.padding = "10px";
+    rawDataContainer.style.background = "#fff";
+    rawDataContainer.style.border = "1px solid #ccc";
+    rawDataContainer.style.borderRadius = "4px";
+
+    const rawDataTitle = document.createElement('h3');
+    rawDataTitle.textContent = "Raw Data:";
+    rawDataTitle.style.marginTop = "0";
+
+    const rawDataPre = document.createElement('pre');
+    rawDataPre.id = "rawDataPre";
+    rawDataPre.style.whiteSpace = "pre-wrap";
+    rawDataPre.style.wordBreak = "break-all";
+    rawDataPre.style.fontSize = "14px";
+    rawDataPre.style.fontFamily = "monospace";
+    rawDataPre.textContent = decompressedData;
+
+    rawDataContainer.appendChild(rawDataTitle);
+    rawDataContainer.appendChild(rawDataPre);
+
     document.body.appendChild(textArea);
     document.body.appendChild(tableContainer);
+    document.body.appendChild(rawDataContainer);
 
-    decompressAndProcess(); // instead of updateTableFromInput
-    textArea.addEventListener('input', decompressAndProcess);
+    updateTableFromInput();
   }
 
-  // ... (rest of your unchanged matData, matLookup, table rendering, clipboard, etc.)
+function updateTableFromInput() {
+  const inputValue = document.getElementById('triggerInput').value;
+  
+  // Split by tabs (now that we've converted spaces to tabs)
+  const items = inputValue.split('\t').filter(item => item.trim());
+  
+  // Group every 3 items into a row (col1, col2, date)
+  const tableData = [];
+  for (let i = 0; i < items.length; i += 3) {
+    if (i + 2 < items.length) {
+      tableData.push([
+        items[i].trim(),     // First column
+        items[i + 1].trim(), // Second column
+        items[i + 2].trim()  // Date column
+      ]);
+    }
+  }
+  
+  const processedData = processTableData(tableData);
+  currentTableData = processedData;
+  originalRowCount = processedData.length;
+  renderTable(processedData);
+}
 
 let matData = [];
 let valueToCodes = {};
@@ -318,9 +340,7 @@ function removeDuplicateRows(tableData) {
   const seenRowSignatures = new Set();
   
   tableData.forEach(row => {
-    // Only compare first 3 columns for duplicate detection (ignore the 4th column with "i")
-    const rowForComparison = [row[0], row[1], row[2]];
-    const rowSignature = JSON.stringify(rowForComparison);
+    const rowSignature = JSON.stringify(row);
     if (!seenRowSignatures.has(rowSignature)) {
       seenRowSignatures.add(rowSignature);
       uniqueRows.push(row);
@@ -368,19 +388,13 @@ function renderTable(tableData) {
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
 
-  // Track consecutive scissors rows for merging
-  let scissorsStartIdx = -1;
-  let scissorsCount = 0;
-
   tableData.forEach((rowData, rowIdx) => {
     const tr = document.createElement('tr');
-    const lastCell = rowData[3];
-    const hasScissors = lastCell === 'i';
+    tr.dataset.rowIndex = rowIdx;
     
-    for (let colIdx = 0; colIdx < 3 && colIdx < rowData.length; colIdx++) {
+    rowData.forEach((cellData, colIdx) => {
       const td = document.createElement('td');
-      const cellData = rowData[colIdx];
-      const cleanedData = cellData.split(/\r?\n/)[0];
+      const cleanedData = (cellData || '').split(/\r?\n/)[0];
       td.textContent = cleanedData;
       td.style.border = '1px solid #ccc';
       td.style.padding = '4px 8px';
@@ -408,150 +422,57 @@ function renderTable(tableData) {
           menu.style.left = `${e.pageX}px`;
           menu.style.top = `${e.pageY}px`;
         });
-      }
-      
-      td.addEventListener('click', function(e) {
-        e.stopPropagation();
-        td.classList.toggle('highlight-first-col');
-      });
-      
-      tr.appendChild(td);
-    }
-    
-    // Handle the last column with merging logic
-    const lastTd = document.createElement('td');
-    lastTd.style.border = '1px solid #ccc';
-    lastTd.style.padding = '4px 8px';
-    lastTd.style.textAlign = 'center';
-    lastTd.style.verticalAlign = 'middle';
-    
-    if (hasScissors) {
-      // Start or continue a scissors sequence
-      if (scissorsStartIdx === -1) {
-        scissorsStartIdx = rowIdx;
-        scissorsCount = 1;
-        lastTd.textContent = '✂️';
-        lastTd.dataset.scissorsStart = 'true';
       } else {
-        scissorsCount++;
-        lastTd.style.display = 'none'; // Hide this cell, will be merged
+        td.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          removeContextMenu();
+          tr.classList.toggle('selected-row');
+        });
       }
-    } else {
-      // Not a scissors row - finalize any previous scissors merge
-      if (scissorsStartIdx !== -1 && scissorsCount > 1) {
-        // Find the first scissors cell and set rowspan
-        const firstScissorsTr = table.rows[scissorsStartIdx];
-        const firstScissorsTd = firstScissorsTr.cells[firstScissorsTr.cells.length - 1];
-        firstScissorsTd.rowSpan = scissorsCount;
-      }
-      scissorsStartIdx = -1;
-      scissorsCount = 0;
       
-      lastTd.textContent = lastCell || '';
-    }
-    
-    lastTd.addEventListener('click', function(e) {
-      e.stopPropagation();
-      lastTd.classList.toggle('highlight-first-col');
-    });
-    
-    tr.appendChild(lastTd);
-
-    let touchStartX = null;
-    tr.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
+      if (colIdx === 0) {
+        td.addEventListener('click', function() {
+          td.classList.toggle('highlight-first-col');
+        });
       }
-    });
-    tr.addEventListener('touchend', function(e) {
-      if (touchStartX !== null && e.changedTouches.length === 1) {
-        const touchEndX = e.changedTouches[0].clientX;
-        if (touchStartX - touchEndX > 50) {
-          tableData.splice(rowIdx, 1);
-          renderTable(tableData);
-        }
-        touchStartX = null;
-      }
+      tr.appendChild(td);
     });
 
     table.appendChild(tr);
   });
-
-  // Handle case where table ends with scissors rows
-  if (scissorsStartIdx !== -1 && scissorsCount > 1) {
-    const firstScissorsTr = table.rows[scissorsStartIdx];
-    const firstScissorsTd = firstScissorsTr.cells[firstScissorsTr.cells.length - 1];
-    firstScissorsTd.rowSpan = scissorsCount;
-  }
-
+  
   const container = document.getElementById('tableContainer');
   container.innerHTML = '';
   container.appendChild(table);
 }
 
-function parseTabSeparatedData(text) {
-  const lines = text.split(/\r?\n/);
-  const rows = [];
-  let currentRow = [];
-  let cellContent = '';
-  let inQuotedCell = false;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let j = 0;
-    
-    while (j < line.length) {
-      const char = line[j];
-      
-      if (!inQuotedCell && char === '\t') {
-        currentRow.push(cellContent);
-        cellContent = '';
-      } else if (char === '"') {
-        inQuotedCell = !inQuotedCell;
-      } else {
-        cellContent += char;
-      }
-      j++;
-    }
-    
-    if (!inQuotedCell) {
-      currentRow.push(cellContent);
-      rows.push(currentRow);
-      currentRow = [];
-      cellContent = '';
-    } else {
-      cellContent += '\n';
-    }
-  }
-  
-  if (currentRow.length > 0 || cellContent) {
-    currentRow.push(cellContent);
-    rows.push(currentRow);
-  }
-  
-  return rows.filter(row => row.some(cell => cell.trim() !== ''));
-}
-
-async function readClipboardAndProcess() {
-  try {
-    const text = await navigator.clipboard.readText();
-    const rows = parseTabSeparatedData(text);
-    const tableData = rows.map(row => {
-      const col0 = row[1] !== undefined ? row[1] : '';
-      const col1 = row[2] !== undefined ? row[2] : '';
-      const col8 = row[8] !== undefined ? row[8] : '';
-      return [col0, col1, col8];
-    });
-    return processTableData(tableData);
-  } catch (err) {
-    alert('Failed to read clipboard. Make sure to grant clipboard permissions.');
-    console.error(err);
-    return null;
-  }
-}
-
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Delete') {
+    const selectedRows = document.querySelectorAll('tr.selected-row');
+    if (selectedRows.length > 0) {
+      const indicesToDelete = [];
+      selectedRows.forEach(row => {
+        const idx = parseInt(row.dataset.rowIndex);
+        if (!isNaN(idx)) {
+          indicesToDelete.push(idx);
+        }
+      });
+      
+      indicesToDelete.sort((a, b) => b - a);
+      
+      indicesToDelete.forEach(rowIndex => {
+        if (rowIndex >= 0 && rowIndex < currentTableData.length) {
+          currentTableData.splice(rowIndex, 1);
+        }
+      });
+      
+      renderTable(currentTableData);
+    }
+  }
+});
 </script>
-</body>
+
 </html>

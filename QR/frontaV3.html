@@ -10,106 +10,108 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-         <link rel="stylesheet" href="frontaV2.css">
-           <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
+    <link rel="stylesheet" href="frontaV2.css">
+    <script src="https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.js"></script>
+    <style>
+        .selected-row {
+            background-color: #ffeb3b !important;
+            outline: 2px solid #fbc02d;
+        }
+        .selected-row td {
+            background-color: #ffeb3b !important;
+        }
+    </style>
 </head>
 <body>
     <button class="btn" id="btnSubmit"><i class="fa-solid fa-repeat"></i> Replace</button>
     <button class="btn" id="btnAppend"><i class="fa-solid fa-plus"></i> Append</button>
 
-
     <div id="tableContainer"></div>
 
+    <div id="loading">
+        <p>Loading application...</p>
+        <p>(Are the JavaScript files missing?)</p>
+        <p>(The JavaScript code needs to be compiled from the TypeScript code.)</p>
+    </div>
+    <form id="loaded" style="display:none" onsubmit="event.preventDefault();">
+        <table>
+            <tbody>
+                <tr hidden>
+                    <td><strong>Text string:</strong></td>
+                    <td><textarea placeholder="Enter your text to be put into the QR Code" id="text-input" style="width:30em; height:5em"></textarea></td>
+                </tr>
+                <tr>
+                    <td><strong>QR Code:</strong></td>
+                    <td>
+                        <canvas id="qrcode-canvas" style="padding:1em; background-color:#E8E8E8"></canvas>
+                        <svg id="qrcode-svg" style="width:30em; height:30em; padding:1em; background-color:#E8E8E8">
+                            <rect width="100%" height="100%" fill="#FFFFFF" stroke-width="0"></rect>
+                            <path d="" fill="#000000" stroke-width="0"></path>
+                        </svg>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Error correction:</strong></td>
+                    <td>
+                        <input type="radio" name="errcorlvl" id="errcorlvl-low" checked="checked"><label for="errcorlvl-low">Low</label>
+                        <input type="radio" name="errcorlvl" id="errcorlvl-medium"><label for="errcorlvl-medium">Medium</label>
+                        <input type="radio" name="errcorlvl" id="errcorlvl-quartile"><label for="errcorlvl-quartile">Quartile</label>
+                        <input type="radio" name="errcorlvl" id="errcorlvl-high"><label for="errcorlvl-high">High</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Output format:</td>
+                    <td>
+                        <input type="radio" name="output-format" id="output-format-bitmap" checked="checked"><label for="output-format-bitmap">Bitmap</label>
+                        <input type="radio" name="output-format" id="output-format-vector"><label for="output-format-vector">Vector</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Border:</td>
+                    <td><input type="number" value="4" min="0" max="100" step="1" id="border-input" style="width:4em"> modules</td>
+                </tr>
+                <tr id="scale-row">
+                    <td>Scale:</td>
+                    <td><input type="number" value="8" min="1" max="30" step="1" id="scale-input" style="width:4em"> pixels per module</td>
+                </tr>
+                <tr>
+                    <td>Colors:</td>
+                    <td>
+                        Light = <input type="text" value="#FFFFFF" id="light-color-input" style="width:6em">,
+                        dark = <input type="text" value="#000000" id="dark-color-input" style="width:6em">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Version range:</td>
+                    <td>
+                        Minimum = <input type="number" value="1"  min="1" max="40" step="1" id="version-min-input" style="width:4em" oninput="app.handleVersionMinMax('min');">,
+                        maximum = <input type="number" value="40" min="1" max="40" step="1" id="version-max-input" style="width:4em" oninput="app.handleVersionMinMax('max');">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mask pattern:</td>
+                    <td><input type="number" value="-1" min="-1" max="7" step="1" id="mask-input" style="width:4em"> (−1 for automatic, 0 to 7 for manual)</td>
+                </tr>
+                <tr>
+                    <td>Boost ECC:</td>
+                    <td><input type="checkbox" checked="checked" id="boost-ecc-input"><label for="boost-ecc-input">Increase <abbr title="error-correcting code">ECC</abbr> level within same version</label></td>
+                </tr>
+                <tr>
+                    <td>Statistics:</td>
+                    <td id="statistics-output" style="white-space:pre"></td>
+                </tr>
+                <tr id="svg-xml-row">
+                    <td>SVG XML code:</td>
+                    <td>
+                        <textarea id="svg-xml-output" readonly="readonly" style="width:100%; max-width:50em; height:15em; font-family:monospace"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 
-
-
-
-		<div id="loading">
-			<p>Loading application...</p>
-			<p>(Are the JavaScript files missing?)</p>
-			<p>(The JavaScript code needs to be compiled from the TypeScript code.)</p>
-		</div>
-		<form id="loaded" style="display:none" onsubmit="event.preventDefault();">
-			<table>
-				<tbody>
-					<tr hidden>
-						<td><strong>Text string:</strong></td>
-						<td><textarea placeholder="Enter your text to be put into the QR Code" id="text-input" style="width:30em; height:5em"></textarea></td>
-					</tr>
-					<tr>
-						<td><strong>QR Code:</strong></td>
-						<td>
-							<canvas id="qrcode-canvas" style="padding:1em; background-color:#E8E8E8"></canvas>
-							<svg id="qrcode-svg" style="width:30em; height:30em; padding:1em; background-color:#E8E8E8">
-								<rect width="100%" height="100%" fill="#FFFFFF" stroke-width="0"></rect>
-								<path d="" fill="#000000" stroke-width="0"></path>
-							</svg>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>Error correction:</strong></td>
-						<td>
-							<input type="radio" name="errcorlvl" id="errcorlvl-low" checked="checked"><label for="errcorlvl-low">Low</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-medium"><label for="errcorlvl-medium">Medium</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-quartile"><label for="errcorlvl-quartile">Quartile</label>
-							<input type="radio" name="errcorlvl" id="errcorlvl-high"><label for="errcorlvl-high">High</label>
-						</td>
-					</tr>
-					<tr>
-						<td>Output format:</td>
-						<td>
-							<input type="radio" name="output-format" id="output-format-bitmap" checked="checked"><label for="output-format-bitmap">Bitmap</label>
-							<input type="radio" name="output-format" id="output-format-vector"><label for="output-format-vector">Vector</label>
-						</td>
-					</tr>
-					<tr>
-						<td>Border:</td>
-						<td><input type="number" value="4" min="0" max="100" step="1" id="border-input" style="width:4em"> modules</td>
-					</tr>
-					<tr id="scale-row">
-						<td>Scale:</td>
-						<td><input type="number" value="8" min="1" max="30" step="1" id="scale-input" style="width:4em"> pixels per module</td>
-					</tr>
-					<tr>
-						<td>Colors:</td>
-						<td>
-							Light = <input type="text" value="#FFFFFF" id="light-color-input" style="width:6em">,
-							dark = <input type="text" value="#000000" id="dark-color-input" style="width:6em">
-						</td>
-					</tr>
-					<tr>
-						<td>Version range:</td>
-						<td>
-							Minimum = <input type="number" value="1"  min="1" max="40" step="1" id="version-min-input" style="width:4em" oninput="app.handleVersionMinMax('min');">,
-							maximum = <input type="number" value="40" min="1" max="40" step="1" id="version-max-input" style="width:4em" oninput="app.handleVersionMinMax('max');">
-						</td>
-					</tr>
-					<tr>
-						<td>Mask pattern:</td>
-						<td><input type="number" value="-1" min="-1" max="7" step="1" id="mask-input" style="width:4em"> (−1 for automatic, 0 to 7 for manual)</td>
-					</tr>
-					<tr>
-						<td>Boost ECC:</td>
-						<td><input type="checkbox" checked="checked" id="boost-ecc-input"><label for="boost-ecc-input">Increase <abbr title="error-correcting code">ECC</abbr> level within same version</label></td>
-					</tr>
-					<tr>
-						<td>Statistics:</td>
-						<td id="statistics-output" style="white-space:pre"></td>
-					</tr>
-					<tr id="svg-xml-row">
-						<td>SVG XML code:</td>
-						<td>
-							<textarea id="svg-xml-output" readonly="readonly" style="width:100%; max-width:50em; height:15em; font-family:monospace"></textarea>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-
-
-
-		<script type="application/javascript" src="qrcodegen.js"></script>
-		<script type="application/javascript" src="qrcodegen-input-demo.js"></script>
+    <script type="application/javascript" src="qrcodegen.js"></script>
+    <script type="application/javascript" src="qrcodegen-input-demo.js"></script>
 </body>
 
 <script>
@@ -131,15 +133,15 @@ let matData = [
   ["M102780", "2.31 BE"],
   ["M103226", "2.35 BE"],
   ["M105367", "2.41 BE"],
-    ["M107881", "2.41 BE"],
+  ["M107881", "2.41 BE"],
   ["M101447", "2.31 BE"],
   ["M107869", "2.31 BE"],
   ["M104281", "3.90 AAC"],
   ["M103469", "3.91 AAC"],
   ["M104730", "3.92 AAC"],
-   ["M107880", "3.92 AAC"],
+  ["M107880", "3.92 AAC"],
   ["M102476", "3.95 AAC"],
-    ["M101450", "3.95 AAC"],
+  ["M101450", "3.95 AAC"],
   ["M104188", "3.96 AAC"],
   ["M200009", "CP 2mm"],
   ["M200043", "CP 2,5mm"],
@@ -148,56 +150,56 @@ let matData = [
   ["M200004", "CP 5mm"],
   ["M200014", "CP 5mm"],
   ["M102112", "2.03 BC"],
-   ["M107877", "2.03 BC"],
+  ["M107877", "2.03 BC"],
   ["M101446", "2.30 BC"],
   ["M106269", "2.30 BC"],
   ["M107862", "2.30 BC"],
   ["M100197", "2.31 BC"],
   ["M100446", "2.31 BC"],
   ["M102338", "2.31 BC"],
-    ["M107860", "2.31 BC"],
+  ["M107860", "2.31 BC"],
   ["M103231", "2.35 BC N2"],
   ["M107883", "2.35 BC N2"],
   ["M101765", "2.40 BC N2"],
   ["M100554", "2.40 BC N2"],
   ["M101538", "2.41 BC"],
-   ["M107873", "2.41 BC"],
+  ["M107873", "2.41 BC"],
   ["M101455", "2.50 BC N2"],
   ["M107868", "2.50 BC N2"],
   ["M101539", "2.51 BC"],
-    ["M107875", "2.51 BC"],
+  ["M107875", "2.51 BC"],
   ["M103225", "2.60 BC N2"],
   ["M103223", "2.70 BC N2"],
   ["M101448", "2.71 BC"],
   ["M102036", "2.71 BC"],
-   ["M107863", "2.71 BC"],
+  ["M107863", "2.71 BC"],
   ["M101989", "2.90 BC"],
   ["M105705", "2.90 BC"],
   ["M107876", "2.90 BC"],
   ["M101990", "2.91 BC"],
   ["M101449", "2.91 BC"],
-    ["M107864", "2.91 BC"],
+  ["M107864", "2.91 BC"],
   ["M102035", "2.91 AC"],
   ["M107879", "2.91 AC"],
   ["M103945", "2.92 AC"],
   ["M101588", "1.20 B"],
-    ["M101441", "1.20 B"],
-      ["M107861", "1.20 B"],
+  ["M101441", "1.20 B"],
+  ["M107861", "1.20 B"],
   ["M103229", "1.25 B"],
-   ["M107871", "1.25 B"],
+  ["M107871", "1.25 B"],
   ["M100187", "1.30 B"],
   ["M101454", "1.30 B"],
   ["M107867", "1.30 B"],
   ["M100062", "1,37 B"],
-    ["M101442", "1,37 B"],
-      ["M107870", "1,37 B"],
+  ["M101442", "1,37 B"],
+  ["M107870", "1,37 B"],
   ["M102964", "1.31 B"],
-   ["M107874", "1.31 B"],
+  ["M107874", "1.31 B"],
   ["M102425", "1.41 B"],
   ["M101443", "1.41 B"],
   ["M107665", "1.41 B N1"],
- ["M107859", "1.41 B"],
- ["M107878", "1.41 B N1"],
+  ["M107859", "1.41 B"],
+  ["M107878", "1.41 B N1"],
   ["M103232", "1.20 C"],
   ["M101764", "1.30 C"],
   ["M107872", "1.30 C"],
@@ -209,8 +211,9 @@ let matData = [
   ["M107865", "1.41 C"],
   ["M100012", "1.21 E"],
   ["M102364", "1.25 E"], 
-   ["M100013", "1.25 E"]
+  ["M100013", "1.25 E"]
 ];
+
 // Create reverse lookup: code -> list of values
 let codeToValues = {};
 matData.forEach(([code, value]) => {
@@ -260,8 +263,14 @@ function removeDuplicateRows(tableData) {
 
 function processTableData(rawTableData) {
   rawTableData.forEach(rowData => {
-    // DON'T substitute the code - keep it as is
-    // Just process the date format
+    // Replace empty cells with "nothing"
+    for (let i = 0; i < rowData.length; i++) {
+      if (!rowData[i] || rowData[i].trim() === '') {
+        rowData[i] = '';
+      }
+    }
+    
+    // Process the date format
     if (rowData.length > 2 && rowData[2]) {
       const dateMatch = rowData[2].match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
       if (dateMatch) {
@@ -273,6 +282,7 @@ function processTableData(rawTableData) {
 
   return removeDuplicateRows(rawTableData);
 }
+
 function renderTable(tableData) {
   const valueCounts = {};
   tableData.forEach(row => {
@@ -325,14 +335,12 @@ function renderTable(tableData) {
           menu.style.top = `${e.pageY}px`;
         });
       } else {
-        // Right-click on any cell except column 1 to select the row
+        // Right-click on any cell except column 1 to toggle row selection
         td.addEventListener('contextmenu', function(e) {
           e.preventDefault();
           removeContextMenu();
-          // Remove previous selection
-          document.querySelectorAll('tr.selected-row').forEach(r => r.classList.remove('selected-row'));
-          // Select this row
-          tr.classList.add('selected-row');
+          // Toggle selection for this row
+          tr.classList.toggle('selected-row');
         });
       }
       if (colIdx === 0) {
@@ -342,12 +350,6 @@ function renderTable(tableData) {
       }
       tr.appendChild(td);
     });
-
-
-
-
-
-
     
     const scissorsTd = document.createElement('td');
     const metadata = rowMetadata[rowIdx] || {};
@@ -430,17 +432,32 @@ async function readClipboardAndProcess() {
 
 document.addEventListener('click', removeContextMenu);
 document.addEventListener('scroll', removeContextMenu);
-// Handle Delete key to remove selected row
+
+// Handle Delete key to remove selected rows
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Delete') {
-    const selectedRow = document.querySelector('tr.selected-row');
-    if (selectedRow) {
-      const rowIndex = parseInt(selectedRow.dataset.rowIndex);
+    const selectedRows = document.querySelectorAll('tr.selected-row');
+    if (selectedRows.length > 0) {
+      // Collect row indices to delete
+      const indicesToDelete = [];
+      selectedRows.forEach(row => {
+        const idx = parseInt(row.dataset.rowIndex);
+        if (!isNaN(idx)) {
+          indicesToDelete.push(idx);
+        }
+      });
       
-      // Remove from all data arrays
-      currentTableData.splice(rowIndex, 1);
-      currentFullData.splice(rowIndex, 1);
-      rowMetadata.splice(rowIndex, 1);
+      // Sort in descending order to delete from bottom to top (avoid index shifting)
+      indicesToDelete.sort((a, b) => b - a);
+      
+      // Remove rows from all data arrays
+      indicesToDelete.forEach(rowIndex => {
+        if (rowIndex >= 0 && rowIndex < currentTableData.length) {
+          currentTableData.splice(rowIndex, 1);
+          currentFullData.splice(rowIndex, 1);
+          rowMetadata.splice(rowIndex, 1);
+        }
+      });
       
       // Re-render table
       renderTable(currentTableData);
@@ -467,10 +484,10 @@ function updateInputField(fullData) {
       col23 = `${day}.${month}.`;
     }
 
-    // Build row: empty col + 2 data cols + 20 empties + date col
+    // Build row: empty col + 2 data cols + 5 empties + date col
     const rowArr = [''];                // 1 empty col
     rowArr.push(col1, col2);            // 2 data cols
-    rowArr.push(...Array(5).fill('')); // 20 empty cols
+    rowArr.push(...Array(5).fill('')); // 5 empty cols
     rowArr.push(col23);                 // last col (date)
 
     return rowArr.join('\t');
@@ -483,42 +500,11 @@ function updateInputField(fullData) {
   textarea.value = text;
 }
 
-
 // --- Replace button ---
 document.getElementById('btnSubmit').addEventListener('click', async () => {
   const result = await readClipboardAndProcess();
   if (result) {
     let { fullData, tableData } = result;
-
-
-document.getElementById('btnAppend').addEventListener('click', async () => {
-  const result = await readClipboardAndProcess();
-  if (result) {
-    let { fullData, tableData } = result;
-
-    // ✅ apply matData conversions
-    tableData = processTableData(tableData);
-
-    const existingRowSignatures = new Set(
-      currentTableData.map(row => JSON.stringify(row))
-    );
-
-    const uniqueNewRows = tableData.filter(row => {
-      const rowSignature = JSON.stringify(row);
-      return !existingRowSignatures.has(rowSignature);
-    });
-
-    currentTableData = currentTableData.concat(uniqueNewRows);
-    currentFullData = currentFullData.concat(fullData);
-
-    renderTable(currentTableData);
-    updateInputField(currentFullData);
-  }
-});
-
-
-
-
 
     // ✅ apply matData conversions
     tableData = processTableData(tableData);
@@ -529,11 +515,12 @@ document.getElementById('btnAppend').addEventListener('click', async () => {
     
     rowMetadata = currentTableData.map(() => ({ hasScissors: true, hasGear: false }));
 
-    renderTable(currentTableData); updateInputField(currentFullData); 
-    
+    renderTable(currentTableData);
+    updateInputField(currentFullData); 
   }
 });
 
+// --- Append button ---
 document.getElementById('btnAppend').addEventListener('click', async () => {
   const result = await readClipboardAndProcess();
   if (result) {
@@ -567,7 +554,8 @@ document.getElementById('btnAppend').addEventListener('click', async () => {
     });
 
     renderTable(currentTableData);   
-     updateInputField(currentFullData);  }
+    updateInputField(currentFullData);
+  }
 });
 </script>
 

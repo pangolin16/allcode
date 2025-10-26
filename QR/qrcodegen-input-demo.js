@@ -61,8 +61,100 @@ var app;
         const ecl = getInputErrorCorrectionLevel();
 
         // Gather text input, compress and encode for QR code
-        const text0 = getElem("text-input").value;
-        const inputText = text0.replace(/\n+/g, ' ').trim();
+         
+        // const text0 = getElem("text-input").value;
+
+
+
+
+  function populateMissingDates(text0) {
+    // 1. Split the input text into individual lines.
+    const lines = text0.split('\n');
+
+    // Regular expression to match the date pattern "DD.MM." at the end of a line.
+    // \d{2} matches exactly two digits.
+    // \. matches a literal dot (escaped because . is a special regex character).
+    // $ asserts the position at the end of the string.
+    const datePattern = /\d{2}\.\d{2}\.$/;
+
+    // Array to store the modified lines.
+    const modifiedLines = [];
+
+    // 2. Iterate through each line.
+    for (const line of lines) {
+        // Trim the line to handle potential leading/trailing whitespace
+        // that might interfere with the regex match, though not strictly
+        // necessary for the given example as the tabs are internal.
+        const trimmedLine = line.trimEnd(); // Only trim trailing whitespace
+
+        // 3. Check if the line ends with the date pattern.
+        if (datePattern.test(trimmedLine)) {
+            // If a date is present, keep the line as is.
+            modifiedLines.push(line);
+        } else {
+            // 4. If a date is missing, append '**' to the original line.
+            // We use the original line (not trimmedLine) to preserve leading tabs/spaces.
+            modifiedLines.push(line + '**');
+        }
+    }
+
+    // 5. Join the modified lines back into a single string, separated by newlines.
+    return modifiedLines.join('\n');
+}
+
+// Your input text
+     const text0 = getElem("text-input").value;
+
+
+// Call the function to get the modified text
+const text1 = populateMissingDates(text0);
+
+
+console.log("\nModified Text:\n", text1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const inputText = text1.replace(/\n+/g, ' ').trim();
+      
         const encoder = new TextEncoder();
         const inputBytes = Array.from(encoder.encode(inputText)); // Array of bytes
 

@@ -18,9 +18,9 @@
     return bytes;
   }
 
-  // Usage after scanning QR:
-   const scannedBase64=`XQAAAAJ0AAAAAAAAAAAbDIMAtb/U+vZ54s8W5bV2qDVFQxy3zHesd4YDTi2AMIfqxuzR9xdpXAsFvhbVFspWD7zCeQeL//5UYwA=`
-   // const scannedBase64
+  // this value 00 needs to be replaced by document.getElementById('triggerInput')
+   const scannedBase64=`XQAAAAKqCAAAAAAAAAAbDIMAtb/U+vZ54s8W5bV2qDVFQxy3zHesd4YDTi2AQrXDbW2tjxffnM6MKTmIAZu3n/4Uf5nKlsPEU2krkdjtdlI924fPCkGPmsgW8QiRGyooxhlQLb8jBQIjQATQmEIfvvPSS92mU139y2en60uftRhwCl7OnBssSenE4u2kTg1f8DFkUF6CrfW68RWP0K8bl1YzfGq8VXZgyYnifnJCOc2srOzlNc657YfE+LovT6UZJMMpBzceKQNMIlBqzVO0Gt3QcIkX7oz2O/xlnL4vCNzKMS8w8by1gIr8BxAUAvWS5EF5+sJIV7vM+R3nBJuMUnLCL5TIioaqfe8cSO/b48FKTO60ZJYxIf//4Nn+AA==`
+ 
   const compressedBytes = base64ToUint8(scannedBase64);
   LZMA.decompress(Array.from(compressedBytes), function(decompressed) {
     let originalText = "";
@@ -38,6 +38,7 @@
     } else {
       originalText = "[Unknown decompressed type]";
     }
+    //this instead of outputing into HTML document is used as an input instead of document.getElementById('triggerInput')
     document.getElementById("output").textContent = originalText;
   });
 </script>

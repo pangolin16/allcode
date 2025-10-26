@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>title</title>
+</head>
+<body>
+  
+</body>
+<script>
+  function populateMissingDates(inputText) {
+    // 1. Split the input text into individual lines.
+    const lines = inputText.split('\n');
+
+    // Regular expression to match the date pattern "DD.MM." at the end of a line.
+    // \d{2} matches exactly two digits.
+    // \. matches a literal dot (escaped because . is a special regex character).
+    // $ asserts the position at the end of the string.
+    const datePattern = /\d{2}\.\d{2}\.$/;
+
+    // Array to store the modified lines.
+    const modifiedLines = [];
+
+    // 2. Iterate through each line.
+    for (const line of lines) {
+        // Trim the line to handle potential leading/trailing whitespace
+        // that might interfere with the regex match, though not strictly
+        // necessary for the given example as the tabs are internal.
+        const trimmedLine = line.trimEnd(); // Only trim trailing whitespace
+
+        // 3. Check if the line ends with the date pattern.
+        if (datePattern.test(trimmedLine)) {
+            // If a date is present, keep the line as is.
+            modifiedLines.push(line);
+        } else {
+            // 4. If a date is missing, append '**' to the original line.
+            // We use the original line (not trimmedLine) to preserve leading tabs/spaces.
+            modifiedLines.push(line + '**');
+        }
+    }
+
+    // 5. Join the modified lines back into a single string, separated by newlines.
+    return modifiedLines.join('\n');
+}
+
+// Your input text
+const inputText = `625010500	M300011						09.06.
+625010503	M300010						09.06.
+625010504	M102036						09.06.
+625009743	M300025						09.06.
+625009744	M300025						
+625009745	M300025						09.06.
+625009746	M300025						09.06.`;
+
+// Call the function to get the modified text
+const modifiedText = populateMissingDates(inputText);
+
+// Output the result
+console.log("Original Text:\n", inputText);
+console.log("\nModified Text:\n", modifiedText);
+
+// Example for a single line test:
+const lineWithDate = "625010500	M300011						09.06.";
+const lineWithoutDate = "625009744	M300025						";
+console.log("\nTest with single line with date:", populateMissingDates(lineWithDate));
+console.log("Test with single line without date:", populateMissingDates(lineWithoutDate));
+</script>
+</html>
