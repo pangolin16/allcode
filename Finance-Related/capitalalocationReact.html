@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    import React, { useState, useMemo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+export default function CapitalAllocationCalculator() {
+  const [peRatio, setPeRatio] = useState(10);
+  const [dividendTax, setDividendTax] = useState(15);
+  const [returnOnCapital, setReturnOnCapital] = useState(20);
+  const [yearsToProject, setYearsToProject] = useState(10);
+
+  const calculations = useMemo(() => {
+    const initialInvestment = 10;
+    const earningsYield = 100 / peRatio; // in percentage
+    const annualEarnings = initialInvestment * (earningsYield / 100);
+    const taxRate = dividendTax / 100;
+    const roe = returnOnCapital / 100;
+
+    // Calculate hurdle rate (after-tax return from dividends)
+    const hurdleRate = earningsYield * (1 - taxRate);
+
+    // Optimal allocation: reinvest if ROC > hurdle rate, otherwise pay dividend
+    let optimalReinvestment = 0;
+    if (returnOnCapital > hurdleRate) {
+      optimalReinvestment = 100;
+    } else {
+      optimalReinvestment = 0;
+    }
+
+    // Project scenarios over time
+    const scenarios = [];
+    for (let year = 0; year <= yearsToProject; year++) {
+      // Scenario 1: 100% Reinvestment
+      const retainedValue1 = initialInvestment * Math.pow(1 + roe, year);
+      
+      // Scenario 2: 100% Dividend
+      const dividendsPaid = annualEarnings * year * (1 - taxRate);
+      const totalValue2 = initialInvestment + dividendsPaid;
+      
+      // Scenario 3: Optimal allocation
+      const optimalValue = optimalReinvestment === 100 ? retainedValue1 : totalValue2;
+
+      scenarios.push({
+        year,
+        reinvest: parseFloat(retainedValue1.toFixed(2)),
+        dividend: parseFloat(totalValue2.toFixed(2)),
+        optimal: parseFloat(optimalValue.toFixed(2))
+      });
+    }
+
+    return {
+      earningsYield: earningsYield.toFixed(2),
+      annualEarnings: annualEarnings.toFixed(2),
+      hurdleRate: hurdleRate.toFixed(2),
+      optimalReinvestment,
+      optimalDividend: 100 - optimalReinvestment,
+      scenarios,
+      shouldReinvest: returnOnCapital > hurdleRate
+    };
+  }, [peRatio, dividendTax, returnOnCapital, yearsToProject]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+          <h1 className="text-3xl font-bold text-slate-800 mb-2">Capital Allocation Optimizer</h1>
+          <p className="text-slate-600 mb-6">Determine optimal reinvestment vs dividend strategy</p>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  P/E Ratio at Purchase: {peRatio}
+                </label>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  step="1"
+                  value={peRatio}
+                  onChange={(e) => setPeRatio(Number(e.target.value))}
+                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="text-xs text-slate-500 mt-1">
+                  Earnings Yield: {calculations.earningsYield}%
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Dividend Tax Rate: {dividendTax}%
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="50"
+                  step="1"
+                  value={dividendTax}
+                  onChange={(e) => setDividendTax(Number(e.target.value))}
+                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Return on Capital: {returnOnCapital}%
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={returnOnCapital}
+                  onChange={(e) => setReturnOnCapital(Number(e.target.value))}
+                  className="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Years to Project: {yearsToProject}
+                </label>
+                <input
+                  type="range"
+                  min="5"
+                  max="30"
+                  step="1"
+                  value={yearsToProject}
+                  onChange={(e) => setYearsToProject(Number(e.target.value))}
+                  className="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+              <div className="text-sm text-blue-700 font-medium mb-1">After-Tax Hurdle Rate</div>
+              <div className="text-2xl font-bold text-blue-900">{calculations.hurdleRate}%</div>
+              <div className="text-xs text-blue-600 mt-1">Minimum ROC to justify reinvestment</div>
+            </div>
+
+            <div className={`rounded-lg p-4 border ${
+              calculations.shouldReinvest 
+                ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' 
+                : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
+            }`}>
+              <div className={`text-sm font-medium mb-1 ${
+                calculations.shouldReinvest ? 'text-green-700' : 'text-amber-700'
+              }`}>
+                Optimal Reinvestment
+              </div>
+              <div className={`text-2xl font-bold ${
+                calculations.shouldReinvest ? 'text-green-900' : 'text-amber-900'
+              }`}>
+                {calculations.optimalReinvestment}%
+              </div>
+              <div className={`text-xs mt-1 ${
+                calculations.shouldReinvest ? 'text-green-600' : 'text-amber-600'
+              }`}>
+                {calculations.shouldReinvest ? 'Reinvest earnings' : 'Pay as dividends'}
+              </div>
+            </div>
+
+            <div className={`rounded-lg p-4 border ${
+              !calculations.shouldReinvest 
+                ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' 
+                : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
+            }`}>
+              <div className={`text-sm font-medium mb-1 ${
+                !calculations.shouldReinvest ? 'text-green-700' : 'text-amber-700'
+              }`}>
+                Optimal Dividend
+              </div>
+              <div className={`text-2xl font-bold ${
+                !calculations.shouldReinvest ? 'text-green-900' : 'text-amber-900'
+              }`}>
+                {calculations.optimalDividend}%
+              </div>
+              <div className={`text-xs mt-1 ${
+                !calculations.shouldReinvest ? 'text-green-600' : 'text-amber-600'
+              }`}>
+                {!calculations.shouldReinvest ? 'Pay as dividends' : 'Reinvest earnings'}
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-lg mb-6 ${
+            calculations.shouldReinvest 
+              ? 'bg-green-50 border border-green-200' 
+              : 'bg-amber-50 border border-amber-200'
+          }`}>
+            <div className={`font-semibold mb-2 ${
+              calculations.shouldReinvest ? 'text-green-900' : 'text-amber-900'
+            }`}>
+              Decision Analysis:
+            </div>
+            <div className={calculations.shouldReinvest ? 'text-green-800' : 'text-amber-800'}>
+              {calculations.shouldReinvest ? (
+                <>
+                  The company's return on capital ({returnOnCapital}%) exceeds the after-tax hurdle rate ({calculations.hurdleRate}%). 
+                  <strong> The company should reinvest 100% of earnings</strong> rather than paying dividends, as this creates more shareholder value.
+                </>
+              ) : (
+                <>
+                  The company's return on capital ({returnOnCapital}%) is below the after-tax hurdle rate ({calculations.hurdleRate}%). 
+                  <strong> The company should pay 100% of earnings as dividends</strong>, as shareholders can achieve better returns elsewhere.
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Value Projection Over Time</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={calculations.scenarios}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis 
+                dataKey="year" 
+                label={{ value: 'Years', position: 'insideBottom', offset: -5 }}
+                stroke="#64748b"
+              />
+              <YAxis 
+                label={{ value: 'Portfolio Value ($)', angle: -90, position: 'insideLeft' }}
+                stroke="#64748b"
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+                formatter={(value) => `$${value}`}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="reinvest" 
+                stroke="#3b82f6" 
+                strokeWidth={2}
+                name="100% Reinvestment"
+                dot={false}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="dividend" 
+                stroke="#ef4444" 
+                strokeWidth={2}
+                name="100% Dividend"
+                dot={false}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="optimal" 
+                stroke="#10b981" 
+                strokeWidth={3}
+                name="Optimal Strategy"
+                dot={false}
+                strokeDasharray="5 5"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+
+          <div className="mt-6 p-4 bg-slate-50 rounded-lg">
+            <h3 className="font-semibold text-slate-800 mb-2">Key Insights:</h3>
+            <ul className="text-sm text-slate-700 space-y-1">
+              <li>• Initial investment: $10 at P/E ratio of {peRatio}</li>
+              <li>• Annual earnings per share: ${calculations.annualEarnings}</li>
+              <li>• The optimal strategy (green dashed line) follows whichever approach yields higher returns</li>
+              <li>• This simplified model assumes constant ROC and no changes in valuation multiples</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+</body>
+</html>

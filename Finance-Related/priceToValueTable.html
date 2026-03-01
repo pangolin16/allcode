@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation Highlight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+        }
+        td:nth-child(1) {
+            text-align: left;
+            white-space: normal;
+        }
+        td:nth-child(2), td:nth-child(3) {
+            text-align: right;
+        }
+        td:nth-child(4) {
+            text-align: center;
+        }
+        .legend {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #eef;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-box {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .legend-gradient {
+            width: 100px;
+            height: 25px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: linear-gradient(to right, #196F3D, #D4EDDA, #F0F0F0, #F8D7DA, #B03A2E);
+        }
+
+        @media (max-width: 600px) {
+            table, .legend {
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Valuation Analysis</h1>
+
+    <div class="legend">
+        <div class="legend-item">
+            <span class="legend-gradient"></span>
+            <span>Highly Undervalued (-ve) &lt;-- Fairly Valued (0%) --&gt; Highly Overvalued (+ve)</span>
+        </div>
+    </div>
+
+    <table id="valuationTable">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Price</th>
+                <th>Expected Value</th>
+                <th>Deviation (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        const companies = `ABB Ltd
+ACCELLERON
+Accenture plc
+Adobe Inc
+ADVANCED INFO SERVICE PUBLIC CO
+adyen
+Agilent Technologies Inc. (A)
+airBNB
+Allegion Plc
+Alphabet Inc
+AMETEK, Inc.
+Amphenol Corp
+Arca Continental
+Arista Networks
+Arm Holdings plc
+Auto Trader Group PLC
+Autodesk Inc
+Booking Holdings Inc. Common Stock
+brambles
+Broadridge Financial Solutions Inc
+BWX Technologies, Inc.
+Cadence Design Sys Inc
+Caterpillar Inc
+Cintas Corp
+Cisco Systems Inc
+cochlear
+Coloplast A/S
+copart
+Dassault Systemes SE
+Descartes Systems
+Eaton Corp PLC
+Edenred
+Eli Lilly and Company
+Epiroc AB
+Experian PLC Ord USD
+Fair Isaac Corporation
+FASTENAL
+Fortinet, Inc.
+GEA Group AG
+Graco Inc
+Grupo Aeroportuario del Pacifico SABdeCV
+GSK PLC
+Hershey Co/The
+Hilton Worldwide Holdings Inc
+Honeywell International
+Houlihan Lokey, Inc.
+HOYA CORPORATION
+Hubbell Inc
+Charles Schwab SCHW
+Chipotle Mexican Grill, Inc.
+Chocoladefabriken Lindt & Spruengli AG
+IDEXX Laboratories Inc
+InterContinental Hotels Group PLC
+Intuit Inc.
+Intuitive Surgical
+ITT Inc.
+James Hardie Industries
+keyence
+KONE Corporation
+L'Oreal SA
+Landstar System Inc
+Lifco AB Ser. B
+Linde
+LPL Financial Holdings LPLA
+Lvmh Moet Hennessy Louis Vuitton SE
+Manhattan Associates, Inc.
+MarketAxess Holdings Inc,
+Marriott International Inc
+Masco Corp
+Mastercard Inc
+mercadolibre
+Merck & Company, Inc.
+Mondelez International Inc
+Moody's Corporation
+Motorola Solutions Inc
+MSCI
+nintendo
+NOMURA RESEARCH INSTITUTE
+Nordson Corp
+Novartis AG
+OBIC CO
+Otis Worldwide Corp
+Paychex Inc
+Pepsico Inc
+Recordati Industria Chmc
+RELX PLC Ord GBP
+Roche Holding AG
+Rollins, Inc.
+Sandvik AB
+SERVICENOW
+SGS SA
+Sherwin-Williams
+Schindler Holding
+SYSCO
+Taiwan Semiconductor Manufacturing Co Ltd
+TechnologyOne Ltd
+Texas Roadhouse, Inc.
+The Lottery Corporation Limited
+THOMSON REUTERS
+Unilever PLC
+Veeva Systems
+Veralto Corp
+VeriSign Inc
+Verisk Analytics Inc
+Visa Inc
+Waters Corp
+West Pharmaceutical Services
+Wisetech Global
+Yum Brands Inc`.trim().split('\n');
+
+        const data = `59,86	49
+66,2	53,84
+247,75	267
+337,86	560
+7,9756275	6,86
+1498,4	1800
+143,2	151
+126,48	154
+165,59	168
+274,57	237
+184,19	168
+139,75	95
+179,97	197
+162,03	120
+170,39	80
+799,6	776
+297,08	320
+5075,86	5200
+24,52	25
+219,88	290
+213,69	119,09
+341,43	320
+585,49	477
+183,9	172
+71,33	61
+285,41	240
+590	962
+42,5	52
+24,57	37
+89,74	96
+387,75	288
+26,05	35
+813,53	650
+206,1	188
+3530	4000
+1566,9	2000
+41,09	31
+84,22	108
+61,95	60
+80,8	79
+398,63	392,38
+1746	2200
+175,28	210
+260,39	229
+212,89	210
+198,38	179,98
+24225	22000
+472,57	383
+94,61	109
+39,76	46
+124600	106000
+627,66	420
+9332	8850
+656,04	720
+537,59	350
+195,47	141
+21,36	28
+60000	65700
+58,28	56
+369,55	415
+124,5	144
+370	320,56
+432,01	466
+343,62	504
+611,5	620
+178,33	225
+158,85	260
+263,12	263
+65,22	85
+554,58	520
+2295,92	2170
+86,58	111
+57,85	75
+471,7	530
+432,18	465
+567,54	590
+12910	13000
+31,6	28,97
+233,18	255
+121,8	105
+26,2	27,59
+93,38	106
+117,4	122
+146,16	166
+50,4	51,88
+3344	3900
+260,1	379
+53,87	46
+288,7	198
+911,7	1050
+90,56	90
+345,73	258
+285,8	277,18
+74,29	83
+305,09	310
+36,91	21
+170,82	132
+5,56	5,3
+152,84	170
+60,97	66
+286,67	287
+99,5	97
+232,82	250
+208	258
+341,28	306
+343,47	330
+284,86	310
+70,37	138
+139,19	144`;
+
+        function parseRgb(rgbString) {
+            const match = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+            return match ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])] : null;
+        }
+
+        function interpolateColor(color1, color2, factor) {
+            const result = color1.map((c1, i) => Math.round(c1 + factor * (color2[i] - c1)));
+            return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
+        }
+
+        function getColorForDeviation(deviationRatio) {
+            const neutral = [255, 255, 255];
+            const lightGreen = [212, 237, 218];
+            const darkGreen = [25, 111, 61];
+            const lightRed = [248, 215, 218];
+            const darkRed = [176, 58, 46];
+
+            const maxAbsoluteDeviation = 1.0;
+            const clampedRatio = Math.max(-maxAbsoluteDeviation, Math.min(maxAbsoluteDeviation, deviationRatio));
+            const neutralThreshold = 0.02;
+
+            if (clampedRatio > neutralThreshold) {
+                const factor = (clampedRatio - neutralThreshold) / (maxAbsoluteDeviation - neutralThreshold);
+                return interpolateColor(lightRed, darkRed, factor);
+            } else if (clampedRatio < -neutralThreshold) {
+                const factor = (Math.abs(clampedRatio) - neutralThreshold) / (maxAbsoluteDeviation - neutralThreshold);
+                return interpolateColor(lightGreen, darkGreen, factor);
+            } else {
+                return `rgb(${neutral[0]}, ${neutral[1]}, ${neutral[2]})`;
+            }
+        }
+
+        function getContrastTextColor(rgbString) {
+            const rgb = parseRgb(rgbString);
+            if (!rgb) return 'black';
+
+            const r = rgb[0];
+            const g = rgb[1];
+            const b = rgb[2];
+
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.5 ? 'black' : 'white';
+        }
+
+        function parseAndProcessData(rawData, companyList) {
+            const lines = rawData.trim().split('\n');
+            return lines.map((line, index) => {
+                const parts = line.split('\t');
+                const price = parseFloat(parts[0].replace(',', '.'));
+                const expectedValue = parseFloat(parts[1].replace(',', '.'));
+
+                let deviationRatio = 0;
+                if (expectedValue !== 0) {
+                    deviationRatio = (price - expectedValue) / expectedValue;
+                }
+
+                return {
+                    company: companyList[index] || 'Unknown',
+                    price: price,
+                    expectedValue: expectedValue,
+                    deviationRatio: deviationRatio,
+                    deviationPercent: (deviationRatio * 100).toFixed(2) + '%'
+                };
+            });
+        }
+
+        function renderTable(processedData) {
+            const tableBody = document.getElementById('valuationTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            processedData.forEach(item => {
+                const row = tableBody.insertRow();
+
+                const companyCell = row.insertCell();
+                companyCell.textContent = item.company;
+
+                const priceCell = row.insertCell();
+                priceCell.textContent = item.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+
+                const expectedCell = row.insertCell();
+                expectedCell.textContent = item.expectedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+
+                const deviationCell = row.insertCell();
+                deviationCell.textContent = item.deviationPercent;
+
+                const bgColor = getColorForDeviation(item.deviationRatio);
+                deviationCell.style.backgroundColor = bgColor;
+                deviationCell.style.color = getContrastTextColor(bgColor);
+                deviationCell.style.fontWeight = 'bold';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const processedData = parseAndProcessData(data, companies);
+            // Sort by deviation ratio from lowest to highest
+            processedData.sort((a, b) => a.deviationRatio - b.deviationRatio);
+            renderTable(processedData);
+        });
+    </script>
+
+</body>
+</html>

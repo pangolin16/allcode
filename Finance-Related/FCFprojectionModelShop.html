@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopify Interactive Valuation</title>
+    <style>
+        :root {
+            --primary: #95bf47; /* Shopify Green */
+            --secondary: #004c3f; /* Shopify Dark Green */
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-dark: #202223;
+            --border: #dfe3e8;
+            --accent: #5c6ac4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        h2 {
+            margin-top: 0;
+            font-size: 0.9rem;
+            color: #6d7175;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex; flex-direction: column; gap: 5px;
+        }
+
+        label { font-size: 0.85rem; font-weight: 600; color: #6d7175; }
+
+        input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th { text-align: left; color: #6d7175; font-size: 0.85rem; padding: 12px 8px; border-bottom: 2px solid var(--border); }
+
+        td { padding: 12px 8px; border-bottom: 1px solid var(--border); }
+
+        .highlight-card {
+            background: linear-gradient(135deg, #004c3f 0%, #002e25 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .intrinsic-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #95bf47;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <header>
+        <h1 style="margin:0; font-size: 1.2rem;">Shopify (SHOP) DCF Calculator</h1>
+        <div style="font-weight: bold; background: #95bf47; padding: 5px 10px; border-radius: 4px; color: #004c3f;">SHOP</div>
+    </header>
+
+    <section class="card">
+        <h2>Assumptions</h2>
+        <div class="input-grid">
+            <div class="input-group">
+                <label>Year 1 Revenue ($M)</label>
+                <input type="number" id="baseRev" value="8300">
+            </div>
+            <div class="input-group">
+                <label>Revenue Growth (%)</label>
+                <input type="number" id="growth" value="22">
+            </div>
+            <div class="input-group">
+                <label>Target FCF Margin (%)</label>
+                <input type="number" id="margin" value="14">
+            </div>
+            <div class="input-group">
+                <label>Discount Rate (%)</label>
+                <input type="number" id="wacc" value="9">
+            </div>
+            <div class="input-group">
+                <label>Exit Multiple (x)</label>
+                <input type="number" id="multiple" value="35">
+            </div>
+            <div class="input-group">
+                <label>Net Debt ($M)</label>
+                <input type="number" id="debt" value="-4000">
+            </div>
+            <div class="input-group">
+                <label>Shares Outstanding (M)</label>
+                <input type="number" id="shares" value="1280">
+            </div>
+        </div>
+    </section>
+
+    <section class="card highlight-card">
+        <h2>Intrinsic Value Per Share</h2>
+        <div class="intrinsic-value" id="pricePerShare">$0.00</div>
+        <p id="valuationLabel" style="opacity: 0.8; font-size: 0.9rem;">Enterprise Value: $0.00 M</p>
+    </section>
+
+    <section class="card full-width">
+        <h2>5-Year Projections (USD)</h2>
+        <table id="projectionTable">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Est. Revenue</th>
+                    <th>Free Cash Flow</th>
+                    <th>Present Value</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</div>
+
+<script>
+    const inputs = ['baseRev', 'growth', 'margin', 'wacc', 'multiple', 'debt', 'shares'];
+    
+    function calculateDCF() {
+        const baseRev = parseFloat(document.getElementById('baseRev').value);
+        const growth = parseFloat(document.getElementById('growth').value) / 100;
+        const margin = parseFloat(document.getElementById('margin').value) / 100;
+        const wacc = parseFloat(document.getElementById('wacc').value) / 100;
+        const multiple = parseFloat(document.getElementById('multiple').value);
+        const debt = parseFloat(document.getElementById('debt').value);
+        const shares = parseFloat(document.getElementById('shares').value);
+
+        let tableBody = '';
+        let totalPVFCF = 0;
+        let currentRev = baseRev;
+
+        for (let i = 1; i <= 5; i++) {
+            if (i > 1) currentRev *= (1 + growth);
+            const fcf = currentRev * margin;
+            const pv = fcf / Math.pow((1 + wacc), i);
+            totalPVFCF += pv;
+
+            tableBody += `
+                <tr>
+                    <td>Year ${i}</td>
+                    <td>$${currentRev.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                    <td>$${fcf.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                    <td>$${pv.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                </tr>
+            `;
+
+            if (i === 5) {
+                const terminalValue = fcf * multiple;
+                const pvTerminalValue = terminalValue / Math.pow((1 + wacc), 5);
+                const enterpriseValue = totalPVFCF + pvTerminalValue;
+                const equityValue = enterpriseValue - debt; // Debt is negative (Net Cash), so it adds to value
+                const price = equityValue / shares;
+
+                document.getElementById('pricePerShare').innerText = `$${price.toFixed(2)}`;
+                document.getElementById('valuationLabel').innerText = `Enterprise Value: $${enterpriseValue.toLocaleString(undefined, {maximumFractionDigits: 0})} M`;
+            }
+        }
+        document.querySelector('#projectionTable tbody').innerHTML = tableBody;
+    }
+
+    inputs.forEach(id => document.getElementById(id).addEventListener('input', calculateDCF));
+    calculateDCF();
+</script>
+
+</body>
+</html>

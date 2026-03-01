@@ -1,0 +1,8692 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>title</title>
+</head>
+<body>
+  
+</body>
+<script>
+  // Original array
+const companies = [
+  {
+    "name": "1st Source Corporation",
+    "result": {
+      "symbol": "SRCE",
+      "shortname": "1st Source Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "92 MNG Inc.",
+    "result": null
+  },
+  {
+    "name": "A&D Holon Holdings",
+    "result": {
+      "symbol": "7745.T",
+      "shortname": "A&D HOLON HOLDINGS COMPANY LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "A10 Networks, Inc.",
+    "result": {
+      "symbol": "ATEN",
+      "shortname": "A10 Networks, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "A2M",
+    "result": {
+      "symbol": "A2M.AX",
+      "shortname": "A2 MILK FPO NZ [A2M]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "AAK d",
+    "result": null
+  },
+  {
+    "name": "ACCELLERON",
+    "result": {
+      "symbol": "ZH20.F",
+      "shortname": "Accelleron Industries Ltd.    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Accton Technology",
+    "result": {
+      "symbol": "2345.TW",
+      "shortname": "ACCTON TECHNOLOGY CORP",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "ACCTON TECHNOLOGY CORPD",
+    "result": null
+  },
+  {
+    "name": "ACER CYBER SECURITY INC",
+    "result": {
+      "symbol": "6690.TWO",
+      "shortname": "ACER CYBER SECURITY INC",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "ACER E-ENABLING SERVICE BUSINESS IN",
+    "result": {
+      "symbol": "6811.TWO",
+      "shortname": "AEB",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "ACM Research, Inc.",
+    "result": {
+      "symbol": "ACMR",
+      "shortname": "ACM Research, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "ACTER GROUP CORPORATION LTD",
+    "result": {
+      "symbol": "5536.TWO",
+      "shortname": "ACTER GROUP CORPORATION LTD",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Acuity Inc.",
+    "result": {
+      "symbol": "AYI",
+      "shortname": "Acuity Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ADDTECH AB SER. B",
+    "result": {
+      "symbol": "ADDT-B.ST",
+      "shortname": "Addtech AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "ADMIRAL GROUP PLC",
+    "result": {
+      "symbol": "FLN.F",
+      "shortname": "Admiral Group PLC             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ADVANCED INFO SERVICE PUBLIC CO",
+    "result": {
+      "symbol": "AVIVF",
+      "shortname": "Advanced Info Service Public Co",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "ADVANCED POWER ELECTRONICSD",
+    "result": null
+  },
+  {
+    "name": "ADVANTEST CORPD",
+    "result": null
+  },
+  {
+    "name": "adyen",
+    "result": {
+      "symbol": "ADYEN.AS",
+      "shortname": "ADYEN",
+      "exchange": "AMS"
+    }
+  },
+  {
+    "name": "aena s",
+    "result": {
+      "symbol": "A441.F",
+      "shortname": "Aena SME S.A.                 A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "AFYA a",
+    "result": null
+  },
+  {
+    "name": "AIRTAC INTERNATIONAL GROUPD",
+    "result": null
+  },
+  {
+    "name": "AIXTRON",
+    "result": {
+      "symbol": "AIXAD.XC",
+      "shortname": "AIXTRON SE",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "AJ BELL PLC ORD GBP",
+    "result": {
+      "symbol": "AJB.L",
+      "shortname": "AJ BELL PLC ORD GBP0.000125",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "ako-b",
+    "result": {
+      "symbol": "AKO-B",
+      "shortname": "Embotelladora Andina S.A.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ALFA FINANCIAL SOFTWARE HLDGS PLC ORD GBP",
+    "result": null
+  },
+  {
+    "name": "ALCHIP TECHNOLOGIES LIMITDD",
+    "result": null
+  },
+  {
+    "name": "ALK-ABELLO B A/S",
+    "result": null
+  },
+  {
+    "name": "Allegion",
+    "result": {
+      "symbol": "ALLE",
+      "shortname": "Allegion plc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Allstate Corporation (The)",
+    "result": {
+      "symbol": "ALL",
+      "shortname": "Allstate Corporation (The)",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "AlphaPolis Co",
+    "result": {
+      "symbol": "9467.T",
+      "shortname": "ALPHAPOLIS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "ALS",
+    "result": {
+      "symbol": "AEI",
+      "shortname": "Alset Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Altium",
+    "result": null
+  },
+  {
+    "name": "ALZCHEM GROUP AG",
+    "result": {
+      "symbol": "ACT.F",
+      "shortname": "Alzchem Group AG              I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "amadeus it",
+    "result": {
+      "symbol": "AI3A.F",
+      "shortname": "Amadeus IT Group S.A.         A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Amalgamated Financial Corp.",
+    "result": {
+      "symbol": "AMAL",
+      "shortname": "Amalgamated Financial Corp.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Amano",
+    "result": {
+      "symbol": "6436.T",
+      "shortname": "AMANO CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "amat",
+    "result": {
+      "symbol": "AMAT",
+      "shortname": "Applied Materials, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Amazon.com, Inc.",
+    "result": {
+      "symbol": "AMZN",
+      "shortname": "Amazon.com, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "amdocs",
+    "result": {
+      "symbol": "DOX",
+      "shortname": "Amdocs Limited",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "American Coastal Insurance Corporation",
+    "result": {
+      "symbol": "ACIC",
+      "shortname": "American Coastal Insurance Corp",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "AMETEK, Inc.",
+    "result": {
+      "symbol": "AME",
+      "shortname": "AMETEK, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Amphastar",
+    "result": {
+      "symbol": "AMPH",
+      "shortname": "Amphastar Pharmaceuticals, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Amvis Holdings",
+    "result": {
+      "symbol": "7071.T",
+      "shortname": "AMVIS HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Andritz",
+    "result": {
+      "symbol": "AZ2.HA",
+      "shortname": "ANDRITZ AG                    I",
+      "exchange": "HAN"
+    }
+  },
+  {
+    "name": "ANYCOLOR INCD",
+    "result": null
+  },
+  {
+    "name": "ANYMIND GROUP INCD",
+    "result": null
+  },
+  {
+    "name": "APP INC",
+    "result": {
+      "symbol": "AAPL",
+      "shortname": "Apple Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Applied Industrial Technologies",
+    "result": {
+      "symbol": "AIT",
+      "shortname": "Applied Industrial Technologies",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Applovin Corporation",
+    "result": {
+      "symbol": "APP",
+      "shortname": "Applovin Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "ARC RESOURCES LTD",
+    "result": {
+      "symbol": "ARX.TO",
+      "shortname": "ARC RESOURCES LTD.",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Arcadyan Technology",
+    "result": {
+      "symbol": "3596.TW",
+      "shortname": "ARCADYAN TECHNOLOGY CORPORATION",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "arco/nvt",
+    "result": null
+  },
+  {
+    "name": "Area Group Ltd",
+    "result": null
+  },
+  {
+    "name": "Arhaus",
+    "result": {
+      "symbol": "ARHS",
+      "shortname": "Arhaus, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Aritzia",
+    "result": {
+      "symbol": "280.F",
+      "shortname": "Aritzia Inc.                  S",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ARIZON RFID TECH (CAYMAN) CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Armstrong World Industries Inc",
+    "result": {
+      "symbol": "AWI",
+      "shortname": "Armstrong World Industries Inc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ARTECHE LANTEGI ELKARTEA, S.A.",
+    "result": {
+      "symbol": "ART.MC",
+      "shortname": "ARTECHE LANTEGI  ELKARTEA, S.A.",
+      "exchange": "MCE"
+    }
+  },
+  {
+    "name": "Artner Co",
+    "result": {
+      "symbol": "2163.T",
+      "shortname": "ARTNER CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Asahi Intecc",
+    "result": {
+      "symbol": "7747.T",
+      "shortname": "ASAHI INTECC CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Asahi Yukizai",
+    "result": {
+      "symbol": "4216.T",
+      "shortname": "ASAHI YUKIZAI CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "ASIA VITAL COMPONENTS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "ASMEDIA TECHNOLOGY INCD",
+    "result": null
+  },
+  {
+    "name": "ASROCK INCORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "ASTER ENERGI",
+    "result": null
+  },
+  {
+    "name": "ASTOR ENERJI",
+    "result": {
+      "symbol": "ASTOR.IS",
+      "shortname": "ASTOR ENERJI",
+      "exchange": "IST"
+    }
+  },
+  {
+    "name": "ASTRAZENECA PLC ORD USD",
+    "result": null
+  },
+  {
+    "name": "ASUSTEK COMPUTER INCD",
+    "result": null
+  },
+  {
+    "name": "ATHABASCA OIL CORP",
+    "result": {
+      "symbol": "ATI.F",
+      "shortname": "Athabasca Oil Corp.           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ATI Inc.",
+    "result": {
+      "symbol": "ATI",
+      "shortname": "ATI Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Atlas Engineered Products",
+    "result": {
+      "symbol": "AEP.V",
+      "shortname": "ATLAS ENGINEERED PRODUCTS LTD",
+      "exchange": "VAN"
+    }
+  },
+  {
+    "name": "Atmus Filtration Technologies Inc.",
+    "result": {
+      "symbol": "ATMU",
+      "shortname": "Atmus Filtration Technologies I",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ATOSS SOFTWARE SE",
+    "result": {
+      "symbol": "AOF.HA",
+      "shortname": "ATOSS Software SE             I",
+      "exchange": "HAN"
+    }
+  },
+  {
+    "name": "AUBAY",
+    "result": {
+      "symbol": "BAQ.F",
+      "shortname": "AUBAY TECHNOLOGY S.A.         A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "AURAS TECHNOLOGY CO",
+    "result": {
+      "symbol": "3324.TWO",
+      "shortname": "AURAS TECHNOLOGY CO",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "AURORA DESIGN PCL",
+    "result": null
+  },
+  {
+    "name": "Aussie Broadband",
+    "result": {
+      "symbol": "9JI.F",
+      "shortname": "Aussie Broadband ltd.         R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "AUSTEVOLL SEAFOOD ASA",
+    "result": {
+      "symbol": "Z85.F",
+      "shortname": "Austevoll Seafood ASA         N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "AUSTRALIAN ETHICAL INVESTMENT LIMITED",
+    "result": {
+      "symbol": "1OP.F",
+      "shortname": "Australian Ethical Inv.       R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "autoliv",
+    "result": {
+      "symbol": "ALV",
+      "shortname": "Autoliv, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "AVANZA BANK HOLDING AB",
+    "result": {
+      "symbol": "1JJA.F",
+      "shortname": "Avanza Bank Holding AB        N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Avery Dennison Corporation",
+    "result": {
+      "symbol": "AVY",
+      "shortname": "Avery Dennison Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "AVI LTD",
+    "result": {
+      "symbol": "FTAI",
+      "shortname": "FTAI Aviation Ltd.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Avista Energy S.A.B. de C.V.",
+    "result": null
+  },
+  {
+    "name": "AVNW/nvt",
+    "result": null
+  },
+  {
+    "name": "Axcelis Technologies",
+    "result": {
+      "symbol": "ACLS",
+      "shortname": "Axcelis Technologies, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Axis Capital Holdings Limited",
+    "result": {
+      "symbol": "AXS",
+      "shortname": "Axis Capital Holdings Limited",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "axon",
+    "result": {
+      "symbol": "AXON",
+      "shortname": "Axon Enterprise, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "axp",
+    "result": {
+      "symbol": "AXP",
+      "shortname": "American Express Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "AZBIL CORPD",
+    "result": null
+  },
+  {
+    "name": "AZZ",
+    "result": {
+      "symbol": "AZZ",
+      "shortname": "AZZ Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "B3 ON NM",
+    "result": null
+  },
+  {
+    "name": "BABCOCK INTERNATIONAL GROUP ORD GBP",
+    "result": null
+  },
+  {
+    "name": "Badger Infrastructure",
+    "result": {
+      "symbol": "BDGIF",
+      "shortname": "Badger Infrastructure Solutions Ltd.",
+      "exchange": "OQX"
+    }
+  },
+  {
+    "name": "BADGER INFRASTRUCTURE SOLUTIONS LTD",
+    "result": {
+      "symbol": "BDGIF",
+      "shortname": "Badger Infrastructure Solutions Ltd.",
+      "exchange": "OQX"
+    }
+  },
+  {
+    "name": "Badger Meter, Inc.",
+    "result": {
+      "symbol": "BMI",
+      "shortname": "Badger Meter, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "BAE Systems",
+    "result": {
+      "symbol": "BA.L",
+      "shortname": "BAE SYSTEMS PLC ORD 2.5P",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Baker Hughes Company",
+    "result": {
+      "symbol": "BKR",
+      "shortname": "Baker Hughes Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Barco NV",
+    "result": {
+      "symbol": "BC1P.F",
+      "shortname": "Barco N.V.                    A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Base Co",
+    "result": {
+      "symbol": "4481.T",
+      "shortname": "BASE CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "BASE CO LTDD",
+    "result": null
+  },
+  {
+    "name": "BASILEA",
+    "result": {
+      "symbol": "0QNA.L",
+      "shortname": "BASILEA PHARMACEUTICA AG BASILE",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Baudroie",
+    "result": {
+      "symbol": "4413.T",
+      "shortname": "BAUDROIE INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "BAUDROIE INCD",
+    "result": null
+  },
+  {
+    "name": "BayCurrent Consulting",
+    "result": {
+      "symbol": "BYCRF",
+      "shortname": "BAYCURRENT CONSULTING INC",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "BAYCURRENT INCD",
+    "result": null
+  },
+  {
+    "name": "BBVA BANCO FRANCES",
+    "result": null
+  },
+  {
+    "name": "BDO UNIBANK, INC.",
+    "result": {
+      "symbol": "BDOUF",
+      "shortname": "BDO Unibank Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Beauty Garage",
+    "result": {
+      "symbol": "3180.T",
+      "shortname": "BEAUTY GARAGE INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "BEAZLEY PLC (UK) ORD GBP",
+    "result": null
+  },
+  {
+    "name": "Bechtle",
+    "result": {
+      "symbol": "BC8.F",
+      "shortname": "BECHTLE AG                    I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "BEIJER ALMA AB SER. B",
+    "result": {
+      "symbol": "BEIA-B.ST",
+      "shortname": "Beijer Alma AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Belc Co",
+    "result": {
+      "symbol": "9974.T",
+      "shortname": "BELC CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Belimo Holding",
+    "result": {
+      "symbol": "8RJ.F",
+      "shortname": "BELIMO Holding AG             N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Bellring Brands",
+    "result": {
+      "symbol": "BRBR",
+      "shortname": "BellRing Brands, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Bengcon AB Ser. B",
+    "result": null
+  },
+  {
+    "name": "Bengo4.com",
+    "result": {
+      "symbol": "6027.T",
+      "shortname": "BENGO4.COM INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "better collective",
+    "result": {
+      "symbol": "BETCO.ST",
+      "shortname": "Better Collective A/S",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "BEXIMCO PHARMACEUTICALS LTD",
+    "result": {
+      "symbol": "R2WA.SG",
+      "shortname": "Beximco Pharmaceuticals Ltd. (G",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "BFF BANK",
+    "result": {
+      "symbol": "2BF.MU",
+      "shortname": "BFF Bank S.p.A.               A",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "BHI CO., LTD.",
+    "result": {
+      "symbol": "083650.KQ",
+      "shortname": "BHI",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Biesse",
+    "result": {
+      "symbol": "BI2.SG",
+      "shortname": "Biesse S.p.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "BINGGRAED",
+    "result": null
+  },
+  {
+    "name": "Biosyent",
+    "result": {
+      "symbol": "BIOYF",
+      "shortname": "BioSyent Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Bird Construction",
+    "result": {
+      "symbol": "6LT.F",
+      "shortname": "Bird Construction Inc.        R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "BIZLINK HOLDING INCD",
+    "result": null
+  },
+  {
+    "name": "Blackstone Inc.",
+    "result": {
+      "symbol": "BX",
+      "shortname": "Blackstone Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Block, Inc.",
+    "result": {
+      "symbol": "GEMI",
+      "shortname": "Gemini Space Station, Inc. Clas",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "BLOOMSBURY PUBLISHING ORD GBP0.0125",
+    "result": null
+  },
+  {
+    "name": "Blue Bird Corporation",
+    "result": {
+      "symbol": "BLBD",
+      "shortname": "Blue Bird Corporation",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Blue Star",
+    "result": {
+      "symbol": "BUSC",
+      "shortname": "Blue Star Global, Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "bme:fer",
+    "result": null
+  },
+  {
+    "name": "bmv:ac",
+    "result": null
+  },
+  {
+    "name": "Bodycote",
+    "result": {
+      "symbol": "21T.F",
+      "shortname": "Bodycote PLC                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "BOLSA MEXICANA DE VALORES SAB DE CV",
+    "result": {
+      "symbol": "BC51.SG",
+      "shortname": "Bolsa Mexicana de Valores S.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Booz Allen Hamilton Holding Corporation",
+    "result": {
+      "symbol": "BAH",
+      "shortname": "Booz Allen Hamilton Holding Cor",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "BORA PHARMACEUTICALS CO LTD",
+    "result": {
+      "symbol": "6472.TW",
+      "shortname": "BORA PHARMACEUTICALS CO LTD",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "Borouge PLC",
+    "result": null
+  },
+  {
+    "name": "BORREGAARD",
+    "result": {
+      "symbol": "BO4.F",
+      "shortname": "Borregaard ASA                N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "BOURSA KUWAIT SECURITIES CO KPSC",
+    "result": null
+  },
+  {
+    "name": "Bowhead Specialty Holdings Inc.",
+    "result": {
+      "symbol": "BOW",
+      "shortname": "Bowhead Specialty Holdings Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Boyd Gaming",
+    "result": {
+      "symbol": "BYD",
+      "shortname": "Boyd Gaming Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Boyd Services",
+    "result": null
+  },
+  {
+    "name": "BRASILAGRO ON NM",
+    "result": {
+      "symbol": "AGRO3.SA",
+      "shortname": "BRASILAGRO  ON      NM",
+      "exchange": "SAO"
+    }
+  },
+  {
+    "name": "Braysearch Laboratories AB Ser. B",
+    "result": null
+  },
+  {
+    "name": "Brederode",
+    "result": {
+      "symbol": "BREB.BR",
+      "shortname": "BREDERODE",
+      "exchange": "BRU"
+    }
+  },
+  {
+    "name": "Breljers AB Ser. B",
+    "result": null
+  },
+  {
+    "name": "brembo",
+    "result": {
+      "symbol": "BRE2.VI",
+      "shortname": "BREMBO NV",
+      "exchange": "VIE"
+    }
+  },
+  {
+    "name": "BREVILLE GROUP LIMITED",
+    "result": {
+      "symbol": "BRG.AX",
+      "shortname": "BREVILLE FPO [BRG]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Brown & Brown, Inc.",
+    "result": {
+      "symbol": "BRO",
+      "shortname": "Brown & Brown, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "BTS GROUP AB SER. B",
+    "result": {
+      "symbol": "BTS-B.ST",
+      "shortname": "BTS Group AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Bufab",
+    "result": {
+      "symbol": "29B0.F",
+      "shortname": "Bufab AB                      N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Bucher Industries",
+    "result": {
+      "symbol": "BUCN.SW",
+      "shortname": "BUCHER N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "BUREAU VERITAS",
+    "result": {
+      "symbol": "4BV.F",
+      "shortname": "Bureau Veritas SA             A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "BUYSELL TECHNOLOGIES CO LTDD",
+    "result": null
+  },
+  {
+    "name": "buzzi",
+    "result": {
+      "symbol": "BZU.MI",
+      "shortname": "BUZZI",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "BWX Technologies, Inc.",
+    "result": {
+      "symbol": "BWXT",
+      "shortname": "BWX Technologies, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "BYTES TECHNOLOGY GROUP PLC ORD GBP0.01",
+    "result": null
+  },
+  {
+    "name": "C Rad",
+    "result": {
+      "symbol": "24C.F",
+      "shortname": "C-Rad AB                      N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "C. UYEMURA & CO.LTDD",
+    "result": null
+  },
+  {
+    "name": "C&C International",
+    "result": {
+      "symbol": "CCEL",
+      "shortname": "Cryo-Cell International, Inc.",
+      "exchange": "ASE"
+    }
+  },
+  {
+    "name": "Cadre Holdings",
+    "result": {
+      "symbol": "CDRE",
+      "shortname": "Cadre Holdings, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CAFE CORP.D",
+    "result": null
+  },
+  {
+    "name": "CAIRN HOMES PLC ORD EUR0.001 (CDI)",
+    "result": null
+  },
+  {
+    "name": "Calian",
+    "result": {
+      "symbol": "74L.F",
+      "shortname": "Calian Group Ltd.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "California Resources Corporation",
+    "result": {
+      "symbol": "CRC",
+      "shortname": "California Resources Corporatio",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Camtek Ltd.",
+    "result": {
+      "symbol": "CAMT",
+      "shortname": "Camtek Ltd.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Camurus",
+    "result": {
+      "symbol": "7CA.F",
+      "shortname": "Camurus AB                    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Canadian Pacific Kansas",
+    "result": {
+      "symbol": "CP",
+      "shortname": "Canadian Pacific Kansas City Li",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Capcom",
+    "result": {
+      "symbol": "9697.T",
+      "shortname": "CAPCOM CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Capital Bancorp, Inc.",
+    "result": {
+      "symbol": "CBNK",
+      "shortname": "Capital Bancorp, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Capital City Bank Group",
+    "result": {
+      "symbol": "CCBG",
+      "shortname": "Capital City Bank Group",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "CAPITEC BANK HLDGS LTD",
+    "result": {
+      "symbol": "CPI.JO",
+      "shortname": "Capitec Bank Hldgs Ltd",
+      "exchange": "JNB"
+    }
+  },
+  {
+    "name": "CAPRICORN METALS LTD",
+    "result": {
+      "symbol": "CRNLF",
+      "shortname": "CAPRICORN METALS LTD",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Car",
+    "result": {
+      "symbol": "CAR",
+      "shortname": "Avis Budget Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Carlo Gavazzi",
+    "result": {
+      "symbol": "GAV.SW",
+      "shortname": "GAVAZZI N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "Carpenter Technology Corporation",
+    "result": {
+      "symbol": "CRS",
+      "shortname": "Carpenter Technology Corporatio",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CASTLES TECH CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Catalyst Pharmaceuticals, Inc.",
+    "result": {
+      "symbol": "CPRX",
+      "shortname": "Catalyst Pharmaceuticals, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "CBIZ",
+    "result": {
+      "symbol": "CBZ",
+      "shortname": "CBIZ, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ccep",
+    "result": {
+      "symbol": "CCEP",
+      "shortname": "Coca-Cola Europacific Partners ",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "ccj",
+    "result": {
+      "symbol": "CCJ",
+      "shortname": "Cameco Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CCL INDUSTRIES INC",
+    "result": {
+      "symbol": "1C9.F",
+      "shortname": "CCL INDUSTRIES INC.           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "CE Info Systems",
+    "result": null
+  },
+  {
+    "name": "CECO Environmental",
+    "result": {
+      "symbol": "CECO",
+      "shortname": "CECO Environmental Corp.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "CELLAVISION AB",
+    "result": {
+      "symbol": "C26.F",
+      "shortname": "CellaVision AB                N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "CENERGY",
+    "result": {
+      "symbol": "CENER.AT",
+      "shortname": "CENERGY HOLDINGS",
+      "exchange": "ATH"
+    }
+  },
+  {
+    "name": "Cenit",
+    "result": {
+      "symbol": "CSH.F",
+      "shortname": "CENIT AG                      I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Central Automotive Products",
+    "result": {
+      "symbol": "8117.T",
+      "shortname": "CENTRAL AUTOMOTIVE PRODUCTS",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Centrus Energy Corp.",
+    "result": {
+      "symbol": "LEU",
+      "shortname": "Centrus Energy Corp.",
+      "exchange": "ASE"
+    }
+  },
+  {
+    "name": "Centurion",
+    "result": {
+      "symbol": "605398.SS",
+      "shortname": "SHANGHAI NEW CENTURION NETWORK ",
+      "exchange": "SHH"
+    }
+  },
+  {
+    "name": "CERILLION PLC ORD GBP0.005",
+    "result": null
+  },
+  {
+    "name": "CICOR TECH",
+    "result": {
+      "symbol": "CRLN.F",
+      "shortname": "Cicor Technologies S.A.       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Cicor Technologies",
+    "result": {
+      "symbol": "CRLN.F",
+      "shortname": "Cicor Technologies S.A.       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Ciena",
+    "result": {
+      "symbol": "CIEN",
+      "shortname": "Ciena Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Cimpress plc",
+    "result": {
+      "symbol": "CMPR",
+      "shortname": "Cimpress PLC",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "cl",
+    "result": {
+      "symbol": "CL",
+      "shortname": "Colgate-Palmolive Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Clarkson",
+    "result": {
+      "symbol": "1DH.F",
+      "shortname": "CLARKSON PLC                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "CLAS OHLSON AB SER. B",
+    "result": {
+      "symbol": "CLAS-B.ST",
+      "shortname": "Clas Ohlson AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "CLASSYS INC.D",
+    "result": null
+  },
+  {
+    "name": "CLEANAWAY COMPANY LIMITEDD",
+    "result": null
+  },
+  {
+    "name": "Clinuvel Pharmaceuticals",
+    "result": {
+      "symbol": "UR9.F",
+      "shortname": "Clinuvel Pharmaceuticals Ltd. R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Clio Cosmetics",
+    "result": {
+      "symbol": "237880.KQ",
+      "shortname": "CLIO Cosmetics",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "clmb",
+    "result": {
+      "symbol": "CLMB",
+      "shortname": "Climb Global Solutions, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "CMC MARKETS ORD GBP0.25",
+    "result": null
+  },
+  {
+    "name": "Coastal Financial Corporation",
+    "result": {
+      "symbol": "CCB",
+      "shortname": "Coastal Financial Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Coca Cola HBC",
+    "result": {
+      "symbol": "CCKC.F",
+      "shortname": "Coca-Cola HBC AG              N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Coca-Cola Femsa S.A.B. de C.V.",
+    "result": {
+      "symbol": "KOF",
+      "shortname": "Coca Cola Femsa S.A.B. de C.V.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CODAN LIMITED",
+    "result": {
+      "symbol": "CDA.AX",
+      "shortname": "CODAN FPO [CDA]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Cohen & Steers Inc",
+    "result": {
+      "symbol": "CNS",
+      "shortname": "Cohen & Steers Inc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "COM7 PUBLIC CO LTD",
+    "result": null
+  },
+  {
+    "name": "Comer Industries",
+    "result": {
+      "symbol": "X5Q.F",
+      "shortname": "Comer Industries  S.p.A.      A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Comfort Systems Usa",
+    "result": {
+      "symbol": "FIX",
+      "shortname": "Comfort Systems USA, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "COMM BK OF DUBAI",
+    "result": {
+      "symbol": "CBD.AE",
+      "shortname": "COMM BK OF DUBAI",
+      "exchange": "DFM"
+    }
+  },
+  {
+    "name": "COMMERCIAL INTERNATIONAL BANK-EGYPT (CIB)",
+    "result": {
+      "symbol": "CMGGF",
+      "shortname": "COMMERCIAL INTL BANK(EGYPT)S.A.",
+      "exchange": "OQX"
+    }
+  },
+  {
+    "name": "Community Trust Bancorp, Inc.",
+    "result": {
+      "symbol": "CTBI",
+      "shortname": "Community Trust Bancorp, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Compania de Distribucion Integral Logista Holdings, S.A.",
+    "result": {
+      "symbol": "5CI.MU",
+      "shortname": "Cia. d. Dis.Integ.Logista HdgsA",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "CompuGroup",
+    "result": {
+      "symbol": "COP2.VI",
+      "shortname": "COMPUGROUP MEDICAL SE& CO KGAA",
+      "exchange": "VIE"
+    }
+  },
+  {
+    "name": "Comture",
+    "result": {
+      "symbol": "CMTUF",
+      "shortname": "COMTURE CORPORATION",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Constellation brands",
+    "result": {
+      "symbol": "STZ",
+      "shortname": "Constellation Brands, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CONSTELLATION SOFTWARE INC",
+    "result": {
+      "symbol": "CSU.TO",
+      "shortname": "CONSTELLATION SOFTWARE INC.",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Construction Partners",
+    "result": {
+      "symbol": "ROAD",
+      "shortname": "Construction Partners, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "ContextVision",
+    "result": {
+      "symbol": "CONTXO.OL",
+      "shortname": "Contextvision AB",
+      "exchange": "OSL"
+    }
+  },
+  {
+    "name": "CONTINENTAL SAB DE CV",
+    "result": {
+      "symbol": "EMBVF",
+      "shortname": "Arca Continental SAB de CV",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "copart",
+    "result": {
+      "symbol": "CPRT",
+      "shortname": "Copart, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Corcept Therapeutics Incorporated",
+    "result": {
+      "symbol": "CORT",
+      "shortname": "Corcept Therapeutics Incorporat",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "CORDIANT DIGITAL INFRASTRUCTURE LTD ORD NPV",
+    "result": null
+  },
+  {
+    "name": "Core & Main, Inc.",
+    "result": {
+      "symbol": "CNM",
+      "shortname": "Core & Main, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Corporate Travel Management",
+    "result": {
+      "symbol": "CTMLF",
+      "shortname": "CORPORATE TRAVEL",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "CORPORATIVA FRAGUA",
+    "result": {
+      "symbol": "FRAGUAB.MX",
+      "shortname": "CORPORATIVA FRAGUA SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Cosel Co",
+    "result": {
+      "symbol": "6905.T",
+      "shortname": "COSEL CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "COSMAX, INC.D",
+    "result": {
+      "symbol": "2CF.F",
+      "shortname": "CHEFS WAREHOUSE INC.DL-01",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Cosmecca Korea",
+    "result": {
+      "symbol": "241710.KQ",
+      "shortname": "COSMECCA KOREA",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "COSMOS PHARMACEUTICAL CORPD",
+    "result": null
+  },
+  {
+    "name": "CoStar Group",
+    "result": {
+      "symbol": "CSGP",
+      "shortname": "CoStar Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "COVER CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "CRA International, Inc.",
+    "result": {
+      "symbol": "CRAI",
+      "shortname": "CRA International,Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Crane Company",
+    "result": {
+      "symbol": "CR",
+      "shortname": "Crane Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Creek & River",
+    "result": {
+      "symbol": "4763.T",
+      "shortname": "CREEK & RIVER",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "CROWELL DEVELOPMENT CORPD",
+    "result": null
+  },
+  {
+    "name": "CSW Industrials",
+    "result": {
+      "symbol": "UCI.F",
+      "shortname": "CSW Industrials Inc.          R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "CTBC FINANCIAL HOLDINGS COMPANY LTDD",
+    "result": null
+  },
+  {
+    "name": "CTS Eventim AG & Co. KGaA",
+    "result": {
+      "symbol": "EVD.F",
+      "shortname": "CTS Eventim AG & Co. KGaA     I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Curtiss-Wright",
+    "result": {
+      "symbol": "CW",
+      "shortname": "Curtiss-Wright Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "cvco",
+    "result": {
+      "symbol": "CVCO",
+      "shortname": "Cavco Industries, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "CWCO",
+    "result": {
+      "symbol": "CWCO",
+      "shortname": "Consolidated Water Co. Ltd.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Cyber Security Cloud",
+    "result": {
+      "symbol": "4493.T",
+      "shortname": "CYBER SECURITY CLOUD INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "CYBERFLKS",
+    "result": {
+      "symbol": "CBF.WA",
+      "shortname": "CYBERFLKS",
+      "exchange": "WSE"
+    }
+  },
+  {
+    "name": "Cyberoo",
+    "result": {
+      "symbol": "K97.F",
+      "shortname": "Cyberoo S.p.A.                A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "DAEJOO ELECTRONIC MATERIALS CO., LTD.D",
+    "result": {
+      "symbol": "078600.KQ",
+      "shortname": "DAEJOO",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "DAI NIPPON PRINTING COD",
+    "result": null
+  },
+  {
+    "name": "DAI-DAN CO LTDD",
+    "result": null
+  },
+  {
+    "name": "DAI-ICHI LIFE HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "DAIICHI SANKYO COMPANY LIMITEDD",
+    "result": null
+  },
+  {
+    "name": "DAIICHIKOSHO COD",
+    "result": null
+  },
+  {
+    "name": "DAIKOKUTENBUSSAN COD",
+    "result": null
+  },
+  {
+    "name": "Daiseki",
+    "result": {
+      "symbol": "9793.T",
+      "shortname": "DAISEKI CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Daiseki Eco Solution",
+    "result": {
+      "symbol": "1712.T",
+      "shortname": "DAISEKI ECO. SOLUTION CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "DAIWABO HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "dampskibsselskabet Norden A/S",
+    "result": {
+      "symbol": "DNORD.CO",
+      "shortname": "D/S Norden",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "DASSAULT AVIATION",
+    "result": {
+      "symbol": "AMP.XC",
+      "shortname": "Dassault Aviation SA",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "Data#3",
+    "result": {
+      "symbol": "20Y.F",
+      "shortname": "Data#3 Ltd.                   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "DB INSURANCED",
+    "result": null
+  },
+  {
+    "name": "DBS",
+    "result": {
+      "symbol": "D05.SI",
+      "shortname": "DBS",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "Delfingen Industr",
+    "result": {
+      "symbol": "HBS.SG",
+      "shortname": "Delfingen Industry S.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Delta Electronics",
+    "result": {
+      "symbol": "NVAW.F",
+      "shortname": "Delta Electronics (Thai.)PCL  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "DEME GROUP",
+    "result": {
+      "symbol": "DEME.BR",
+      "shortname": "DEME GROUP",
+      "exchange": "BRU"
+    }
+  },
+  {
+    "name": "Dentsu Soken",
+    "result": {
+      "symbol": "ISW.F",
+      "shortname": "Dentsu Soken Inc.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Descartes Systems",
+    "result": {
+      "symbol": "DSG.TO",
+      "shortname": "DESCARTES SYS",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "DEUTSCHE BOERSE AG",
+    "result": {
+      "symbol": "DB1.DE",
+      "shortname": "DEUTSCHE BOERSE AG            N",
+      "exchange": "GER"
+    }
+  },
+  {
+    "name": "DEXERIALS CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Digi International",
+    "result": {
+      "symbol": "DGII",
+      "shortname": "Digi International Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Digital Arts",
+    "result": {
+      "symbol": "2326.T",
+      "shortname": "DIGITAL ARTS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Digital Value",
+    "result": {
+      "symbol": "DGVM.XD",
+      "shortname": "Digital Value SpA",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "DiRadimed Corporation",
+    "result": null
+  },
+  {
+    "name": "DO & CO AG",
+    "result": {
+      "symbol": "0E64.IL",
+      "shortname": "DO & CO AG DO & CO AKTIENGESELL",
+      "exchange": "IOB"
+    }
+  },
+  {
+    "name": "DOCEBO INC",
+    "result": {
+      "symbol": "061.MU",
+      "shortname": "Docebo Inc.                   R",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Dollarama",
+    "result": {
+      "symbol": "DOL.TO",
+      "shortname": "DOLLARAMA INC",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Domino's Pizza Inc",
+    "result": {
+      "symbol": "DPZ",
+      "shortname": "Domino's Pizza Inc",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "DONGKOOK PHARMACEUTICAL CO.,LTD.D",
+    "result": {
+      "symbol": "086450.KQ",
+      "shortname": "DongKook Pharm",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "DONGSUNG FINETEC CO., LTDD",
+    "result": {
+      "symbol": "033500.KQ",
+      "shortname": "DONGSUNG FINETEC",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Dongwon F & B",
+    "result": null
+  },
+  {
+    "name": "Doosan Bobcat",
+    "result": {
+      "symbol": "241560.KS",
+      "shortname": "Doosan Bobcat",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Dorman Products, Inc.",
+    "result": {
+      "symbol": "DORM",
+      "shortname": "Dorman Products, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "DoubleDown Interactive Co., Ltd. - American Depository Shares",
+    "result": {
+      "symbol": "DDI",
+      "shortname": "DoubleDown Interactive Co., Ltd",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "DOUBLEUGAMESD",
+    "result": null
+  },
+  {
+    "name": "DoubleVerify Holdings",
+    "result": {
+      "symbol": "DV",
+      "shortname": "DoubleVerify Holdings, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "dover",
+    "result": {
+      "symbol": "DOV",
+      "shortname": "Dover Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Doximity, Inc.",
+    "result": {
+      "symbol": "DOCS",
+      "shortname": "Doximity, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Drewloong Precision",
+    "result": {
+      "symbol": "4572.TW",
+      "shortname": "DREWLOONG PRECISION INC",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "DREWLOONG PRECISION INCD",
+    "result": null
+  },
+  {
+    "name": "DUK SAN NEOLUX CO.,LTDD",
+    "result": {
+      "symbol": "213420.KQ",
+      "shortname": "DUK SAN NEOLUX",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Dundee Precious Metals",
+    "result": {
+      "symbol": "DPM.TO",
+      "shortname": "DUNDEE PRECIOUS METALS INC.",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Duratec",
+    "result": {
+      "symbol": "DURCF",
+      "shortname": "DURATEC LTD.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "DXP Enterprises",
+    "result": {
+      "symbol": "DXPE",
+      "shortname": "DXP Enterprises, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Dycom Industries",
+    "result": {
+      "symbol": "DY",
+      "shortname": "Dycom Industries, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Dynavox Group AB",
+    "result": {
+      "symbol": "DYVOX.ST",
+      "shortname": "Dynavox Group AB",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Ebara",
+    "result": {
+      "symbol": "6328.T",
+      "shortname": "EBARA JITSUGYO CO",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "EBOS",
+    "result": {
+      "symbol": "EJG.F",
+      "shortname": "EBOS Group Ltd.               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ebr:die",
+    "result": null
+  },
+  {
+    "name": "Ebro",
+    "result": {
+      "symbol": "W5B.F",
+      "shortname": "EBRO EV Motors S.A.           A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Eckert & Ziegler SE",
+    "result": {
+      "symbol": "EUZD.XC",
+      "shortname": "Eckert & Ziegler SE",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "Eclerx Services",
+    "result": {
+      "symbol": "ECLERX.NS",
+      "shortname": "ECLERX SERVICES LTD",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "Edenred",
+    "result": {
+      "symbol": "0MUM.IL",
+      "shortname": "EDENRED SA EDENRED ORD SHS",
+      "exchange": "IOB"
+    }
+  },
+  {
+    "name": "EGUARANTEE INC.D",
+    "result": null
+  },
+  {
+    "name": "Einhell Germany AG",
+    "result": {
+      "symbol": "EIN.F",
+      "shortname": "Einhell Germany AG            I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "el en spa",
+    "result": {
+      "symbol": "ELEAF",
+      "shortname": "El. En Spa",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "EL PUERTO DE LIVERPOOL",
+    "result": {
+      "symbol": "LIVEPOLC-1.MX",
+      "shortname": "EL PUERTO DE LIVERPOOL SAB DE C",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Elecnor",
+    "result": {
+      "symbol": "ELNRF",
+      "shortname": "ELECNOR SA",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "ELECOM COD",
+    "result": null
+  },
+  {
+    "name": "Elecon Engineering",
+    "result": {
+      "symbol": "ELECON.BO",
+      "shortname": "ELECON ENGINEERING CO.LTD.",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "Electrolux Professional",
+    "result": {
+      "symbol": "ECTXF",
+      "shortname": "ELECTROLUX PROFESSIONAL AB",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Electromed",
+    "result": {
+      "symbol": "ELMD",
+      "shortname": "Electromed, Inc.",
+      "exchange": "ASE"
+    }
+  },
+  {
+    "name": "ELF BEAUTY",
+    "result": null
+  },
+  {
+    "name": "Eli Lilly and Company",
+    "result": {
+      "symbol": "LLY",
+      "shortname": "Eli Lilly and Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ELITE MATERIAL COD",
+    "result": null
+  },
+  {
+    "name": "Elixirr International",
+    "result": {
+      "symbol": "ELXXF",
+      "shortname": "ELIXIRR INTERNATIONAL PLC",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Elmos Semiconductor",
+    "result": {
+      "symbol": "ELTTF",
+      "shortname": "ELMOS SEMICONDUCTOR SE",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Elopak ASA",
+    "result": {
+      "symbol": "ELPKF",
+      "shortname": "ELOPAK ASA",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Elswedy Electric",
+    "result": {
+      "symbol": "EGS3G0Z1C014.CA",
+      "shortname": "ELSWEDY ELECTRIC",
+      "exchange": "CAI"
+    }
+  },
+  {
+    "name": "EM SYSTEMS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "eme",
+    "result": {
+      "symbol": "EME",
+      "shortname": "EMCOR Group, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "EMEMORY TECHNOLOGY INC.",
+    "result": {
+      "symbol": "3529.TWO",
+      "shortname": "EMEMORY TECHNOLOGY INC.",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Emmi AG",
+    "result": {
+      "symbol": "FV6.F",
+      "shortname": "EMMI AG                       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Encompass Health Corporation",
+    "result": {
+      "symbol": "EHC",
+      "shortname": "Encompass Health Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Ensign",
+    "result": {
+      "symbol": "ENSG",
+      "shortname": "The Ensign Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Environmental",
+    "result": {
+      "symbol": "MEG",
+      "shortname": "Montrose Environmental Group, I",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "epa:dsy",
+    "result": null
+  },
+  {
+    "name": "ePlus",
+    "result": {
+      "symbol": "PLUS",
+      "shortname": "ePlus inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Equasens",
+    "result": {
+      "symbol": "PHF.F",
+      "shortname": "Equasens S.A.                 A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Equity Group Holdings PLC",
+    "result": null
+  },
+  {
+    "name": "Erie Indemnity Company",
+    "result": {
+      "symbol": "ERIE",
+      "shortname": "Erie Indemnity Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Esautomotion",
+    "result": {
+      "symbol": "ESAU.MI",
+      "shortname": "ESAUTOMOTION",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "Espec",
+    "result": {
+      "symbol": "6859.T",
+      "shortname": "ESPEC CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "EssilorLuxottica SA",
+    "result": {
+      "symbol": "ELP.XD",
+      "shortname": "EssilorLuxottica SA",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "etr:bc8",
+    "result": null
+  },
+  {
+    "name": "etr:fph",
+    "result": null
+  },
+  {
+    "name": "EUGENE TECHNOLOGY CO., LTD.D",
+    "result": {
+      "symbol": "084370.KQ",
+      "shortname": "Eugenetech",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "eurofins",
+    "result": {
+      "symbol": "ERF.PA",
+      "shortname": "EUROFINS SCIENT.",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Euronet Worldwide, Inc.",
+    "result": {
+      "symbol": "EEFT.MX",
+      "shortname": "EURONET WORLDWIDE INC",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Evercore Inc.",
+    "result": {
+      "symbol": "EVR",
+      "shortname": "Evercore Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "EVERLIGHT ELECTRONICS COD",
+    "result": null
+  },
+  {
+    "name": "Evs Broadcast Equipment",
+    "result": {
+      "symbol": "5E1.F",
+      "shortname": "EVS Broadcast Equipment S.A.  A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "EVT",
+    "result": {
+      "symbol": "EVT",
+      "shortname": "Eaton Vance Tax Advantaged Divi",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Exelixis, Inc.",
+    "result": {
+      "symbol": "EXEL",
+      "shortname": "Exelixis, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "exls",
+    "result": {
+      "symbol": "EXLS",
+      "shortname": "ExlService Holdings, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Exlservice Holdings",
+    "result": {
+      "symbol": "EXLS",
+      "shortname": "ExlService Holdings, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "exor",
+    "result": {
+      "symbol": "EXXRF",
+      "shortname": "Exor NV",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Expedia Group, Inc.",
+    "result": {
+      "symbol": "EXPE",
+      "shortname": "Expedia Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Experian PLC Ord USD",
+    "result": {
+      "symbol": "EXPN.L",
+      "shortname": "EXPERIAN PLC ORD USD0.10",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Extendicare Inc. CDA",
+    "result": null
+  },
+  {
+    "name": "extr",
+    "result": {
+      "symbol": "EXTR",
+      "shortname": "Extreme Networks, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Fabasoft",
+    "result": {
+      "symbol": "FAAD.XD",
+      "shortname": "Fabasoft AG",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "Fabrinet",
+    "result": {
+      "symbol": "FN",
+      "shortname": "Fabrinet",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Fair Isaac Corporation",
+    "result": {
+      "symbol": "FICO",
+      "shortname": "Fair Isaac Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "FAR EASTONE TELECOMMUNICATIONSD",
+    "result": null
+  },
+  {
+    "name": "FAST",
+    "result": {
+      "symbol": "FAST",
+      "shortname": "Fastenal Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Federal Signal",
+    "result": {
+      "symbol": "FSS",
+      "shortname": "Federal Signal Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Ferrari",
+    "result": {
+      "symbol": "RACE",
+      "shortname": "Ferrari N.V.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Ferreycorp SA",
+    "result": null
+  },
+  {
+    "name": "Ferrovial SE",
+    "result": {
+      "symbol": "FER.MC",
+      "shortname": "FERROVIAL SE",
+      "exchange": "MCE"
+    }
+  },
+  {
+    "name": "Fibergate",
+    "result": {
+      "symbol": "9450.T",
+      "shortname": "FIBERGATE INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Fidelity Bank PLC",
+    "result": null
+  },
+  {
+    "name": "FINANCIAL PARTNERS GROUP CO LTDD",
+    "result": null
+  },
+  {
+    "name": "FinecoBank",
+    "result": {
+      "symbol": "FBK.VI",
+      "shortname": "FINECOBANK SPA",
+      "exchange": "VIE"
+    }
+  },
+  {
+    "name": "Finning International",
+    "result": {
+      "symbol": "FTT.TO",
+      "shortname": "FINNING INTL",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Five Point Holdings",
+    "result": {
+      "symbol": "FPH",
+      "shortname": "Five Point Holdings, LLC",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Fixstars",
+    "result": {
+      "symbol": "3687.T",
+      "shortname": "FIXSTARS CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "FlatexDegiro AG",
+    "result": {
+      "symbol": "FTK.F",
+      "shortname": "flatexDEGIRO AG               N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "FLEETCOR TECHNOLOGIES",
+    "result": null
+  },
+  {
+    "name": "Fluor Corporation",
+    "result": {
+      "symbol": "FLR",
+      "shortname": "Fluor Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Fonix PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Food Empire Holdings",
+    "result": {
+      "symbol": "F03.SI",
+      "shortname": "Food Empire",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "Foraco International",
+    "result": {
+      "symbol": "3F3.F",
+      "shortname": "Foraco International SA       A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Fortec",
+    "result": {
+      "symbol": "FEV.F",
+      "shortname": "FORTEC Elektronik AG          I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Fortune Electric",
+    "result": {
+      "symbol": "1519.TW",
+      "shortname": "FORTUNE ELECTRIC CO LTD",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "FORTUNE ELECTRIC CO LTDD",
+    "result": null
+  },
+  {
+    "name": "FORUM ENGINEERING INCD",
+    "result": null
+  },
+  {
+    "name": "Fourlis",
+    "result": {
+      "symbol": "2FH.F",
+      "shortname": "Fourlis Holdings S.A.         N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "FOXSEMICON INTEGRATED TECHNOLOGY IND",
+    "result": null
+  },
+  {
+    "name": "fra:lto",
+    "result": null
+  },
+  {
+    "name": "Fractal Gaming AB",
+    "result": null
+  },
+  {
+    "name": "Freelance.com",
+    "result": {
+      "symbol": "9B4.F",
+      "shortname": "Freelance.com                 A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Frequentis AG",
+    "result": {
+      "symbol": "FQT.F",
+      "shortname": "Frequentis AG                 I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Fresenius Medical Care AG",
+    "result": {
+      "symbol": "FMS",
+      "shortname": "Fresenius Medical Care AG",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Fresenius SE & Co KGAA O.N.",
+    "result": null
+  },
+  {
+    "name": "Friedrich Vorwerk Group SE",
+    "result": {
+      "symbol": "VH2.F",
+      "shortname": "Friedrich Vorwerk Group SE    I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Frontdoor, Inc.",
+    "result": {
+      "symbol": "FTDR",
+      "shortname": "frontdoor, inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Frp Advisory",
+    "result": {
+      "symbol": "6S6.F",
+      "shortname": "FRP Advisory Group PLC        R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ftdr",
+    "result": {
+      "symbol": "FTDR",
+      "shortname": "frontdoor, inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "FTI Consulting",
+    "result": {
+      "symbol": "FCN",
+      "shortname": "FTI Consulting, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Fugro",
+    "result": {
+      "symbol": "F3DC.F",
+      "shortname": "Fugro N.V.                    A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "fuchs",
+    "result": {
+      "symbol": "FPE3D.XC",
+      "shortname": "FUCHS SE",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "FUJI ELECTRIC CO. LTD.D",
+    "result": null
+  },
+  {
+    "name": "Fuji Kyuko Co",
+    "result": {
+      "symbol": "8V7.F",
+      "shortname": "FUJI KYUKO CO. LTD.           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Fuji Oil Holdings",
+    "result": null
+  },
+  {
+    "name": "FUJIKURAD",
+    "result": null
+  },
+  {
+    "name": "FUJIMI INCD",
+    "result": null
+  },
+  {
+    "name": "FURUNO ELECTRIC COD",
+    "result": null
+  },
+  {
+    "name": "FURUYA METAL CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Furyu",
+    "result": {
+      "symbol": "6238.T",
+      "shortname": "FURYU CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "FUSHENG PRECISION CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Futu Holdings Limited",
+    "result": {
+      "symbol": "FUTU",
+      "shortname": "Futu Holdings Limited",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "FUTURE CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "G- HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "G8 Education",
+    "result": {
+      "symbol": "GEM.AX",
+      "shortname": "G8 EDUCATE FPO [GEM]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Gakujo Co",
+    "result": {
+      "symbol": "2301.T",
+      "shortname": "GAKUJO CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Galliford Try Holdings PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Gambling.com Group Limited",
+    "result": {
+      "symbol": "6WH.F",
+      "shortname": "GAMBLING.COM Group Ltd.       R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Games Workshop Group Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Gamma Communications PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "GB Bank Financial Holdings Inc.",
+    "result": null
+  },
+  {
+    "name": "GBG ENERGY AGD",
+    "result": null
+  },
+  {
+    "name": "GCC SAB de CV",
+    "result": {
+      "symbol": "GCWOF",
+      "shortname": "GCC SAB DE CV",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "GE HealthCare Technologies Inc.",
+    "result": {
+      "symbol": "GEHC",
+      "shortname": "GE HealthCare Technologies Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "GEA AG",
+    "result": null
+  },
+  {
+    "name": "General Dynamics Corporation",
+    "result": {
+      "symbol": "GD",
+      "shortname": "General Dynamics Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Generation Development Group Limited",
+    "result": {
+      "symbol": "GDG.AX",
+      "shortname": "GEN DEV FPO [GDG]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "GENESYS LOGIC",
+    "result": {
+      "symbol": "6104.TWO",
+      "shortname": "GENESYS LOGIC",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "GENIUS ELECTRONIC OPTICAL CO.LTDD",
+    "result": null
+  },
+  {
+    "name": "Genmab A/S",
+    "result": {
+      "symbol": "GMAB.CO",
+      "shortname": "Genmab A/S",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "Genomma Lab Internacional SAB",
+    "result": {
+      "symbol": "GNMLF",
+      "shortname": "GENOMMA LAB INTERNACIONAL SAB",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "GenOway S.A.",
+    "result": {
+      "symbol": "JEH.F",
+      "shortname": "Genoway S.A.                  A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Gentera SAB de CV",
+    "result": {
+      "symbol": "CMPRF",
+      "shortname": "GENTERA SAB DE CV",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Gentex",
+    "result": {
+      "symbol": "GNTX",
+      "shortname": "Gentex Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Genting Singapore",
+    "result": {
+      "symbol": "G13.SI",
+      "shortname": "Genting Sing",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "GenusPlus Group Ltd",
+    "result": {
+      "symbol": "GNP.AX",
+      "shortname": "GENUSPLUS FPO [GNP]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Georg Fischer",
+    "result": {
+      "symbol": "FCHRF",
+      "shortname": "GEORG FISCHER AG",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Gerard Perrier Industrie",
+    "result": {
+      "symbol": "80T.MU",
+      "shortname": "GERARD PERRIER INDUSTRIE S.A. A",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Gestamp Automocion",
+    "result": {
+      "symbol": "7GA.F",
+      "shortname": "GESTAMP AUTOMOCION EO-,50",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "GETAC HOLDINGS CORPD",
+    "result": null
+  },
+  {
+    "name": "GIFT Holdings",
+    "result": {
+      "symbol": "9279.T",
+      "shortname": "GIFT HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Giftee",
+    "result": {
+      "symbol": "4449.T",
+      "shortname": "GIFTEE INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Giga Prize Co",
+    "result": null
+  },
+  {
+    "name": "GIGA-BYTE TECHNOLOGY COD",
+    "result": null
+  },
+  {
+    "name": "GigaCloud Technology Inc",
+    "result": {
+      "symbol": "GCT",
+      "shortname": "GigaCloud Technology Inc",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Gilat Satellite Networks",
+    "result": {
+      "symbol": "GILT",
+      "shortname": "Gilat Satellite Networks Ltd.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Glanbia",
+    "result": {
+      "symbol": "GL9.SG",
+      "shortname": "Glanbia PLC",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Glenveagh Properties PLC",
+    "result": {
+      "symbol": "IE00BD6JX574.SG",
+      "shortname": "Glenveagh Properties PLC",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "GLOBAL PMX CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Global Security Experts",
+    "result": {
+      "symbol": "4417.T",
+      "shortname": "GLOBAL SECURITY EXPERTS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Global Ship Lease Inc New",
+    "result": {
+      "symbol": "GSL",
+      "shortname": "Global Ship Lease Inc New",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "GLOBAL UNICHIP CORP.D",
+    "result": null
+  },
+  {
+    "name": "Globant",
+    "result": {
+      "symbol": "GLOB",
+      "shortname": "Globant S.A.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Globus Medical",
+    "result": {
+      "symbol": "GMED",
+      "shortname": "Globus Medical, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Gmm Pfaudler",
+    "result": {
+      "symbol": "GMMPFAUDLR.NS",
+      "shortname": "GMM PFAUDLER LIMITED",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "GMO FINANCIAL GATE INCD",
+    "result": null
+  },
+  {
+    "name": "GMO PAYMENT GATEWAY INCD",
+    "result": null
+  },
+  {
+    "name": "Gold Fields Ltd",
+    "result": {
+      "symbol": "GFI",
+      "shortname": "Gold Fields Limited",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "GOLDEN FRIENDS CO",
+    "result": {
+      "symbol": "4506.TWO",
+      "shortname": "GOLDEN FRIENDS CO",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Goosehead Insurance, Inc.",
+    "result": {
+      "symbol": "GSHD",
+      "shortname": "Goosehead Insurance, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Gorman-Rupp Co",
+    "result": {
+      "symbol": "GRC",
+      "shortname": "Gorman-Rupp Company (The)",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "GPO AEROPORTUARIO DEL SURESTE SAB",
+    "result": null
+  },
+  {
+    "name": "GQG Partners Inc.",
+    "result": {
+      "symbol": "6P1.F",
+      "shortname": "GQG Partners Inc.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Grand Canyon Education, Inc.",
+    "result": {
+      "symbol": "LOPE",
+      "shortname": "Grand Canyon Education, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "GRAND PHARMACEUTICAL GROUP LTDD",
+    "result": null
+  },
+  {
+    "name": "Greencore",
+    "result": {
+      "symbol": "GCG.F",
+      "shortname": "GREENCORE GROUP PLC           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Greggs Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Grenevia",
+    "result": {
+      "symbol": "8MF.F",
+      "shortname": "Grenevia S.A.                 I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Greneviad",
+    "result": null
+  },
+  {
+    "name": "Group 1 Automotive",
+    "result": {
+      "symbol": "GPI",
+      "shortname": "Group 1 Automotive, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Gruma SAB de CV",
+    "result": {
+      "symbol": "3G3B.SG",
+      "shortname": "Gruma S.A.B. de C.V.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Grupo Aeroportuario",
+    "result": {
+      "symbol": "G7AB.F",
+      "shortname": "Grupo Aerop.d.Centro Norte SABR",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Grupo Catalana Occidente, S.A.",
+    "result": {
+      "symbol": "OCZA.F",
+      "shortname": "Grupo Catalana Occidente S.A. A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Grupo Empresarial San Jose, S.A.",
+    "result": {
+      "symbol": "80E.F",
+      "shortname": "Grupo Empresarial San Jose S.AA",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Grupo Financiero Galicia SAD",
+    "result": null
+  },
+  {
+    "name": "GRUPO HERDEZ",
+    "result": {
+      "symbol": "HERDEZ.MX",
+      "shortname": "GRUPO HERDEZ SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Grupo Supervielle S.A.",
+    "result": {
+      "symbol": "SUPV",
+      "shortname": "Grupo Supervielle S.A.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Grupracu JD",
+    "result": null
+  },
+  {
+    "name": "GUD Holdings",
+    "result": {
+      "symbol": "8308.HK",
+      "shortname": "GUDOU HLDGS",
+      "exchange": "HKG"
+    }
+  },
+  {
+    "name": "H Hotel Leasehold REIT",
+    "result": null
+  },
+  {
+    "name": "Haemonetics",
+    "result": {
+      "symbol": "HAE",
+      "shortname": "Haemonetics Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Halows Co",
+    "result": {
+      "symbol": "2742.T",
+      "shortname": "HALOWS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Halozyme Therapeutics, Inc.",
+    "result": {
+      "symbol": "HALO",
+      "shortname": "Halozyme Therapeutics, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Hammond Power Solutions",
+    "result": {
+      "symbol": "T11.F",
+      "shortname": "Hammond Power Solutions Inc.  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Hancock Whitney Corporation",
+    "result": {
+      "symbol": "HWC",
+      "shortname": "Hancock Whitney Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Hannover Rueck SE",
+    "result": {
+      "symbol": "HNR1.DE",
+      "shortname": "HANNOVER RUECK SE NA O.N.",
+      "exchange": "GER"
+    }
+  },
+  {
+    "name": "Hanover Insurance Group Inc",
+    "result": {
+      "symbol": "THG",
+      "shortname": "Hanover Insurance Group Inc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Happinet",
+    "result": {
+      "symbol": "7552.T",
+      "shortname": "HAPPINET CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Harmony Biosciences Holdings, Inc.",
+    "result": {
+      "symbol": "HRMY",
+      "shortname": "Harmony Biosciences Holdings, I",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Hawkins, Inc.",
+    "result": {
+      "symbol": "HWKN",
+      "shortname": "Hawkins, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "HCI Group, Inc.",
+    "result": {
+      "symbol": "HCI",
+      "shortname": "HCI Group, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Headwater Exploration Inc.",
+    "result": {
+      "symbol": "C6V.F",
+      "shortname": "Headwater Exploration Inc.    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Hellenic Exchanges (CR)",
+    "result": null
+  },
+  {
+    "name": "Hennge KK",
+    "result": null
+  },
+  {
+    "name": "Heritage Insurance Holdings, Inc.",
+    "result": {
+      "symbol": "HRTG",
+      "shortname": "Heritage Insurance Holdings, In",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Hess Corporation",
+    "result": null
+  },
+  {
+    "name": "Hibiya Engineering",
+    "result": {
+      "symbol": "1982.T",
+      "shortname": "HIBIYA ENGINEERING",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "HIKARI TSUSHIN INCD",
+    "result": null
+  },
+  {
+    "name": "Hikma Pharmaceuticals Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Hill & Smith PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Hilton Worldwide Holdings Inc.",
+    "result": {
+      "symbol": "HLT",
+      "shortname": "Hilton Worldwide Holdings Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Himoshi Moshi Retail Corporation PCL",
+    "result": null
+  },
+  {
+    "name": "Hioki EE",
+    "result": null
+  },
+  {
+    "name": "Hitit Bilgisayar",
+    "result": {
+      "symbol": "HTTBT.IS",
+      "shortname": "HITIT BILGISAYAR",
+      "exchange": "IST"
+    }
+  },
+  {
+    "name": "HLKKRKA DD NPV",
+    "result": null
+  },
+  {
+    "name": "Horiba",
+    "result": {
+      "symbol": "01H.F",
+      "shortname": "HORIBA LTD.                   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "HOSHIZAKI CORP",
+    "result": {
+      "symbol": "6465.T",
+      "shortname": "HOSHIZAKI CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Hosokawa Micron",
+    "result": {
+      "symbol": "6277.T",
+      "shortname": "HOSOKAWA MICRON CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "HOTLAND HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Houlihan Lokey, Inc.",
+    "result": {
+      "symbol": "HLI",
+      "shortname": "Houlihan Lokey, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Housing & Development Bank",
+    "result": {
+      "symbol": "EGS60301C016.CA",
+      "shortname": "Housing & Development Bank",
+      "exchange": "CAI"
+    }
+  },
+  {
+    "name": "Howmet Aerospace",
+    "result": {
+      "symbol": "HWM",
+      "shortname": "Howmet Aerospace Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "HOYA CORPORATION",
+    "result": {
+      "symbol": "HYB.F",
+      "shortname": "Hoya Corp.                    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "HPSP Co",
+    "result": {
+      "symbol": "403870.KQ",
+      "shortname": "HPSP",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "HUB24 Limited",
+    "result": {
+      "symbol": "HUB.AX",
+      "shortname": "HUB24LTD FPO [HUB]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Hubbell Inc",
+    "result": {
+      "symbol": "HUBB",
+      "shortname": "Hubbell Inc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Huber+Suhner",
+    "result": {
+      "symbol": "HGUA.MU",
+      "shortname": "Huber & Suhner AG             N",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Hugel",
+    "result": {
+      "symbol": "145020.KQ",
+      "shortname": "Hugel",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "HUGEL, INC.D",
+    "result": {
+      "symbol": "145020.KQ",
+      "shortname": "Hugel",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "HUMEDIX CO., LTD.D",
+    "result": {
+      "symbol": "200670.KQ",
+      "shortname": "Humedix",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Huntington Ingalls Industries,",
+    "result": {
+      "symbol": "HII",
+      "shortname": "Huntington Ingalls Industries, ",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Huons",
+    "result": {
+      "symbol": "243070.KQ",
+      "shortname": "Huons",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Huron Consulting Group Inc.",
+    "result": {
+      "symbol": "HURN",
+      "shortname": "Huron Consulting Group Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "HY-Lok",
+    "result": {
+      "symbol": "013030.KQ",
+      "shortname": "HY-LOKCO",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Hyphens Pharma",
+    "result": {
+      "symbol": "1J5.SI",
+      "shortname": "$ Hyphens Pharma",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "Hyundai Autoever",
+    "result": {
+      "symbol": "307950.KS",
+      "shortname": "HyundaiAutoever",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "HYUNDAI MERC MARD",
+    "result": null
+  },
+  {
+    "name": "HYUNDAI ROTEMD",
+    "result": null
+  },
+  {
+    "name": "Chemed Corp",
+    "result": {
+      "symbol": "CHE",
+      "shortname": "Chemed Corp",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CHEMOMETEC A/S",
+    "result": {
+      "symbol": "CHEMM.CO",
+      "shortname": "ChemoMetec A/S",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "CHEMRING GROUP ORD GBP0.01",
+    "result": null
+  },
+  {
+    "name": "CHENMING ELECTRONIC TECHNOLOGY CORPD",
+    "result": null
+  },
+  {
+    "name": "Chewy, Inc.",
+    "result": {
+      "symbol": "CHWY",
+      "shortname": "Chewy, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CHIEF TELECOM INC",
+    "result": {
+      "symbol": "6561.TWO",
+      "shortname": "CHIEF TELECOM INC",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Chipotle Mexican Grill, Inc.",
+    "result": {
+      "symbol": "CMG",
+      "shortname": "Chipotle Mexican Grill, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "CHROMA ATE INCD",
+    "result": null
+  },
+  {
+    "name": "CHUGAI PHARMACEUTICAL COD",
+    "result": null
+  },
+  {
+    "name": "CHUNG HSIN ELECTRIC & MACHINERYD",
+    "result": null
+  },
+  {
+    "name": "I Homes, Inc.",
+    "result": {
+      "symbol": "INVH",
+      "shortname": "Invitation Homes Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "I-mobile Co Share",
+    "result": null
+  },
+  {
+    "name": "I-SHENG ELECTRIC WIRE & CABLE COD",
+    "result": null
+  },
+  {
+    "name": "IAMGOLD Corp",
+    "result": {
+      "symbol": "IAG",
+      "shortname": "Iamgold Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "IBJ",
+    "result": {
+      "symbol": "6071.T",
+      "shortname": "IBJ INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Ibotta, Inc.",
+    "result": {
+      "symbol": "IBTA",
+      "shortname": "Ibotta, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ICF International",
+    "result": {
+      "symbol": "ICFI",
+      "shortname": "ICF International, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Idacorp",
+    "result": {
+      "symbol": "IDA",
+      "shortname": "IDACORP, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "IDOM INCD",
+    "result": null
+  },
+  {
+    "name": "Idp Education",
+    "result": {
+      "symbol": "03F.F",
+      "shortname": "IDP Education Ltd.            R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "IDT Corporation",
+    "result": {
+      "symbol": "IDT",
+      "shortname": "IDT Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "IG Group Holdings Ord GBP",
+    "result": null
+  },
+  {
+    "name": "IGG INCD",
+    "result": null
+  },
+  {
+    "name": "Ichitan Group PCL",
+    "result": null
+  },
+  {
+    "name": "Immersion Corporation",
+    "result": {
+      "symbol": "IMMR",
+      "shortname": "Immersion Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Indel",
+    "result": {
+      "symbol": "INDB.MI",
+      "shortname": "INDEL B",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "Infomedia",
+    "result": {
+      "symbol": "BGLOBAL.NS",
+      "shortname": "BHARATIYA GLOBAL INFO LTD",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "Infotel",
+    "result": {
+      "symbol": "INF.PA",
+      "shortname": "INFOTEL",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Infusystem Holdings",
+    "result": {
+      "symbol": "1TZ.F",
+      "shortname": "InfuSystems Holdings Inc.     R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Inghams",
+    "result": {
+      "symbol": "IH1.DU",
+      "shortname": "Inghams Group Ltd.            R",
+      "exchange": "DUS"
+    }
+  },
+  {
+    "name": "Inmode",
+    "result": {
+      "symbol": "INMD",
+      "shortname": "InMode Ltd.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Innodata Inc.",
+    "result": {
+      "symbol": "INOD",
+      "shortname": "Innodata Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Insperity",
+    "result": {
+      "symbol": "NSP",
+      "shortname": "Insperity, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Insurance Australia Group Limited",
+    "result": {
+      "symbol": "IAGPF.AX",
+      "shortname": "INSUR.AUST NYR3QUT [IAGPF]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Int'l Container Terminals Inc.",
+    "result": null
+  },
+  {
+    "name": "Integer Holdings",
+    "result": {
+      "symbol": "ITGR",
+      "shortname": "Integer Holdings Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Integral Diagnostics",
+    "result": {
+      "symbol": "IDX.XA",
+      "shortname": "INTEG DIAG FPO [IDX]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "Inter Action",
+    "result": {
+      "symbol": "7725.T",
+      "shortname": "INTER ACTION CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Inter Cars SA",
+    "result": {
+      "symbol": "7FZ.DU",
+      "shortname": "Inter Cars S.A.               I",
+      "exchange": "DUS"
+    }
+  },
+  {
+    "name": "Interactive Brokers Group, Inc.",
+    "result": {
+      "symbol": "IBKR",
+      "shortname": "Interactive Brokers Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "INTERNATIONAL GAMES SYSTEM CO",
+    "result": {
+      "symbol": "3293.TWO",
+      "shortname": "INTERNATIONAL GAMES SYSTEM CO",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "International Seaways",
+    "result": {
+      "symbol": "INSW",
+      "shortname": "International Seaways, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "INTERNET INITIATIVE JAPAN INCD",
+    "result": null
+  },
+  {
+    "name": "Interparfums, Inc.",
+    "result": {
+      "symbol": "IPAR",
+      "shortname": "Interparfums, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Interpump",
+    "result": {
+      "symbol": "8IG.F",
+      "shortname": "INTERPUMP GROUP S.P.A.        A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Intertek Group Ord GBP",
+    "result": null
+  },
+  {
+    "name": "inTest",
+    "result": {
+      "symbol": "IN9.F",
+      "shortname": "INTEST CORP.                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Intuit Inc.",
+    "result": {
+      "symbol": "INTU",
+      "shortname": "Intuit Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "INVEX Controladora SAB de CV",
+    "result": {
+      "symbol": "INVEXA.MX",
+      "shortname": "INVEX CONTROLADORA SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Ipsos",
+    "result": {
+      "symbol": "IPZ.F",
+      "shortname": "IPSOS S.A.                    A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Iradimed",
+    "result": {
+      "symbol": "IRMD",
+      "shortname": "iRadimed Corporation",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Irish Continental",
+    "result": {
+      "symbol": "IR5B.F",
+      "shortname": "Irish Continental Group PLC   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Iriso Electronics",
+    "result": {
+      "symbol": "6908.T",
+      "shortname": "IRISO ELECTRONICS CO",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "ISETAN MITSUKOSHI HOLDINGS LTDD",
+    "result": null
+  },
+  {
+    "name": "ISS A/S",
+    "result": {
+      "symbol": "QJQ.MU",
+      "shortname": "ISS AS                        I",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "ISUPETASYSD",
+    "result": null
+  },
+  {
+    "name": "ITAUSA ON NM",
+    "result": null
+  },
+  {
+    "name": "ITOKI CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Itron, Inc.",
+    "result": {
+      "symbol": "ITRI",
+      "shortname": "Itron, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "ITT Inc.",
+    "result": {
+      "symbol": "ITT",
+      "shortname": "ITT Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "IWAKI CO LTDD",
+    "result": null
+  },
+  {
+    "name": "J & J Snack Foods",
+    "result": {
+      "symbol": "JJSF",
+      "shortname": "J & J Snack Foods Corp.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "James Hardie Industries",
+    "result": {
+      "symbol": "JHX",
+      "shortname": "James Hardie Industries plc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "JAMJOOM PHARMACEUTICALS FACTORY CO.D",
+    "result": null
+  },
+  {
+    "name": "Janus International",
+    "result": {
+      "symbol": "JBI",
+      "shortname": "Janus International Group, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Japan Elevator Service Holdings Co",
+    "result": {
+      "symbol": "6544.T",
+      "shortname": "JAPAN ELEVATOR SERVICE HLDGS CO",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "JAPAN LIFELINE COD",
+    "result": null
+  },
+  {
+    "name": "JAPAN MATERIAL CO LTDD",
+    "result": null
+  },
+  {
+    "name": "JBCC HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "JCU CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Jenoptik AG",
+    "result": {
+      "symbol": "0ZPV.IL",
+      "shortname": "JENOPTIK AG JENOPTIK N ORD SHS",
+      "exchange": "IOB"
+    }
+  },
+  {
+    "name": "JENTECH PRECISION INDUSTRIAL",
+    "result": {
+      "symbol": "3653.TW",
+      "shortname": "JENTECH PRECISION INDUSTRIAL CO",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "JEOL LTDD",
+    "result": null
+  },
+  {
+    "name": "JINS HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "Johns Lyng",
+    "result": {
+      "symbol": "JLG.XA",
+      "shortname": "JOHNS LYNG FPO [JLG]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "JOHNSON HEALTH TECHD",
+    "result": null
+  },
+  {
+    "name": "Joint",
+    "result": {
+      "symbol": "HSBK.IL",
+      "shortname": "JSC HALYK BANK GDR (EACH REPR 4",
+      "exchange": "IOB"
+    }
+  },
+  {
+    "name": "JP-HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "JPP HOLDING COMPANY LIMITEDD",
+    "result": null
+  },
+  {
+    "name": "JSE Ltd",
+    "result": {
+      "symbol": "JF6.SG",
+      "shortname": "JSE Ltd.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Juhayna Food Industries",
+    "result": {
+      "symbol": "EGS30901C010.CA",
+      "shortname": "Juhayna Food Industries",
+      "exchange": "CAI"
+    }
+  },
+  {
+    "name": "Jumbo Interactive Limited",
+    "result": {
+      "symbol": "JIN.AX",
+      "shortname": "JUMBO INT FPO [JIN]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Jungfraubahn Holding",
+    "result": {
+      "symbol": "JFBHF",
+      "shortname": "JUNGFRAUBAHN HOLDING AG",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "JVCkenwood",
+    "result": {
+      "symbol": "6632.T",
+      "shortname": "JVCKENWOOD CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "JVM Co",
+    "result": {
+      "symbol": "054950.KQ",
+      "shortname": "JVM",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Jyothy Labs",
+    "result": {
+      "symbol": "JYOTHYLAB.NS",
+      "shortname": "JYOTHY LABS LIMITED",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "JYP Entertainment",
+    "result": {
+      "symbol": "035900.KQ",
+      "shortname": "JYP Ent.",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "K CARD",
+    "result": {
+      "symbol": "KRTA.F",
+      "shortname": "Krungthai Card PCL            R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "K-Bro Linen",
+    "result": {
+      "symbol": "74R.F",
+      "shortname": "K-Bro Linen Inc.              R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "KAKAKU.COM. INCD",
+    "result": null
+  },
+  {
+    "name": "KAKEN PHARMACEUTICALD",
+    "result": null
+  },
+  {
+    "name": "Kalbe Farma",
+    "result": {
+      "symbol": "LCLA.F",
+      "shortname": "Kalbe Farma, PT               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Kale Kimyevi Maddeler",
+    "result": {
+      "symbol": "KLKIM.IS",
+      "shortname": "KALEKIM KIMYEVI MADDELER",
+      "exchange": "IST"
+    }
+  },
+  {
+    "name": "kambi",
+    "result": {
+      "symbol": "7KB.F",
+      "shortname": "KAMBI GROUP PLC               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "KANDENKO CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Kangwon Land",
+    "result": {
+      "symbol": "035250.KS",
+      "shortname": "Kangwonland",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Kansai Paint Co",
+    "result": {
+      "symbol": "KAP.F",
+      "shortname": "KANSAI PAINT CO. LTD.         R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Kaonavi",
+    "result": null
+  },
+  {
+    "name": "Kardex",
+    "result": {
+      "symbol": "KARN.SW",
+      "shortname": "KARDEX N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "KASUMIGASEKI CAPITAL CO LTDD",
+    "result": null
+  },
+  {
+    "name": "KATITAS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Kaufman et Broad",
+    "result": {
+      "symbol": "KOF.PA",
+      "shortname": "KAUFMAN ET BROAD",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "KBC Ancora Ord",
+    "result": {
+      "symbol": "KBCA.BR",
+      "shortname": "KBC ANCORA ord",
+      "exchange": "BRU"
+    }
+  },
+  {
+    "name": "KCB Group Ltd",
+    "result": null
+  },
+  {
+    "name": "KeePer Technical Laboratory",
+    "result": {
+      "symbol": "6036.T",
+      "shortname": "KEEPER TECHNICAL LABORATORY CO ",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "KH NEOCHEM CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Kid ASA",
+    "result": {
+      "symbol": "97Q.F",
+      "shortname": "KID ASA                       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Kimball Electronics",
+    "result": {
+      "symbol": "KE",
+      "shortname": "Kimball Electronics, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Kinaxis",
+    "result": {
+      "symbol": "9KX.F",
+      "shortname": "Kinaxis Inc.                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "KING SLIDE WORKS COD",
+    "result": null
+  },
+  {
+    "name": "Kingsgate Consolidated Ltd.",
+    "result": {
+      "symbol": "KCN.SG",
+      "shortname": "Kingsgate Consolidated Ltd.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "KINIK COD",
+    "result": null
+  },
+  {
+    "name": "Kirby",
+    "result": {
+      "symbol": "KEX",
+      "shortname": "Kirby Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Kirloskar Brothers",
+    "result": {
+      "symbol": "KIRLOSBROS.BO",
+      "shortname": "KIRLOSKAR BROTHERS LTD.",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "Kitron ASA",
+    "result": {
+      "symbol": "KP5.F",
+      "shortname": "Kitron ASA                    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "KLA Corporation",
+    "result": {
+      "symbol": "KLAC",
+      "shortname": "KLA Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "KNC Laboratories",
+    "result": {
+      "symbol": "6568.T",
+      "shortname": "KNC LABORATORIES CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "KNORR-BREMSE",
+    "result": {
+      "symbol": "US4991801071.SG",
+      "shortname": "Knorr Bremse AG (ADRs)",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "KOBE BUSSAN CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Koei Tecmo Holdings",
+    "result": {
+      "symbol": "85T.F",
+      "shortname": "Koei Tecmo Holdings Co. Ltd.  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "KOHOKU KOGYO CO LTDD",
+    "result": null
+  },
+  {
+    "name": "KOKUSAI ELECTRIC CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Komatsu Wall Industry",
+    "result": {
+      "symbol": "7949.T",
+      "shortname": "KOMATSU WALL INDUSTRY CO",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "KONAMI GROUP CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Konecranes",
+    "result": {
+      "symbol": "K34.BE",
+      "shortname": "Konecranes Oyj                R",
+      "exchange": "BER"
+    }
+  },
+  {
+    "name": "Koninklijke Heijmans N.V.",
+    "result": {
+      "symbol": "0M6I.L",
+      "shortname": "KONINKLIJKE HEIJMANS N.V KONINK",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Kontron AG",
+    "result": {
+      "symbol": "KTN.F",
+      "shortname": "Kontron AG                    I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "koppers",
+    "result": {
+      "symbol": "KOP",
+      "shortname": "Koppers Holdings Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Korea Electric Terminal",
+    "result": {
+      "symbol": "025540.KS",
+      "shortname": "KorElecTerm",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "KOSAIDO HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Kotobuki Spirits",
+    "result": {
+      "symbol": "2222.T",
+      "shortname": "KOTOBUKI SPIRITS",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "KOTOBUKI SPIRITSD",
+    "result": null
+  },
+  {
+    "name": "KPIT Technologies",
+    "result": {
+      "symbol": "KPITTECH.NS",
+      "shortname": "KPIT TECHNOLOGIES LIMITED",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "Kraken Robotics Inc",
+    "result": {
+      "symbol": "PNG.V",
+      "shortname": "KRAKEN ROBOTICS INC",
+      "exchange": "VAN"
+    }
+  },
+  {
+    "name": "Krosaki Harima",
+    "result": {
+      "symbol": "5352.T",
+      "shortname": "KROSAKI HARIMA CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "KSB SE & Co",
+    "result": {
+      "symbol": "KSBD.XD",
+      "shortname": "KSB SE & Co KGaA",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "KUO TOONG INTERNATIONAL",
+    "result": {
+      "symbol": "8936.TWO",
+      "shortname": "KUO TOONG INTERNATIONAL",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "KWS — KWS SAAT SE",
+    "result": null
+  },
+  {
+    "name": "L'Air Liquide",
+    "result": {
+      "symbol": "AI.PA",
+      "shortname": "AIR LIQUIDE",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Laboratorios Farmaceuticos Rovi",
+    "result": {
+      "symbol": "41L.F",
+      "shortname": "Laboratorios Farmaceut.Rovi SAA",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "LACOMER SAB DE CV",
+    "result": {
+      "symbol": "LACOMERUBC.MX",
+      "shortname": "LACOMER SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Lafarge Cement Wapco PLC",
+    "result": null
+  },
+  {
+    "name": "Lagercrantz Group AB Ser B",
+    "result": {
+      "symbol": "LAGR-B.ST",
+      "shortname": "Lagercrantz Group AB ser B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Leidos Holdings, Inc.",
+    "result": {
+      "symbol": "LDOS",
+      "shortname": "Leidos Holdings, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Lem Holding",
+    "result": {
+      "symbol": "LMHDF",
+      "shortname": "LEM HOLDING SA",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "LeMaitre Vascular, Inc.",
+    "result": {
+      "symbol": "LMAT",
+      "shortname": "LeMaitre Vascular, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Lifco AB Ser. B",
+    "result": null
+  },
+  {
+    "name": "Limbach Holdings, Inc.",
+    "result": {
+      "symbol": "LMB",
+      "shortname": "Limbach Holdings, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Lime Technologies AB",
+    "result": {
+      "symbol": "LTX.F",
+      "shortname": "Lime Technologies AB          N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Linamar",
+    "result": {
+      "symbol": "LNR.F",
+      "shortname": "LINAMAR CORP.                 R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Link and Motivation",
+    "result": {
+      "symbol": "2170.T",
+      "shortname": "LINK AND MOTIVATION INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "LION FINANCE GROUP PLC ORD GBP",
+    "result": null
+  },
+  {
+    "name": "Liquidity Services, Inc.",
+    "result": {
+      "symbol": "LQDT",
+      "shortname": "Liquidity Services, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Litalico",
+    "result": {
+      "symbol": "7366.T",
+      "shortname": "LITALICO INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Loma Negra Cia Ind Argentina SA",
+    "result": {
+      "symbol": "8LN.DU",
+      "shortname": "Loma Negra Comp.Ind. ArgentinaR",
+      "exchange": "DUS"
+    }
+  },
+  {
+    "name": "lon:rto",
+    "result": null
+  },
+  {
+    "name": "Lorenzo",
+    "result": {
+      "symbol": "SNLGF",
+      "shortname": "SAN LORENZO GOLD CORP",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "LOTUS PHARMACEUTICAL COD",
+    "result": null
+  },
+  {
+    "name": "Lovisa Holdings",
+    "result": {
+      "symbol": "LOV.AX",
+      "shortname": "LOVISA FPO [LOV]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "LPL Financial Holdings Inc.",
+    "result": {
+      "symbol": "LPLA",
+      "shortname": "LPL Financial Holdings Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Luckin Coffee",
+    "result": {
+      "symbol": "LKNCY",
+      "shortname": "Luckin Coffee Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "LUNGTEH SHIPBUILDING CO LTDD",
+    "result": null
+  },
+  {
+    "name": "M Energy Company",
+    "result": null
+  },
+  {
+    "name": "M UP HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "M-up Holdings",
+    "result": {
+      "symbol": "3661.T",
+      "shortname": "M UP HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "M&A CAPITAL PARTNERS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "M&M Holdings PLC",
+    "result": {
+      "symbol": "MSTY.PA",
+      "shortname": "Yieldmax MSTR Option Income Str",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Macbee Planet",
+    "result": {
+      "symbol": "7095.T",
+      "shortname": "MACBEE PLANET INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "MACQUARIE KOREA INFRASTRUCTURE FUNDDCEF",
+    "result": null
+  },
+  {
+    "name": "Macquarie Technology",
+    "result": {
+      "symbol": "MAQ.XA",
+      "shortname": "MAQ TECH FPO [MAQ]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "Mader Group Limited",
+    "result": {
+      "symbol": "MAD.AX",
+      "shortname": "MADERGROUP FPO [MAD]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "MAEDA KOSEN CO.LTDD",
+    "result": null
+  },
+  {
+    "name": "Magyar Telekom Shared",
+    "result": null
+  },
+  {
+    "name": "Maire",
+    "result": {
+      "symbol": "3OY1.F",
+      "shortname": "Maire S.p.A.                  A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "MAN Group PLC (New) Ord USD",
+    "result": null
+  },
+  {
+    "name": "MAN WAH HOLDINGS LTDD",
+    "result": null
+  },
+  {
+    "name": "Management Solutions",
+    "result": {
+      "symbol": "7033.T",
+      "shortname": "MANAGEMENT SOLUTIONS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Mandalay Resources Corp",
+    "result": {
+      "symbol": "CA5625684025.SG",
+      "shortname": "Mandalay Resources Corp.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Manhattan Associates, Inc.",
+    "result": {
+      "symbol": "MANH",
+      "shortname": "Manhattan Associates, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Mani inc",
+    "result": {
+      "symbol": "MNICF",
+      "shortname": "Mani, Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Marco Polo Marine",
+    "result": {
+      "symbol": "MRPMF",
+      "shortname": "MARCO POLO MARINE LTD.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Marcopolo On EJ N2",
+    "result": null
+  },
+  {
+    "name": "Marico Bangladesh Ltd",
+    "result": null
+  },
+  {
+    "name": "MarkLines Co",
+    "result": {
+      "symbol": "3901.T",
+      "shortname": "MARKLINES CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Marks and Spencer",
+    "result": {
+      "symbol": "MKS.L",
+      "shortname": "MARKS AND SPENCER GROUP PLC ORD",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Marks Electrical",
+    "result": {
+      "symbol": "KV7.F",
+      "shortname": "Marks Electrical Group PLC    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Martinrea International",
+    "result": {
+      "symbol": "03M.F",
+      "shortname": "Martinrea International Inc.  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Masan Consumer Corporation",
+    "result": null
+  },
+  {
+    "name": "Matson, Inc.",
+    "result": {
+      "symbol": "MATX",
+      "shortname": "Matson, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Maurel et Prom",
+    "result": {
+      "symbol": "ETX.F",
+      "shortname": "ETS MAUREL ET PROM S.A.       A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Max Healthcare Institute",
+    "result": {
+      "symbol": "MAXHEALTH.BO",
+      "shortname": "Max Healthcare Institute Limit",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "Max Stock Ltd.",
+    "result": {
+      "symbol": "MAXO.TA",
+      "shortname": "MAX STOCK LTD.",
+      "exchange": "TLV"
+    }
+  },
+  {
+    "name": "Mazda Motor",
+    "result": {
+      "symbol": "MZA0.F",
+      "shortname": "Mazda Motor Corp.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "MCDONALD'S HOLDINGS COMPANY(JAPAN)D",
+    "result": null
+  },
+  {
+    "name": "McGrath RentCorp",
+    "result": {
+      "symbol": "MG8.F",
+      "shortname": "MC GRATH RENT CORP.           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "MCJ CO LTDD",
+    "result": null
+  },
+  {
+    "name": "McMillan Shakespeare Limited",
+    "result": {
+      "symbol": "NMN.F",
+      "shortname": "McMillan Shakespeare Ltd.     R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Mears Group",
+    "result": {
+      "symbol": "MM7.F",
+      "shortname": "MEARS GROUP PLC               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Medacta Group",
+    "result": {
+      "symbol": "6MD.F",
+      "shortname": "Medacta Group S.A.            N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Medical Properties Trust",
+    "result": {
+      "symbol": "MPW",
+      "shortname": "Medical Properties Trust, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Medistim",
+    "result": {
+      "symbol": "MEDI.OL",
+      "shortname": "MEDISTIM",
+      "exchange": "OSL"
+    }
+  },
+  {
+    "name": "Medley",
+    "result": {
+      "symbol": "MDLM",
+      "shortname": "MEDLEY MANAGEMENT INC",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Medpace Holdings",
+    "result": {
+      "symbol": "MEDP",
+      "shortname": "Medpace Holdings, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "MEIDENSHA CORPD",
+    "result": null
+  },
+  {
+    "name": "Meier Tobler",
+    "result": {
+      "symbol": "MTGZ.XC",
+      "shortname": "Meier Tobler Group AG",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "MEIKO ELECTRONICS COD",
+    "result": null
+  },
+  {
+    "name": "Meko AB",
+    "result": {
+      "symbol": "1OM.F",
+      "shortname": "Meko AB                       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Melexis NV",
+    "result": {
+      "symbol": "MLXSF",
+      "shortname": "MELEXIS",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Merck & Company, Inc.",
+    "result": {
+      "symbol": "MRK",
+      "shortname": "Merck & Company, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Mercury General Corporation",
+    "result": {
+      "symbol": "MCY",
+      "shortname": "Mercury General Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "MERITZ FINANCIAL GROUPD",
+    "result": null
+  },
+  {
+    "name": "MERRY ELECTRONICS COD",
+    "result": null
+  },
+  {
+    "name": "Mersen",
+    "result": {
+      "symbol": "CBLNF",
+      "shortname": "MERSEN SA",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Metrodata Electronics TRK",
+    "result": null
+  },
+  {
+    "name": "Metropolitan Bank & Trust Co.",
+    "result": {
+      "symbol": "MTPOF",
+      "shortname": "Metropolitan Bank & Trust",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Micro Systemation",
+    "result": {
+      "symbol": "W98.F",
+      "shortname": "MICRO SYSTEMATION AB          N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Microchip Technology",
+    "result": {
+      "symbol": "MCHP",
+      "shortname": "Microchip Technology Incorporat",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "MICRONICS JAPAN COD",
+    "result": null
+  },
+  {
+    "name": "MIDAC HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Military Commercial Joint Stock Bank",
+    "result": {
+      "symbol": "MBB.VN",
+      "shortname": "MILITARY COMMERCIAL JOINT STOCK",
+      "exchange": "VSE"
+    }
+  },
+  {
+    "name": "Miller Industries, Inc.",
+    "result": {
+      "symbol": "MLR",
+      "shortname": "Miller Industries, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Mimaki Engineering",
+    "result": {
+      "symbol": "6638.T",
+      "shortname": "MIMAKI ENGINEERING CO.LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Mineros S.A.",
+    "result": {
+      "symbol": "MINEROS.CL",
+      "shortname": "MINEROS S.A.",
+      "exchange": "BVC"
+    }
+  },
+  {
+    "name": "MIPS AB",
+    "result": {
+      "symbol": "MIPS.ST",
+      "shortname": "Mips AB",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Mitek Systems",
+    "result": {
+      "symbol": "MITK",
+      "shortname": "Mitek Systems, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Mitie Group PLC",
+    "result": {
+      "symbol": "MZ4.F",
+      "shortname": "MITIE GROUP PLC               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Mitra Keluarga Karyasehat TBK PT",
+    "result": null
+  },
+  {
+    "name": "MITSUI MINING & SMELTING COD",
+    "result": null
+  },
+  {
+    "name": "MLP Saglik",
+    "result": {
+      "symbol": "MPARK.IS",
+      "shortname": "MLP SAGLIK",
+      "exchange": "IST"
+    }
+  },
+  {
+    "name": "Mobile World Investment Corporation",
+    "result": {
+      "symbol": "MWG.VN",
+      "shortname": "MOBILE WORLD INVESTMENT CORPORA",
+      "exchange": "VSE"
+    }
+  },
+  {
+    "name": "MODEC INC(JAPAN)D",
+    "result": null
+  },
+  {
+    "name": "modine",
+    "result": {
+      "symbol": "MOD",
+      "shortname": "Modine Manufacturing Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Mold-Tek",
+    "result": {
+      "symbol": "MOLDTECH.BO",
+      "shortname": "MOLD-TEK TECHNOLOGIES LTD.",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "Molina Healthcare Inc",
+    "result": {
+      "symbol": "MOH",
+      "shortname": "Molina Healthcare Inc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "MONOGATARI CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Monolithic Power Systems, Inc.",
+    "result": {
+      "symbol": "MPWR",
+      "shortname": "Monolithic Power Systems, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Mony Group PLC",
+    "result": {
+      "symbol": "MONYL.XC",
+      "shortname": "MONY Group PLC",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "MORIYA TPT ENG & MFG CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Morningstar, Inc.",
+    "result": {
+      "symbol": "MORN",
+      "shortname": "Morningstar, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Mortgage Advice Bureau (Holdings) PLC",
+    "result": {
+      "symbol": "MAB1.L",
+      "shortname": "MORTGAGE ADVICE BUREAU (HOLDING",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "MPI CORPORATION",
+    "result": {
+      "symbol": "6223.TWO",
+      "shortname": "MPI CORPORATION",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "MPLX LP",
+    "result": {
+      "symbol": "MPLX",
+      "shortname": "MPLX LP",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "MT Hojgaard Holding A/S",
+    "result": null
+  },
+  {
+    "name": "mtch",
+    "result": {
+      "symbol": "MTCH",
+      "shortname": "Match Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Mueller Industries, Inc.",
+    "result": {
+      "symbol": "MLI",
+      "shortname": "Mueller Industries, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Mueller Water Products",
+    "result": {
+      "symbol": "MWA",
+      "shortname": "MUELLER WATER PRODUCTS",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Multi Bintang Indonesia",
+    "result": {
+      "symbol": "MLBI.JK",
+      "shortname": "Multi Bintang Indonesia Tbk",
+      "exchange": "JKT"
+    }
+  },
+  {
+    "name": "Multiconsult ASA",
+    "result": {
+      "symbol": "3MC.F",
+      "shortname": "Multiconsult AS               N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Munters AB",
+    "result": null
+  },
+  {
+    "name": "Musashi Seimitsu Industry",
+    "result": {
+      "symbol": "7220.T",
+      "shortname": "MUSASHI SEIMITSU IND",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "My E.G. Services BHD",
+    "result": null
+  },
+  {
+    "name": "Mycronic AB",
+    "result": {
+      "symbol": "MLT0.F",
+      "shortname": "Mycronic AB                   N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Myoung Shin Industrial",
+    "result": {
+      "symbol": "009900.KS",
+      "shortname": "MS IND",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Myrg",
+    "result": {
+      "symbol": "MYRG",
+      "shortname": "MYR Group, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Mytilineos",
+    "result": {
+      "symbol": "MYTHF",
+      "shortname": "MYTILINEOS S.A",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "N-Able",
+    "result": {
+      "symbol": "NABL",
+      "shortname": "N-able, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Nakanishi",
+    "result": {
+      "symbol": "6SN.F",
+      "shortname": "NAKANISHI INC.                R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NAN KANG RUBBER TIRED",
+    "result": null
+  },
+  {
+    "name": "NAN PAO RESINS CHEMICAL CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Nanosonics",
+    "result": {
+      "symbol": "NAN.AX",
+      "shortname": "NANOSONICS FPO [NAN]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Napco Security Technologies",
+    "result": {
+      "symbol": "NSSC",
+      "shortname": "NAPCO Security Technologies, In",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "NATIONAL MEDICAL CARE CO.D",
+    "result": null
+  },
+  {
+    "name": "Navigator Global Investments Limited",
+    "result": {
+      "symbol": "HVH.F",
+      "shortname": "Navigator Global Invts Ltd.   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NC AB Ser. A",
+    "result": {
+      "symbol": "NCC-A.ST",
+      "shortname": "NCC AB ser. A",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Nedbank Group Ltd",
+    "result": {
+      "symbol": "NED.JO",
+      "shortname": "Nedbank Group Ltd",
+      "exchange": "JNB"
+    }
+  },
+  {
+    "name": "Nederman Holding",
+    "result": {
+      "symbol": "NMAN.ST",
+      "shortname": "Nederman Holding AB",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "nemak",
+    "result": {
+      "symbol": "NEMAKA.MX",
+      "shortname": "NEMAK SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "Neogen",
+    "result": {
+      "symbol": "NEO",
+      "shortname": "NeoGenomics, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "nesn",
+    "result": {
+      "symbol": "NESN.SW",
+      "shortname": "NESTLE N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "NetApp, Inc.",
+    "result": {
+      "symbol": "NTAP",
+      "shortname": "NetApp, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Netflix, Inc.",
+    "result": {
+      "symbol": "NFLX",
+      "shortname": "Netflix, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Neucad",
+    "result": null
+  },
+  {
+    "name": "Neuland",
+    "result": {
+      "symbol": "NEULANDLAB.BO",
+      "shortname": "NEULAND LABORATORIES LTD.",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "Neurocrine Biosciences",
+    "result": {
+      "symbol": "NBIX",
+      "shortname": "Neurocrine Biosciences, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Neurones",
+    "result": {
+      "symbol": "NE9.F",
+      "shortname": "Neurones S.A.                 A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "New York Times Company (The)",
+    "result": {
+      "symbol": "NYT",
+      "shortname": "New York Times Company (The)",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Newlat Food",
+    "result": {
+      "symbol": "IT0005385213.SG",
+      "shortname": "Newlat Food S.p.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Nexteq",
+    "result": {
+      "symbol": "R87.F",
+      "shortname": "Nexteq PLC                    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NEXTIN INC.D",
+    "result": null
+  },
+  {
+    "name": "NexTone",
+    "result": {
+      "symbol": "7094.T",
+      "shortname": "NEXTONE INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Nexus AG",
+    "result": {
+      "symbol": "NXU.F",
+      "shortname": "NEXUS AG                      I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NHK SPRING CO LTDD",
+    "result": null
+  },
+  {
+    "name": "NICE",
+    "result": {
+      "symbol": "NICE",
+      "shortname": "NICE Ltd",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "NICE INFORMATION SERVICED",
+    "result": null
+  },
+  {
+    "name": "Nicolet Bankshares Inc.",
+    "result": {
+      "symbol": "NIC",
+      "shortname": "Nicolet Bankshares Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "NIEN MADE ENTERPRISE CO LTDD",
+    "result": null
+  },
+  {
+    "name": "nintendo",
+    "result": {
+      "symbol": "NTDOY",
+      "shortname": "Nintendo Co., Ltd.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "NISSAN CHEMICAL CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "NISSEI ASB MACHINE COD",
+    "result": null
+  },
+  {
+    "name": "Nisso Holdings",
+    "result": {
+      "symbol": "9332.T",
+      "shortname": "NISSO HOLDINGS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "NITERRA CO LTDD",
+    "result": null
+  },
+  {
+    "name": "NKT a/s",
+    "result": {
+      "symbol": "NKT.F",
+      "shortname": "NKT A/S                       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NMDC Group PJSC",
+    "result": null
+  },
+  {
+    "name": "nmfc",
+    "result": {
+      "symbol": "NMFC",
+      "shortname": "New Mountain Finance Corporatio",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "NMI Holdings Inc",
+    "result": {
+      "symbol": "NMIH",
+      "shortname": "NMI Holdings Inc",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "NOF CORPD",
+    "result": null
+  },
+  {
+    "name": "Nomura Micro Science",
+    "result": {
+      "symbol": "6254.T",
+      "shortname": "NOMURA MICRO SCIENCE CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "NOMURA RESEARCH INSTITUTE",
+    "result": {
+      "symbol": "NR7.F",
+      "shortname": "NOMURA RESEARCH INSTITUTE LTD.R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Nongshim",
+    "result": {
+      "symbol": "072710.KS",
+      "shortname": "NongshimHoldings",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Norbit ASA",
+    "result": {
+      "symbol": "4NK.F",
+      "shortname": "Norbit ASA                    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Nordnet AB",
+    "result": {
+      "symbol": "SAVE.ST",
+      "shortname": "Nordnet AB",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Norion Bank AB",
+    "result": {
+      "symbol": "NORIOS.XD",
+      "shortname": "Norion Bank AB",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "North American Construction",
+    "result": {
+      "symbol": "N5Z.F",
+      "shortname": "North American Constr.Gr.Ltd. R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Northern Oil and Gas, Inc.",
+    "result": {
+      "symbol": "NOG",
+      "shortname": "Northern Oil and Gas, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Northern Star Resources",
+    "result": {
+      "symbol": "NST.AX",
+      "shortname": "NTH STAR FPO [NST]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Northrim BanCorp Inc",
+    "result": {
+      "symbol": "NRIM",
+      "shortname": "Northrim BanCorp Inc",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Nova Ltd.",
+    "result": {
+      "symbol": "NVMI",
+      "shortname": "Nova Ltd.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Novo Nordisk B A/S",
+    "result": {
+      "symbol": "NOVO-B.CO",
+      "shortname": "Novo Nordisk B A/S",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "NRB Bearings",
+    "result": {
+      "symbol": "NRBBEARING.BO",
+      "shortname": "NRB BEARINGS LTD.",
+      "exchange": "BSE"
+    }
+  },
+  {
+    "name": "NRJ group",
+    "result": {
+      "symbol": "NRGP.XD",
+      "shortname": "NRJ Group",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "NRW Holdings Limited",
+    "result": {
+      "symbol": "3NR.F",
+      "shortname": "NRW Holdings Ltd.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "NVENT ELECTRIC",
+    "result": {
+      "symbol": "NVT",
+      "shortname": "nVent Electric plc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "NVT",
+    "result": {
+      "symbol": "NVT",
+      "shortname": "nVent Electric plc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "O'Reilly Automotive",
+    "result": {
+      "symbol": "ORLY",
+      "shortname": "O'Reilly Automotive, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "OBIC CO",
+    "result": {
+      "symbol": "OBL.F",
+      "shortname": "OBIC CO. LTD.                 R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Objective Corporation Limited",
+    "result": {
+      "symbol": "OCL.XA",
+      "shortname": "OBJECTIVE FPO [OCL]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "OCBC Bank",
+    "result": {
+      "symbol": "O39.SI",
+      "shortname": "OCBC Bank",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "Oceanagold Corporation",
+    "result": {
+      "symbol": "OGC.TO",
+      "shortname": "OCEANAGOLD CORPORATION",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Oddity Tech Ltd.",
+    "result": {
+      "symbol": "KW7.F",
+      "shortname": "ODDITY Tech. Ltd.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Odfjell SE",
+    "result": {
+      "symbol": "O7F.F",
+      "shortname": "Odfjell SE                    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Okomu Oil Palm Co PLC",
+    "result": null
+  },
+  {
+    "name": "Okuma",
+    "result": {
+      "symbol": "6103.T",
+      "shortname": "OKUMA CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Ollie's Bargain Outlet",
+    "result": {
+      "symbol": "OLLI",
+      "shortname": "Ollie's Bargain Outlet Holdings",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "One Career",
+    "result": {
+      "symbol": "4377.T",
+      "shortname": "ONE CAREER INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "OneSpaWorld Holdings Limited",
+    "result": {
+      "symbol": "OSW",
+      "shortname": "OneSpaWorld Holdings Limited",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Onto Innovation Inc.",
+    "result": {
+      "symbol": "ONTO",
+      "shortname": "Onto Innovation Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "OPAP (CR)",
+    "result": null
+  },
+  {
+    "name": "Open Up",
+    "result": {
+      "symbol": "2154.T",
+      "shortname": "OPEN UP GROUP INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "OPTEX GROUP COMPANY LTDD",
+    "result": null
+  },
+  {
+    "name": "Optima Bank (CR)",
+    "result": null
+  },
+  {
+    "name": "Orezone Gold Corp",
+    "result": {
+      "symbol": "OEX0.F",
+      "shortname": "Orezone Gold Corp.            R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ORGANO CORPD",
+    "result": null
+  },
+  {
+    "name": "Orica",
+    "result": {
+      "symbol": "ICA.F",
+      "shortname": "ORICA LTD.                    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ORIENTAL LAND",
+    "result": {
+      "symbol": "OLL.HA",
+      "shortname": "ORIENTAL LAND CO. LTD.        R",
+      "exchange": "HAN"
+    }
+  },
+  {
+    "name": "Orion",
+    "result": {
+      "symbol": "OEC",
+      "shortname": "Orion S.A.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Orion Corporation",
+    "result": {
+      "symbol": "ORNBV.HE",
+      "shortname": "Orion Corporation B",
+      "exchange": "HEL"
+    }
+  },
+  {
+    "name": "OSAKA TITANIUM TECHNOLOGIESD",
+    "result": null
+  },
+  {
+    "name": "Oshkosh",
+    "result": {
+      "symbol": "OSK",
+      "shortname": "Oshkosh Corporation (Holding Co",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "OSI Systems, Inc.",
+    "result": {
+      "symbol": "OSIS",
+      "shortname": "OSI Systems, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Ossur hf",
+    "result": null
+  },
+  {
+    "name": "Otsuka",
+    "result": {
+      "symbol": "4768.T",
+      "shortname": "OTSUKA CORPORATION",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "OVB Holding AG",
+    "result": {
+      "symbol": "O4B.F",
+      "shortname": "OVB Holding AG                I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Oxford Lane Capital Corp. CEF",
+    "result": null
+  },
+  {
+    "name": "Packaging Corporation of America",
+    "result": {
+      "symbol": "PKG",
+      "shortname": "Packaging Corporation of Americ",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Palomar Holdings, Inc.",
+    "result": {
+      "symbol": "PLMR",
+      "shortname": "Palomar Holdings, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Pampa Energia S.A.",
+    "result": {
+      "symbol": "PAM",
+      "shortname": "Pampa Energia S.A.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Pandora A/S",
+    "result": {
+      "symbol": "PNDORA.CO",
+      "shortname": "Pandora A/S",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "Panunited",
+    "result": {
+      "symbol": "P52.SI",
+      "shortname": "PanUnited",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "PARK SYSTEMS CORP.D",
+    "result": null
+  },
+  {
+    "name": "Park24",
+    "result": {
+      "symbol": "4666.T",
+      "shortname": "PARK 24 CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Parsons Corporation",
+    "result": {
+      "symbol": "PSN",
+      "shortname": "Parsons Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Partners Group",
+    "result": {
+      "symbol": "PEYA.F",
+      "shortname": "Partners Grp. Priv. Equity LtdR",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "pax",
+    "result": {
+      "symbol": "PAX",
+      "shortname": "Patria Investments Limited",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Paylocity Holding Corporation",
+    "result": {
+      "symbol": "PCTY",
+      "shortname": "Paylocity Holding Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "PayPoint Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Paysign",
+    "result": {
+      "symbol": "PAYS",
+      "shortname": "Paysign, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Pegasystems Inc.",
+    "result": {
+      "symbol": "PEGA",
+      "shortname": "Pegasystems Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "PEGAVISION CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Pennant",
+    "result": {
+      "symbol": "PFLT",
+      "shortname": "PennantPark Floating Rate Capit",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "PEOPLE & TECHNOLOGY, INC.D",
+    "result": {
+      "symbol": "137400.KQ",
+      "shortname": "P&T",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "pep",
+    "result": {
+      "symbol": "PEP",
+      "shortname": "Pepsico, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "PeptiDream",
+    "result": {
+      "symbol": "4587.T",
+      "shortname": "PEPTIDREAM INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Perenti",
+    "result": {
+      "symbol": "FWG.F",
+      "shortname": "Perenti Ltd.                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "PERSOL HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Perusahaan Perkebunan London Sumtrad",
+    "result": null
+  },
+  {
+    "name": "Petershill Partners PLC",
+    "result": {
+      "symbol": "9X7.F",
+      "shortname": "Petershill Partners PLC       R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "PHA Co",
+    "result": {
+      "symbol": "TAK",
+      "shortname": "Takeda Pharmaceutical Company L",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Pharmanutra",
+    "result": {
+      "symbol": "PHN.MI",
+      "shortname": "PHARMANUTRA",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "PharmaResearch",
+    "result": {
+      "symbol": "214450.KQ",
+      "shortname": "PharmaResearch",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Pharmasgp Holding SE",
+    "result": {
+      "symbol": "PSGD.XD",
+      "shortname": "PharmaSGP Holding SE",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "PHISON ELECTRONICS CORP",
+    "result": {
+      "symbol": "8299.TWO",
+      "shortname": "PHISON ELECTRONICS CORP",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "PILOT CORP(NEW).PORSCHE INN.LEASE OD",
+    "result": null
+  },
+  {
+    "name": "Pinnacle Investment Management Group Limited",
+    "result": {
+      "symbol": "PNI.AX",
+      "shortname": "PINNACLE FPO [PNI]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "PKOBP",
+    "result": {
+      "symbol": "PKO.WA",
+      "shortname": "PKOBP",
+      "exchange": "WSE"
+    }
+  },
+  {
+    "name": "Planet Fitness",
+    "result": {
+      "symbol": "PLNT",
+      "shortname": "Planet Fitness, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Playway",
+    "result": {
+      "symbol": "6P5.SG",
+      "shortname": "PlayWay S.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Plejd AB",
+    "result": {
+      "symbol": "3CA.F",
+      "shortname": "Plejd AB                      N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Plexus",
+    "result": {
+      "symbol": "PLXS",
+      "shortname": "Plexus Corp.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Plus Alpha Consulting",
+    "result": {
+      "symbol": "4071.T",
+      "shortname": "PLUS ALPHA CONSULTING CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Popular, Inc.",
+    "result": {
+      "symbol": "BPOP",
+      "shortname": "Popular, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Powell Industries, Inc.",
+    "result": {
+      "symbol": "POWL",
+      "shortname": "Powell Industries, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Power Solutions International, Inc.",
+    "result": {
+      "symbol": "PSIX",
+      "shortname": "Power Solutions International, ",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "POYA INTERNATIONAL CO LTD",
+    "result": {
+      "symbol": "5904.TWO",
+      "shortname": "POYA INTERNATIONAL CO LTD",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "PRADA SPAD",
+    "result": null
+  },
+  {
+    "name": "PREMIUM GROUP CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Prestige International",
+    "result": {
+      "symbol": "4290.T",
+      "shortname": "PRESTIGE INTERNATIONAL INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "PriceSmart, Inc.",
+    "result": {
+      "symbol": "PSMT",
+      "shortname": "PriceSmart, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Primoris Services",
+    "result": {
+      "symbol": "PRIM",
+      "shortname": "Primoris Services Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Progressive Corporation (The)",
+    "result": {
+      "symbol": "PGR",
+      "shortname": "Progressive Corporation (The)",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "progyny",
+    "result": {
+      "symbol": "PGNY",
+      "shortname": "Progyny, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Promotora y Operadora de Infraestructura",
+    "result": {
+      "symbol": "AKY.F",
+      "shortname": "Promotora y Operadora de InfraR",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Propel Holdings Inc",
+    "result": {
+      "symbol": "8KO.F",
+      "shortname": "Propel Holdings Inc.          R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Protector Forsikring ASA",
+    "result": {
+      "symbol": "PSKRY",
+      "shortname": "PROTECTOR FORSIKRING ASA UNSPON",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Proto",
+    "result": {
+      "symbol": "PRLB",
+      "shortname": "Proto Labs, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "PSK HOLDINGS INC.D",
+    "result": null
+  },
+  {
+    "name": "PSK INC.D",
+    "result": null
+  },
+  {
+    "name": "PSO",
+    "result": {
+      "symbol": "PSO",
+      "shortname": "Pearson, Plc",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "pt mitra adiperkasa",
+    "result": {
+      "symbol": "QGI.F",
+      "shortname": "Mitra Adiperkasa Tbk, PT      R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Publicis Groupe SAD",
+    "result": null
+  },
+  {
+    "name": "PulteGroup, Inc.",
+    "result": {
+      "symbol": "PHM",
+      "shortname": "PulteGroup, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Pum Tech Korea",
+    "result": {
+      "symbol": "251970.KQ",
+      "shortname": "PUM-TECH KOREA",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "puody",
+    "result": {
+      "symbol": "PUODY",
+      "shortname": "Promotora Y Operadora de Infrae",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Puuilo PLC",
+    "result": {
+      "symbol": "8JQ.MU",
+      "shortname": "Puuilo Oyj                    R",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "pVA Tepla AG",
+    "result": {
+      "symbol": "TPE.F",
+      "shortname": "PVA TePla AG                  I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "PWR Holdings",
+    "result": {
+      "symbol": "PWRHF",
+      "shortname": "PWR HLDGS LTD",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "QB Net Holdings",
+    "result": {
+      "symbol": "6571.T",
+      "shortname": "QB NET HOLDINGS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "QBE Insurance Group Limited",
+    "result": {
+      "symbol": "QBEIF",
+      "shortname": "QBE INSURANCE GROUP",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "QT Group OYJ",
+    "result": {
+      "symbol": "2QT.F",
+      "shortname": "QT Group PLC                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "QUANTA COMPUTERD",
+    "result": null
+  },
+  {
+    "name": "Qube Holdings",
+    "result": {
+      "symbol": "QUBHF",
+      "shortname": "QUBE HOLDINGS LIMITED",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Quest Holdings (CR)",
+    "result": null
+  },
+  {
+    "name": "R. Sarantis (CR)",
+    "result": null
+  },
+  {
+    "name": "R&S Group",
+    "result": {
+      "symbol": "RSGN.SW",
+      "shortname": "R&S GROUP N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "Rainbow",
+    "result": {
+      "symbol": "RBW.WA",
+      "shortname": "RAINBOW",
+      "exchange": "WSE"
+    }
+  },
+  {
+    "name": "Rainbow Tours SA",
+    "result": null
+  },
+  {
+    "name": "Rakus",
+    "result": {
+      "symbol": "3923.T",
+      "shortname": "RAKUS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "RAKUS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Ralph Lauren",
+    "result": {
+      "symbol": "RL",
+      "shortname": "Ralph Lauren Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Ramelius Resources Limited",
+    "result": {
+      "symbol": "RMS.XA",
+      "shortname": "RAMELIUS FPO [RMS]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "Raymond James Financial, Inc.",
+    "result": {
+      "symbol": "RJF",
+      "shortname": "Raymond James Financial, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Recordati Ord",
+    "result": {
+      "symbol": "REC.MI",
+      "shortname": "RECORDATI ORD",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "RECRUIT HOLDINGS",
+    "result": {
+      "symbol": "6098.T",
+      "shortname": "RECRUIT HOLDINGS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Red River Bancshares, Inc.",
+    "result": {
+      "symbol": "RRBI",
+      "shortname": "Red River Bancshares, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Regional SAB de CV",
+    "result": {
+      "symbol": "RA.MX",
+      "shortname": "REGIONAL SAB DE CV",
+      "exchange": "MEX"
+    }
+  },
+  {
+    "name": "ReinetInvest",
+    "result": null
+  },
+  {
+    "name": "Rejlers",
+    "result": {
+      "symbol": "3RE.F",
+      "shortname": "Rejlers AB                    N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Reliance Worldwide",
+    "result": {
+      "symbol": "0EU.F",
+      "shortname": "Reliance Worldwide Corp. Ltd. R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "RELX PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Renta 4 Banco, S.A.",
+    "result": {
+      "symbol": "R4.MC",
+      "shortname": "RENTA 4 BANCO, S.A.",
+      "exchange": "MCE"
+    }
+  },
+  {
+    "name": "Reply",
+    "result": {
+      "symbol": "REJA.F",
+      "shortname": "Reply S.p.A.                  A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ReposiTrak, Inc.",
+    "result": {
+      "symbol": "TRAK",
+      "shortname": "ReposiTrak, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Republic Services",
+    "result": {
+      "symbol": "RSG",
+      "shortname": "Republic Services, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ResMed Inc.",
+    "result": {
+      "symbol": "RMD",
+      "shortname": "ResMed Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "RESORTTRUST INCD",
+    "result": null
+  },
+  {
+    "name": "Revolve Group, Inc.",
+    "result": {
+      "symbol": "RVLV",
+      "shortname": "Revolve Group, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Rheinmetall",
+    "result": {
+      "symbol": "RHM.DE",
+      "shortname": "RHEINMETALL AG                I",
+      "exchange": "GER"
+    }
+  },
+  {
+    "name": "Richter Gedeon Share",
+    "result": null
+  },
+  {
+    "name": "Risura Group Ltd",
+    "result": null
+  },
+  {
+    "name": "RIVERSTONE",
+    "result": {
+      "symbol": "RIY.MU",
+      "shortname": "Riverstone Energy Ltd.        R",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Robertet",
+    "result": {
+      "symbol": "0R7.F",
+      "shortname": "ROBERTET S.A.                 A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Rockwool A/S Ser. A",
+    "result": {
+      "symbol": "ROCK-A.CO",
+      "shortname": "Rockwool A/S ser. A",
+      "exchange": "CPH"
+    }
+  },
+  {
+    "name": "Rohto Pharmaceutical",
+    "result": {
+      "symbol": "UC1.F",
+      "shortname": "ROHTO PHARMACEUTICAL CO. LTD. R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Rollins, Inc.",
+    "result": {
+      "symbol": "ROL",
+      "shortname": "Rollins, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "RORZE CORPD",
+    "result": null
+  },
+  {
+    "name": "Royal Caribbean Cruises Ltd.",
+    "result": {
+      "symbol": "RCL",
+      "shortname": "Royal Caribbean Cruises Ltd.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Royal Gold, Inc.",
+    "result": {
+      "symbol": "RGLD",
+      "shortname": "Royal Gold, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Royal Unibrew A/S",
+    "result": {
+      "symbol": "0R1.F",
+      "shortname": "Royal Unibrew AS              N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "RS TECHNOLOGIES CO LTDD",
+    "result": null
+  },
+  {
+    "name": "SAAB AB Ser. B",
+    "result": {
+      "symbol": "SAAB-B.ST",
+      "shortname": "SAAB AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "Sabesp On EDJ NM",
+    "result": null
+  },
+  {
+    "name": "Sabre Insurance Group PLC Ord GBP",
+    "result": null
+  },
+  {
+    "name": "Saf-Holland Se",
+    "result": {
+      "symbol": "SFQ.F",
+      "shortname": "SAF-HOLLAND SE                I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SAKATA SEED CORPD",
+    "result": null
+  },
+  {
+    "name": "SALESFORCE",
+    "result": {
+      "symbol": "CRM",
+      "shortname": "Salesforce, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Samart Aviation Solutions PCL",
+    "result": null
+  },
+  {
+    "name": "Samsung Engineering",
+    "result": null
+  },
+  {
+    "name": "SAMSUNG FIRE & MARINE INSURANCED",
+    "result": null
+  },
+  {
+    "name": "Samwha Capacitor",
+    "result": {
+      "symbol": "001820.KS",
+      "shortname": "SamwhaCapacitor",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "SAMYANG FOODD",
+    "result": null
+  },
+  {
+    "name": "Sandhar",
+    "result": {
+      "symbol": "SANDHAR.NS",
+      "shortname": "SANDHAR TECHNOLOGIES LTD",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "SandRidge Energy, Inc.",
+    "result": {
+      "symbol": "SD",
+      "shortname": "SandRidge Energy, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Sanken Electric",
+    "result": {
+      "symbol": "SANJF",
+      "shortname": "Sanken Electric Co., Ltd.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "SANKI ENGINEERING COD",
+    "result": null
+  },
+  {
+    "name": "Sanlorenzo",
+    "result": {
+      "symbol": "6SZA.MU",
+      "shortname": "Sanlorenzo S.p.A. In Sigla Sl A",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Sanrio Co",
+    "result": {
+      "symbol": "SJ8.F",
+      "shortname": "SANRIO CO. LTD.               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Santam Limited",
+    "result": {
+      "symbol": "SNT.JO",
+      "shortname": "Santam Limited",
+      "exchange": "JNB"
+    }
+  },
+  {
+    "name": "Sanwa Holdings",
+    "result": {
+      "symbol": "5929.T",
+      "shortname": "SANWA HOLDINGS CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "SAP SE O.N.D",
+    "result": null
+  },
+  {
+    "name": "Saunders International",
+    "result": {
+      "symbol": "SND.XA",
+      "shortname": "SAUNDERS FPO [SND]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "Scanfil",
+    "result": {
+      "symbol": "S0A.F",
+      "shortname": "Scanfil Oyj                   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Scout24 SE",
+    "result": {
+      "symbol": "G24D.XD",
+      "shortname": "Scout24 SE",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "SCREEN HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "SCSK CORP",
+    "result": {
+      "symbol": "QSU.F",
+      "shortname": "SCSK Corp.                    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Sdiptech",
+    "result": {
+      "symbol": "938.F",
+      "shortname": "Sdiptech AB                   A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Sega Sammy Holdings",
+    "result": {
+      "symbol": "RYU.F",
+      "shortname": "Sega Sammy Holdings Inc.      R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SEI Investments Company",
+    "result": {
+      "symbol": "SEIC",
+      "shortname": "SEI Investments Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "select medical",
+    "result": {
+      "symbol": "SEM",
+      "shortname": "Select Medical Holdings Corpora",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Semler Scientific",
+    "result": {
+      "symbol": "SMLR",
+      "shortname": "Semler Scientific, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "SENSHU ELECTRIC COD",
+    "result": null
+  },
+  {
+    "name": "Seraku Co",
+    "result": {
+      "symbol": "6199.T",
+      "shortname": "SERAKU CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Sercomm",
+    "result": {
+      "symbol": "5388.TW",
+      "shortname": "SERCOMM CORP",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "Seven group",
+    "result": null
+  },
+  {
+    "name": "SFS AG",
+    "result": null
+  },
+  {
+    "name": "SharkNinja, Inc.",
+    "result": {
+      "symbol": "SN",
+      "shortname": "SharkNinja, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Shedir Pharm",
+    "result": null
+  },
+  {
+    "name": "Shibaura",
+    "result": {
+      "symbol": "6104.T",
+      "shortname": "SHIBAURA MACHINE CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Shibaura Machine",
+    "result": {
+      "symbol": "6104.T",
+      "shortname": "SHIBAURA MACHINE CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Shift",
+    "result": {
+      "symbol": "FOUR",
+      "shortname": "Shift4 Payments, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Shimadzu",
+    "result": {
+      "symbol": "HDZ.F",
+      "shortname": "SHIMADZU CORP.                R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Shin Maint Holdings Co",
+    "result": {
+      "symbol": "6086.T",
+      "shortname": "SHIN MAINT HOLDINGS CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "SHINY CHEMICAL INDUSTRIAL CO. LTD.D",
+    "result": null
+  },
+  {
+    "name": "SHIONOGI & COD",
+    "result": null
+  },
+  {
+    "name": "Shopper",
+    "result": {
+      "symbol": "1F0.SI",
+      "shortname": "$ Shopper360",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "Siegfried",
+    "result": {
+      "symbol": "SQG0.F",
+      "shortname": "Siegfried Holding AG          N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Sigmaxyz Holdings",
+    "result": {
+      "symbol": "6088.T",
+      "shortname": "SIGMAXYZ HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "SIGMAXYZ HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "SIIX",
+    "result": {
+      "symbol": "7613.T",
+      "shortname": "SIIX CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Sika",
+    "result": {
+      "symbol": "SKR.BK",
+      "shortname": "SKR_SIKARIN",
+      "exchange": "SET"
+    }
+  },
+  {
+    "name": "SILICON  CO.,LTD.D",
+    "result": {
+      "symbol": "257720.KQ",
+      "shortname": "Silicon2",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "Silicon Motion Technology Corporation",
+    "result": {
+      "symbol": "SIMO",
+      "shortname": "Silicon Motion Technology Corpo",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "SilverCrest Metals",
+    "result": null
+  },
+  {
+    "name": "SIMPLEX HLDGS INCD",
+    "result": null
+  },
+  {
+    "name": "Simplex Holdings",
+    "result": {
+      "symbol": "4373.T",
+      "shortname": "SIMPLEX HLDGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Sinbon Electronics",
+    "result": {
+      "symbol": "3023.TW",
+      "shortname": "SINBON ELECTRONICS CO LTD",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "SINFONIA TECHNOLOGY CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Skyward Specialty Insurance Group, Inc.",
+    "result": {
+      "symbol": "SKWD",
+      "shortname": "Skyward Specialty Insurance Gro",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "SL CORPORATION",
+    "result": {
+      "symbol": "SLM",
+      "shortname": "SLM Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Smaregi",
+    "result": {
+      "symbol": "4431.T",
+      "shortname": "SMAREGI INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "SMAREGI INCD",
+    "result": null
+  },
+  {
+    "name": "Smart Parking",
+    "result": {
+      "symbol": "E8Q.F",
+      "shortname": "Smart Parking Ltd.            R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SmartGroup Corporation Ltd",
+    "result": {
+      "symbol": "SW8.F",
+      "shortname": "Smartgroup Corp. Ltd.         R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SmartPay Holdings",
+    "result": {
+      "symbol": "SMP.XA",
+      "shortname": "SMARTPAY FPO NZX [SMP]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "SMCI",
+    "result": {
+      "symbol": "SMCI",
+      "shortname": "Super Micro Computer, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Smith & Nephew PLC Common Stock",
+    "result": null
+  },
+  {
+    "name": "Smiths Group PLC",
+    "result": {
+      "symbol": "QS2A.F",
+      "shortname": "Smiths Group PLC              R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SMS CO",
+    "result": {
+      "symbol": "SMSZF",
+      "shortname": "SMS CO LTD",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "SNC-Lavalin",
+    "result": null
+  },
+  {
+    "name": "SNT MOTIV",
+    "result": {
+      "symbol": "064960.KS",
+      "shortname": "SNT MOTIV",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Societe Ldc SA",
+    "result": {
+      "symbol": "LOUPP.XD",
+      "shortname": "Societe LDC SADIR",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "Societe Pour l Informatique Industriell",
+    "result": null
+  },
+  {
+    "name": "Sol SpA",
+    "result": {
+      "symbol": "QOL.MU",
+      "shortname": "SOL S.P.A.                    A",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "SOLID, INC.D",
+    "result": {
+      "symbol": "SLDP",
+      "shortname": "Solid Power, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Solvi PLC",
+    "result": null
+  },
+  {
+    "name": "SOMPO HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "Southern Cross Electrical Engineering Ltd",
+    "result": {
+      "symbol": "4SO.BE",
+      "shortname": "Southern Cross Elect.Engin.LtdR",
+      "exchange": "BER"
+    }
+  },
+  {
+    "name": "Southern States Bancshares, Inc.",
+    "result": {
+      "symbol": "GEMI",
+      "shortname": "Gemini Space Station, Inc. Clas",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "SP Group A/S",
+    "result": {
+      "symbol": "SPIR.OL",
+      "shortname": "SPIR GROUP ASA",
+      "exchange": "OSL"
+    }
+  },
+  {
+    "name": "Sprouts Farmers Market, Inc.",
+    "result": {
+      "symbol": "SFM",
+      "shortname": "Sprouts Farmers Market, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "SPS Commerce",
+    "result": {
+      "symbol": "SPSC",
+      "shortname": "SPS Commerce, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "SPX Technologies, Inc.",
+    "result": {
+      "symbol": "SPXC",
+      "shortname": "SPX Technologies, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "ST Engineering",
+    "result": {
+      "symbol": "S63.SI",
+      "shortname": "ST Engineering",
+      "exchange": "SES"
+    }
+  },
+  {
+    "name": "ST HI-TECH ENT",
+    "result": null
+  },
+  {
+    "name": "Stef SA",
+    "result": {
+      "symbol": "STF.PA",
+      "shortname": "STEF",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Sterling Infrastructure, Inc.",
+    "result": {
+      "symbol": "STRL",
+      "shortname": "Sterling Infrastructure, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "STO SE &",
+    "result": {
+      "symbol": "STO3.F",
+      "shortname": "Sto SE & Co. KGaA             I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Stolt-Nielsen Limited",
+    "result": {
+      "symbol": "SN6.F",
+      "shortname": "Stolt-Nielsen Ltd.            R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Straumann",
+    "result": {
+      "symbol": "SAUHY",
+      "shortname": "Straumann Holding AG",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Stride, Inc.",
+    "result": {
+      "symbol": "LRN",
+      "shortname": "Stride, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Strike Co",
+    "result": {
+      "symbol": "6196.T",
+      "shortname": "STRIKE COMPANY LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Sues Microtec",
+    "result": {
+      "symbol": "SMHN.HA",
+      "shortname": "SUSS MicroTec SE              N",
+      "exchange": "HAN"
+    }
+  },
+  {
+    "name": "SUGI HOLDINGS CO.LTD.D",
+    "result": null
+  },
+  {
+    "name": "SUMITOMO RIKO CO LTDD",
+    "result": null
+  },
+  {
+    "name": "SUNDRUG CO LTDD",
+    "result": null
+  },
+  {
+    "name": "SUNONWEALTH ELECTRIC MACHINE IND COD",
+    "result": null
+  },
+  {
+    "name": "Supply Network",
+    "result": {
+      "symbol": "SNL.AX",
+      "shortname": "SUPPLY NET FPO [SNL]",
+      "exchange": "ASX"
+    }
+  },
+  {
+    "name": "Surgical Science Sweden",
+    "result": {
+      "symbol": "4P41.F",
+      "shortname": "Surgical Science Sweden AB    A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "SUZUKI MOTOR CORPD",
+    "result": null
+  },
+  {
+    "name": "SWCC CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "Swedish Orphan Biovitrum",
+    "result": {
+      "symbol": "B6E.F",
+      "shortname": "Swedish Orphan Biovitrum AB   N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Swissquote",
+    "result": {
+      "symbol": "SQNZ.XC",
+      "shortname": "Swissquote Group Holding SA",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "SYNCMOLD ENTERPRISE CORPD",
+    "result": null
+  },
+  {
+    "name": "Synergie SE",
+    "result": {
+      "symbol": "SDG.PA",
+      "shortname": "SYNERGIE",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "SYSCO",
+    "result": {
+      "symbol": "SYY",
+      "shortname": "Sysco Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "SYSMEX CORPD",
+    "result": null
+  },
+  {
+    "name": "System Support",
+    "result": {
+      "symbol": "4396.T",
+      "shortname": "SYSTEM SUPPORT HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Systemair",
+    "result": {
+      "symbol": "52SA.F",
+      "shortname": "Systemair AB                  N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "T&D HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "T&L CO., LTD.D",
+    "result": {
+      "symbol": "LOVE",
+      "shortname": "The Lovesac Company",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "TAISEI CORPD",
+    "result": null
+  },
+  {
+    "name": "TAIWAN HON CHUAN ENTERPRISED",
+    "result": null
+  },
+  {
+    "name": "TAIWAN SAKURAD",
+    "result": null
+  },
+  {
+    "name": "Taiwan semi",
+    "result": {
+      "symbol": "TSM",
+      "shortname": "Taiwan Semiconductor Manufactur",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TAIWAN UNION TECHNOLOGY CORPORATION",
+    "result": {
+      "symbol": "6274.TWO",
+      "shortname": "TAIWAN UNION TECHNOLOGY CORPORA",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Takeuchi Mfg",
+    "result": {
+      "symbol": "6432.T",
+      "shortname": "TAKEUCHI MFG CO",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "TAKUMA CO LTDD",
+    "result": null
+  },
+  {
+    "name": "TAMRON CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Target Hospitality",
+    "result": {
+      "symbol": "TH",
+      "shortname": "Target Hospitality Corp.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "Tasmea Limited",
+    "result": {
+      "symbol": "TEA.XA",
+      "shortname": "TASMEA FPO [TEA]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "Taylor Morrison Home Corporation",
+    "result": {
+      "symbol": "TMHC",
+      "shortname": "Taylor Morrison Home Corporatio",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TDC Soft",
+    "result": {
+      "symbol": "4687.T",
+      "shortname": "TDC SOFT INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "TeamViewer SE",
+    "result": {
+      "symbol": "TMV.F",
+      "shortname": "TeamViewer SE                 I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Tecan AG",
+    "result": null
+  },
+  {
+    "name": "Tecnoglass",
+    "result": {
+      "symbol": "TGLS",
+      "shortname": "Tecnoglass Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TECHMATRIX CORPD",
+    "result": null
+  },
+  {
+    "name": "Technip Energies N.V.",
+    "result": {
+      "symbol": "68F.DU",
+      "shortname": "Technip Energies N.V.         A",
+      "exchange": "DUS"
+    }
+  },
+  {
+    "name": "Technogym",
+    "result": {
+      "symbol": "TGYM.MI",
+      "shortname": "TECHNOGYM",
+      "exchange": "MIL"
+    }
+  },
+  {
+    "name": "TECHNOLOGY CORPORATION",
+    "result": {
+      "symbol": "SIMO",
+      "shortname": "Silicon Motion Technology Corpo",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Teikoku Electric",
+    "result": {
+      "symbol": "6333.T",
+      "shortname": "TEIKOKU ELECTRIC MFG",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Telecom Egypt",
+    "result": {
+      "symbol": "EGS48031C016.CA",
+      "shortname": "Telecom Egypt",
+      "exchange": "CAI"
+    }
+  },
+  {
+    "name": "Tennant Co",
+    "result": {
+      "symbol": "TNC",
+      "shortname": "Tennant Company",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Tentos ON NM",
+    "result": null
+  },
+  {
+    "name": "teqnion",
+    "result": {
+      "symbol": "M45.MU",
+      "shortname": "Teqnion AB                    N",
+      "exchange": "MUN"
+    }
+  },
+  {
+    "name": "Teradyne, Inc.",
+    "result": {
+      "symbol": "TER",
+      "shortname": "Teradyne, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "terex",
+    "result": {
+      "symbol": "TEX",
+      "shortname": "Terex Corporation",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Terravest Industries Inc",
+    "result": {
+      "symbol": "TRRVF",
+      "shortname": "TerraVest Industries Inc.",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "TERUMO CORP",
+    "result": {
+      "symbol": "TUO.F",
+      "shortname": "TERUMO CORP.                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Tetra Tech",
+    "result": {
+      "symbol": "TTI",
+      "shortname": "Tetra Technologies, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Tetragon Financial Group",
+    "result": {
+      "symbol": "TFG.L",
+      "shortname": "\"Tetragon Financial Group Ltd\"",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Texas Roadhouse, Inc.",
+    "result": {
+      "symbol": "TXRH",
+      "shortname": "Texas Roadhouse, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "TF Bank AB",
+    "result": {
+      "symbol": "0RHM.L",
+      "shortname": "TF BANK AB TF BANK ORD SHS",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "The Bancorp, Inc.",
+    "result": {
+      "symbol": "TBBK",
+      "shortname": "The Bancorp, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "The Hartford Insurance Group, Inc.",
+    "result": {
+      "symbol": "HIG",
+      "shortname": "The Hartford Insurance Group, I",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "The National Bank of Ras Al Khaimah",
+    "result": null
+  },
+  {
+    "name": "The Sage Group PLC",
+    "result": {
+      "symbol": "SGPYY",
+      "shortname": "Sage Group plc (The)",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "The Swatch Grp Ltd",
+    "result": null
+  },
+  {
+    "name": "The Trade Desk, Inc.",
+    "result": {
+      "symbol": "TTD",
+      "shortname": "The Trade Desk, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "The Vita Coco Company, Inc.",
+    "result": {
+      "symbol": "COCO",
+      "shortname": "The Vita Coco Company, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Thermon group",
+    "result": {
+      "symbol": "8TG.F",
+      "shortname": "Thermon Group Holdings Inc.   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Tim SA",
+    "result": {
+      "symbol": "TCZ.BE",
+      "shortname": "TIM S.A.                      R",
+      "exchange": "BER"
+    }
+  },
+  {
+    "name": "TK",
+    "result": {
+      "symbol": "TK",
+      "shortname": "Teekay Corporation Ltd.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TKC",
+    "result": {
+      "symbol": "TKC",
+      "shortname": "Turkcell Iletisim Hizmetleri AS",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TOA (Hyogo",
+    "result": null
+  },
+  {
+    "name": "Tobii Dynavox AB",
+    "result": {
+      "symbol": "H3Q.BE",
+      "shortname": "Dynavox Group AB              N",
+      "exchange": "BER"
+    }
+  },
+  {
+    "name": "TOCALO CO LTDD",
+    "result": null
+  },
+  {
+    "name": "TOEI ANIMATIOND",
+    "result": null
+  },
+  {
+    "name": "Tokai Carbon Co",
+    "result": {
+      "symbol": "7TC.F",
+      "shortname": "TOKAI CARBON CO. LTD.         R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "TOKIO MARINE HOLDINGS INCD",
+    "result": null
+  },
+  {
+    "name": "TOKYO OHKA KOGYO COD",
+    "result": null
+  },
+  {
+    "name": "TOKYO SEIMITSU COD",
+    "result": null
+  },
+  {
+    "name": "TOMY COMPANY LTDD",
+    "result": null
+  },
+  {
+    "name": "TONGYANG LIFE INSURANCED",
+    "result": null
+  },
+  {
+    "name": "TOPCO SCIENTIFIC COD",
+    "result": null
+  },
+  {
+    "name": "Topicus Com Inc",
+    "result": {
+      "symbol": "TOI.V",
+      "shortname": "TOPICUS COM INC",
+      "exchange": "VAN"
+    }
+  },
+  {
+    "name": "Toro Company (The)",
+    "result": {
+      "symbol": "TTC",
+      "shortname": "Toro Company (The)",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Toromont Industries",
+    "result": {
+      "symbol": "14T.F",
+      "shortname": "TOROMONT INDUSTRIES LTD.      R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "TOWA CORPD",
+    "result": null
+  },
+  {
+    "name": "Toyo Suisan Kaisha",
+    "result": {
+      "symbol": "2875.T",
+      "shortname": "TOYO SUISAN KAISHA",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Toyo Tanso Co",
+    "result": {
+      "symbol": "T9T.F",
+      "shortname": "Toyo Tanso Co. Ltd.           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Toyoda Gosei",
+    "result": {
+      "symbol": "11T.F",
+      "shortname": "TOYODA GOSEI CO. LTD.         R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "tpr",
+    "result": {
+      "symbol": "TPR",
+      "shortname": "Tapestry, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "TRANSCOM INCD",
+    "result": null
+  },
+  {
+    "name": "TREASURE FACTORY CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Trelleborg",
+    "result": {
+      "symbol": "TBABY",
+      "shortname": "TRELLEBORG AB UNSPON ADS EACH R",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "TREND MICRO INCD",
+    "result": null
+  },
+  {
+    "name": "TRI CHEMICAL LABORATORIES INC.D",
+    "result": null
+  },
+  {
+    "name": "Trigano",
+    "result": {
+      "symbol": "TRIP.XC",
+      "shortname": "Trigano SA",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "tRisura Group Ltd",
+    "result": {
+      "symbol": "TRRSF",
+      "shortname": "Trisura Group Ltd",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "Tryg A/S",
+    "result": {
+      "symbol": "T2V1.F",
+      "shortname": "Tryg AS                       N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "tse:csu",
+    "result": null
+  },
+  {
+    "name": "Tsuburaya Fields Holdings",
+    "result": {
+      "symbol": "2767.T",
+      "shortname": "TSUBURAYA FIELDS HOLDINGS INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "TURN CLOUD TECHNOLOGY SERVICE INC",
+    "result": {
+      "symbol": "6870.TWO",
+      "shortname": "Turn Cloud",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "TXT e Solutions SpA",
+    "result": {
+      "symbol": "TXTM.XD",
+      "shortname": "TXT e-solutions SpA",
+      "exchange": "DXE"
+    }
+  },
+  {
+    "name": "tyl",
+    "result": {
+      "symbol": "TYL",
+      "shortname": "Tyler Technologies, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Tyro Payments Limited",
+    "result": {
+      "symbol": "TYR.XA",
+      "shortname": "TYRO PAY FPO [TYR]",
+      "exchange": "CXA"
+    }
+  },
+  {
+    "name": "U-NEXT HOLDINGS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "UFP Technologies, Inc.",
+    "result": {
+      "symbol": "UFPT",
+      "shortname": "UFP Technologies, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "UL Solutions Inc.",
+    "result": {
+      "symbol": "72R.F",
+      "shortname": "UL Solutions Inc.             R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Ulker Biskuvi",
+    "result": {
+      "symbol": "ULKER.IS",
+      "shortname": "ULKER BISKUVI",
+      "exchange": "IST"
+    }
+  },
+  {
+    "name": "united health group",
+    "result": null
+  },
+  {
+    "name": "United States Lime & Minerals, Inc.",
+    "result": {
+      "symbol": "USLM",
+      "shortname": "United States Lime & Minerals, ",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "United Therapeutics Corporation",
+    "result": {
+      "symbol": "UTHR",
+      "shortname": "United Therapeutics Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Unity Bancorp, Inc.",
+    "result": {
+      "symbol": "UNTY",
+      "shortname": "Unity Bancorp, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Universal Health Services, Inc.",
+    "result": {
+      "symbol": "UHS",
+      "shortname": "Universal Health Services, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "UNIVERSAL MICROWAVE TECHNOLOGY INC",
+    "result": {
+      "symbol": "3491.TWO",
+      "shortname": "UNIVERSAL MICROWAVE TECHNOLOGY ",
+      "exchange": "TWO"
+    }
+  },
+  {
+    "name": "Universal Music Group N.V.",
+    "result": {
+      "symbol": "0VD.F",
+      "shortname": "Universal Music Group N.V.    A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Universal Technical Institute Inc",
+    "result": {
+      "symbol": "UTI",
+      "shortname": "Universal Technical Institute I",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Upwork Inc.",
+    "result": {
+      "symbol": "UPWK",
+      "shortname": "Upwork Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "US Silica Holdings",
+    "result": null
+  },
+  {
+    "name": "USEN NEXT HOLDINGS",
+    "result": {
+      "symbol": "USNNF",
+      "shortname": "USEN-NEXT HOLDINGS CO LTD",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "USS CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Vaisala Corporation",
+    "result": {
+      "symbol": "VAIAS.HE",
+      "shortname": "Vaisala Corporation A",
+      "exchange": "HEL"
+    }
+  },
+  {
+    "name": "Vaisala Oyj",
+    "result": {
+      "symbol": "0GEG.L",
+      "shortname": "VAISALA OYJ VAISALA ORD SHS",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Valvoline Inc.",
+    "result": {
+      "symbol": "VVV",
+      "shortname": "Valvoline Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Van Elle Holdings",
+    "result": {
+      "symbol": "5MH.F",
+      "shortname": "VAN ELLE PLC                  R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "VAT Group",
+    "result": {
+      "symbol": "VACN.SW",
+      "shortname": "VAT GROUP N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "VC",
+    "result": {
+      "symbol": "VC",
+      "shortname": "Visteon Corporation",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "vecima Networks",
+    "result": {
+      "symbol": "VCM.TO",
+      "shortname": "VECIMA NETWORKS INC.",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Veeva Systems",
+    "result": {
+      "symbol": "VEEV",
+      "shortname": "Veeva Systems Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Veralto Corp",
+    "result": {
+      "symbol": "VLTO",
+      "shortname": "Veralto Corp",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Vercom",
+    "result": {
+      "symbol": "14W.F",
+      "shortname": "Vercom S.A.                   I",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Vertiv Holdings, LLC",
+    "result": {
+      "symbol": "VRT",
+      "shortname": "Vertiv Holdings, LLC",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Victory Capital Holdings, Inc. Class A Common Stock",
+    "result": {
+      "symbol": "VCTR",
+      "shortname": "Victory Capital Holdings, Inc. ",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Vidrala, S.A.",
+    "result": {
+      "symbol": "VIDE.XC",
+      "shortname": "Vidrala SA",
+      "exchange": "CXE"
+    }
+  },
+  {
+    "name": "Viemed Healthcare",
+    "result": {
+      "symbol": "VIJ.F",
+      "shortname": "Viemed Healthcare Inc.        R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Viper Energy, Inc.",
+    "result": {
+      "symbol": "VNOM",
+      "shortname": "Viper Energy, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Virbac SA",
+    "result": {
+      "symbol": "VIRP.PA",
+      "shortname": "VIRBAC",
+      "exchange": "PAR"
+    }
+  },
+  {
+    "name": "Virtra",
+    "result": {
+      "symbol": "VTSI",
+      "shortname": "VirTra, Inc.",
+      "exchange": "NCM"
+    }
+  },
+  {
+    "name": "VISCO VISION INCD",
+    "result": null
+  },
+  {
+    "name": "Vision",
+    "result": {
+      "symbol": "CLNV",
+      "shortname": "Clean Vision Corporation",
+      "exchange": "OQB"
+    }
+  },
+  {
+    "name": "Visional",
+    "result": {
+      "symbol": "4194.T",
+      "shortname": "VISIONAL INC",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "visteon",
+    "result": {
+      "symbol": "VS51.SG",
+      "shortname": "Visteon Corp.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "Vistra Corp.",
+    "result": {
+      "symbol": "VST",
+      "shortname": "Vistra Corp.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Vita Coco",
+    "result": {
+      "symbol": "COCO",
+      "shortname": "The Vita Coco Company, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "Vital Farms, Inc.",
+    "result": {
+      "symbol": "VITL",
+      "shortname": "Vital Farms, Inc.",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Vitalhub",
+    "result": {
+      "symbol": "VHI.TO",
+      "shortname": "VITALHUB CORP",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Vitrolife",
+    "result": {
+      "symbol": "VTFN.HA",
+      "shortname": "Vitrolife AB                  N",
+      "exchange": "HAN"
+    }
+  },
+  {
+    "name": "Vitru ltd",
+    "result": null
+  },
+  {
+    "name": "Vivara S.A. ON NM",
+    "result": {
+      "symbol": "VIVA3.SA",
+      "shortname": "VIVARA S.A. ON      NM",
+      "exchange": "SAO"
+    }
+  },
+  {
+    "name": "VIZIONFOCUS INCD",
+    "result": null
+  },
+  {
+    "name": "VOLTRONIC POWER TECHNOLOGY CORPD",
+    "result": null
+  },
+  {
+    "name": "Volue ASA",
+    "result": null
+  },
+  {
+    "name": "Volvo AB",
+    "result": {
+      "symbol": "VOLV-B.ST",
+      "shortname": "Volvo, AB ser. B",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "vossloh",
+    "result": {
+      "symbol": "VOS.DE",
+      "shortname": "VOSSLOH AG                    I",
+      "exchange": "GER"
+    }
+  },
+  {
+    "name": "VOYAGEURS DU MONDE",
+    "result": {
+      "symbol": "8Z4.F",
+      "shortname": "Voyageurs du Monde            A",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "VSTECS HOLDINGS LTDD",
+    "result": null
+  },
+  {
+    "name": "VT Co",
+    "result": {
+      "symbol": "018290.KQ",
+      "shortname": "VT",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "VTD",
+    "result": {
+      "symbol": "VTDRF",
+      "shortname": "Vantage Drilling International ",
+      "exchange": "PNK"
+    }
+  },
+  {
+    "name": "VZ Holding",
+    "result": {
+      "symbol": "VZN.SW",
+      "shortname": "VZ HOLDING N",
+      "exchange": "EBS"
+    }
+  },
+  {
+    "name": "wab",
+    "result": {
+      "symbol": "WAB",
+      "shortname": "Westinghouse Air Brake Technolo",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "WACI Worldwide, Inc.",
+    "result": {
+      "symbol": "GEMI",
+      "shortname": "Gemini Space Station, Inc. Clas",
+      "exchange": "NGM"
+    }
+  },
+  {
+    "name": "Warpaint London PLC",
+    "result": {
+      "symbol": "1J2.F",
+      "shortname": "Warpaint London PLC           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "WASION HOLDINGS LTDD",
+    "result": null
+  },
+  {
+    "name": "Waste Management",
+    "result": {
+      "symbol": "WM",
+      "shortname": "Waste Management, Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Wavestone SA",
+    "result": {
+      "symbol": "2WSA.SG",
+      "shortname": "Wavestone S.A.",
+      "exchange": "STU"
+    }
+  },
+  {
+    "name": "WD-40 Company",
+    "result": {
+      "symbol": "WDFC",
+      "shortname": "WD-40 Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "WDB coco Co",
+    "result": {
+      "symbol": "7079.T",
+      "shortname": "WDB COCO CO LTD",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "WEATHERNEWS INCD",
+    "result": null
+  },
+  {
+    "name": "WEG ON NM",
+    "result": {
+      "symbol": "WEGE3.SA",
+      "shortname": "WEG         ON      NM",
+      "exchange": "SAO"
+    }
+  },
+  {
+    "name": "Weir",
+    "result": {
+      "symbol": "42W.F",
+      "shortname": "WEIR GROUP PLC, THE           R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Welspun",
+    "result": {
+      "symbol": "WELSPUNLIV.NS",
+      "shortname": "WELSPUN LIVING LIMITED",
+      "exchange": "NSI"
+    }
+  },
+  {
+    "name": "West African Resources Limited",
+    "result": {
+      "symbol": "W25.F",
+      "shortname": "West African Resources Ltd.   R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Whitecap Resources Inc",
+    "result": {
+      "symbol": "WCP.TO",
+      "shortname": "WHITECAP RESOURCES INC",
+      "exchange": "TOR"
+    }
+  },
+  {
+    "name": "Wilson Bayly Hlm-Ovc Ltd",
+    "result": {
+      "symbol": "WBO.JO",
+      "shortname": "Wilson Bayly Hlm-Ovc Ltd",
+      "exchange": "JNB"
+    }
+  },
+  {
+    "name": "WINGARCST INCD",
+    "result": null
+  },
+  {
+    "name": "Wingstop Inc.",
+    "result": {
+      "symbol": "WING",
+      "shortname": "Wingstop Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "WINMATE COMMUNICATION INCD",
+    "result": null
+  },
+  {
+    "name": "WINWAY TECHNOLOGY CO LTDD",
+    "result": null
+  },
+  {
+    "name": "Wise PLC CLS A Ord GBP",
+    "result": {
+      "symbol": "WISE.L",
+      "shortname": "WISE PLC CLS A ORD GBP0.01",
+      "exchange": "LSE"
+    }
+  },
+  {
+    "name": "Wisetech Global",
+    "result": {
+      "symbol": "17W.F",
+      "shortname": "WiseTech Global Ltd.          R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "WISTRON",
+    "result": {
+      "symbol": "3231.TW",
+      "shortname": "WISTRON CORPORATION",
+      "exchange": "TAI"
+    }
+  },
+  {
+    "name": "WIWYNN CORPORATIOND",
+    "result": null
+  },
+  {
+    "name": "WNS",
+    "result": {
+      "symbol": "WNS",
+      "shortname": "WNS (Holdings) Limited",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Wolters Kluwer",
+    "result": {
+      "symbol": "WKL.AS",
+      "shortname": "WOLTERS KLUWER",
+      "exchange": "AMS"
+    }
+  },
+  {
+    "name": "Woodward, Inc.",
+    "result": {
+      "symbol": "WWD",
+      "shortname": "Woodward, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "XP Inc.",
+    "result": {
+      "symbol": "XPEV",
+      "shortname": "XPeng Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "XPS Pensions Group PLC",
+    "result": {
+      "symbol": "406.F",
+      "shortname": "XPS Pensions Group PLC        R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "XT e Solutions SpA",
+    "result": null
+  },
+  {
+    "name": "Yamami Co",
+    "result": {
+      "symbol": "2820.T",
+      "shortname": "YAMAMI COMPANY",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "YG Entertainment",
+    "result": {
+      "symbol": "122870.KQ",
+      "shortname": "YG Entertainment",
+      "exchange": "KOE"
+    }
+  },
+  {
+    "name": "YG Plus",
+    "result": {
+      "symbol": "037270.KS",
+      "shortname": "YGP",
+      "exchange": "KSC"
+    }
+  },
+  {
+    "name": "Yokogawa Bridge Holdings",
+    "result": {
+      "symbol": "5911.T",
+      "shortname": "YOKOGAWA BRIDGE HOLDINGS CORP",
+      "exchange": "JPX"
+    }
+  },
+  {
+    "name": "Yokogawa Electric",
+    "result": {
+      "symbol": "YKE.F",
+      "shortname": "YOKOGAWA ELECTRIC CORP.       R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "YONEX CO LTDD",
+    "result": null
+  },
+  {
+    "name": "York Water Co",
+    "result": {
+      "symbol": "YORW",
+      "shortname": "The York Water Company",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "YouGov plc",
+    "result": {
+      "symbol": "Y1G.F",
+      "shortname": "YouGov PLC                    R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "YOUNG FAST OPTOELECTRONICS CO. LTD.D",
+    "result": null
+  },
+  {
+    "name": "Ypsomed",
+    "result": {
+      "symbol": "OWX.F",
+      "shortname": "Ypsomed Holding AG            N",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "ytl corp",
+    "result": {
+      "symbol": "4677.KL",
+      "shortname": "YTL",
+      "exchange": "KLS"
+    }
+  },
+  {
+    "name": "Yubico AB",
+    "result": {
+      "symbol": "YUBICO.ST",
+      "shortname": "Yubico AB",
+      "exchange": "STO"
+    }
+  },
+  {
+    "name": "ZENKOKU HOSHO CO LTDD",
+    "result": null
+  },
+  {
+    "name": "ZERIA PHARMACEUTICALD",
+    "result": null
+  },
+  {
+    "name": "ZIGExN Co",
+    "result": {
+      "symbol": "ZGE.F",
+      "shortname": "ZIGExN Co. Ltd.               R",
+      "exchange": "FRA"
+    }
+  },
+  {
+    "name": "Zoom Communications, Inc.",
+    "result": {
+      "symbol": "ZM",
+      "shortname": "Zoom Communications, Inc.",
+      "exchange": "NMS"
+    }
+  },
+  {
+    "name": "zts",
+    "result": {
+      "symbol": "ZTS",
+      "shortname": "Zoetis Inc.",
+      "exchange": "NYQ"
+    }
+  },
+  {
+    "name": "Zurn Elkay Water Solutions",
+    "result": {
+      "symbol": "ZWS",
+      "shortname": "Zurn Elkay Water Solutions Corp",
+      "exchange": "NYQ"
+    }
+  }
+]
+// Transform
+// Filter + transform
+const simplified = companies
+  .filter(c => c.result && c.result.symbol) // keep only entries with valid symbol
+  .map(c => ({
+    name: c.name,
+    result: { symbol: c.result.symbol }
+  }));
+
+console.log(simplified);
+
+
+
+</script>
+</html>

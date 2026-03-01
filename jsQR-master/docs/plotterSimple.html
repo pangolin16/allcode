@@ -282,20 +282,22 @@ table, td, tr {
     updateTableFromInput();
   }
 
+
 function updateTableFromInput() {
   const inputValue = document.getElementById('triggerInput').value;
   
   // Split by tabs (now that we've converted spaces to tabs)
   const items = inputValue.split('\t').filter(item => item.trim());
   
-  // Group every 3 items into a row (col1, col2, date)
+  // Group every 4 items into a row (col1, col2, col3, col4)
   const tableData = [];
-  for (let i = 0; i < items.length; i += 3) {
-    if (i + 2 < items.length) {
+  for (let i = 0; i < items.length; i += 4) {
+    if (i + 3 < items.length) {
       tableData.push([
         items[i].trim(),     // First column
         items[i + 1].trim(), // Second column
-        items[i + 2].trim()  // Date column
+        items[i + 2].trim(), // Third column
+        items[i + 3].trim()  // Fourth column
       ]);
     }
   }

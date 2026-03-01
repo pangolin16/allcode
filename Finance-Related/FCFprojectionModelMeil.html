@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MELI Valuation Dashboard</title>
+    <style>
+        :root {
+            --primary: #ffe600; /* Mercado Libre Yellow */
+            --secondary: #2d3277; /* Mercado Libre Blue */
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --border: #e2e8f0;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .ticker-badge {
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: var(--secondary);
+            font-weight: 600;
+            padding: 12px 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metric-label {
+            color: #64748b;
+        }
+
+        .metric-value {
+            font-weight: 600;
+        }
+
+        .highlight-card {
+            background: linear-gradient(135deg, #2d3277 0%, #1e293b 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .highlight-card h2 {
+            color: #94a3b8;
+            border-color: #475569;
+        }
+
+        .intrinsic-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 10px 0;
+            color: #ffe600;
+        }
+
+        .currency::before {
+            content: "$";
+            margin-right: 2px;
+        }
+
+        .unit-m::after {
+            content: "M";
+            margin-left: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <header>
+        <h1 style="margin:0; font-size: 1.5rem;">Mercado Libre DCF Model</h1>
+        <div class="ticker-badge">Ticker: MELI</div>
+    </header>
+
+    <section class="card full-width">
+        <h2>Free Cash Flow Projections (USD Millions)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Revenue (Est.)</th>
+                    <th>Free Cash Flow</th>
+                    <th>Cumulative FCF</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1.0 (2024A)</td>
+                    <td class="currency unit-m">21,000</td>
+                    <td class="currency unit-m">7,058</td>
+                    <td class="currency unit-m">7,058</td>
+                </tr>
+                <tr>
+                    <td>2.0 (2025E)</td>
+                    <td class="currency unit-m">27,300</td>
+                    <td class="currency unit-m">8,460</td>
+                    <td class="currency unit-m">15,518</td>
+                </tr>
+                <tr>
+                    <td>3.0 (2026E)</td>
+                    <td class="currency unit-m">35,490</td>
+                    <td class="currency unit-m">10,150</td>
+                    <td class="currency unit-m">25,668</td>
+                </tr>
+                <tr>
+                    <td>4.0 (2027E)</td>
+                    <td class="currency unit-m">44,360</td>
+                    <td class="currency unit-m">12,180</td>
+                    <td class="currency unit-m">37,848</td>
+                </tr>
+                <tr>
+                    <td>5.0 (2028E)</td>
+                    <td class="currency unit-m">53,230</td>
+                    <td class="currency unit-m">14,610</td>
+                    <td class="currency unit-m">52,458</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Key Inputs & Assumptions</h2>
+        <div class="metric-row">
+            <span class="metric-label">Exit Multiple (EV / FCF)</span>
+            <span class="metric-value">18.0x</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Exit Year FCF (Yr 5)</span>
+            <span class="metric-value currency unit-m">14,610</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Cash & Equivalents</span>
+            <span class="metric-value currency unit-m">12,914</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Total Debt</span>
+            <span class="metric-value currency unit-m">9,877</span>
+        </div>
+        <div class="metric-row" style="border:none">
+            <span class="metric-label">Shares Outstanding</span>
+            <span class="metric-value">50.70M</span>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Valuation Summary (USD M)</h2>
+        <div class="metric-row">
+            <span class="metric-label">PV of 5-Yr FCF</span>
+            <span class="metric-value currency unit-m">38,520</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Terminal Value (TV)</span>
+            <span class="metric-value currency unit-m">262,980</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">Enterprise Value (PV)</span>
+            <span class="metric-value currency unit-m">125,480</span>
+        </div>
+        <div class="metric-row" style="border:none">
+            <span class="metric-label">Equity Value</span>
+            <span class="metric-value currency unit-m">128,517</span>
+        </div>
+    </section>
+
+    <section class="card full-width highlight-card">
+        <h2>Intrinsic Value Per Share</h2>
+        <div class="intrinsic-value">$2,534.85</div>
+        <p style="font-size: 0.8rem; opacity: 0.7;">Based on 18x FCF Exit Multiple & 10% Discount Rate</p>
+    </section>
+</div>
+
+</body>
+</html>

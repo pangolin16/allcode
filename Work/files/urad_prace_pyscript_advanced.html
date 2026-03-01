@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Úřad práce ČR - Vyhledávač (PyScript)</title>
+    
+    <!-- PyScript CSS and JS -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .config-section {
+            padding: 20px 40px;
+            background: #fff3cd;
+            border-bottom: 2px solid #ffc107;
+        }
+        
+        .config-section h3 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .config-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .config-group label {
+            font-weight: 600;
+            min-width: 120px;
+        }
+        
+        .config-group input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .mode-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .search-form {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            padding: 40px;
+        }
+        
+        .job-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .job-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .job-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .job-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .meta-label {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 40px;
+            color: #666;
+        }
+        
+        .status-message {
+            padding: 15px;
+            margin: 20px 40px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .status-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
+        .status-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .example-searches {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .example-searches h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .example-searches ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .example-searches li {
+            padding: 5px 0;
+            color: #555;
+        }
+        
+        .example-searches li:before {
+            content: "→ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Vyhledávač práce</h1>
+            <p>Úřad práce České republiky - PyScript Edition</p>
+        </div>
+        
+        <!-- Configuration Section -->
+        <div class="config-section">
+            <h3>⚙️ Nastavení</h3>
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="setMode('demo')" id="demoBtn">
+                    📊 Demo režim (ukázková data)
+                </button>
+                <button class="mode-btn" onclick="setMode('proxy')" id="proxyBtn">
+                    🔗 Proxy režim (skutečná data)
+                </button>
+            </div>
+            <div class="config-group" id="proxyConfig" style="display: none; margin-top: 15px;">
+                <label>Proxy URL:</label>
+                <input type="text" id="proxyUrl" value="http://localhost:5000/api/jobs" 
+                       placeholder="http://localhost:5000/api/jobs">
+            </div>
+        </div>
+        
+        <div class="search-form">
+            <form id="searchForm">
+                <div class="form-group">
+                    <label for="keyword">🏷️ Klíčové slovo (např. logistika, IT, účetní):</label>
+                    <input type="text" id="keyword" name="keyword" placeholder="Zadejte klíčové slovo...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">📍 Místo (např. Praha, Brno, Ostrava):</label>
+                    <input type="text" id="location" name="location" placeholder="Zadejte město nebo region...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="minSalary">💰 Minimální mzda (Kč/měsíc):</label>
+                    <input type="number" id="minSalary" name="minSalary" placeholder="např. 30000" min="0" step="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxSalary">💰 Maximální mzda (Kč/měsíc):</label>
+                    <input type="number" id="maxSalary" name="maxSalary" placeholder="např. 50000" min="0" step="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="education">🎓 Požadované vzdělání:</label>
+                    <select id="education" name="education">
+                        <option value="">Všechny</option>
+                        <option value="basic">Základní</option>
+                        <option value="vocational">Vyučení / Střední odborné</option>
+                        <option value="secondary">Střední s maturitou</option>
+                        <option value="higher">Vyšší odborné</option>
+                        <option value="bachelor">Vysokoškolské (Bc.)</option>
+                        <option value="master">Vysokoškolské (Mgr./Ing.)</option>
+                        <option value="phd">Doktorské (Ph.D.)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="limit">📊 Počet výsledků:</label>
+                    <select id="limit" name="limit">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="excludeDriverLicense" name="excludeDriverLicense" 
+                               style="width: auto; cursor: pointer;">
+                        <span>🚗 Vyloučit nabídky vyžadující řidičský průkaz</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="search-btn" id="searchBtn">Hledat pracovní místa</button>
+            </form>
+            
+            <div class="example-searches">
+                <h4>💡 Příklady vyhledávání:</h4>
+                <ul>
+                    <li>Klíčové slovo: "logistika" + Místo: "Praha"</li>
+                    <li>Klíčové slovo: "IT" + Min. mzda: 40000 Kč</li>
+                    <li>Vzdělání: "Vysokoškolské (Bc.)" + Místo: "Brno"</li>
+                    <li>Min. mzda: 35000 + Max. mzda: 50000 (rozsah platů)</li>
+                    <li>Zaškrtnout "Vyloučit ŘP" pro pozice bez požadavku na řidičský průkaz</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Vyhledávání pracovních míst...</p>
+        </div>
+        
+        <div class="results" id="results"></div>
+    </div>
+
+    <!-- Mode Selection JavaScript -->
+    <script>
+        // Store mode in window object so PyScript can access it
+        window.currentMode = 'demo';
+        
+        function setMode(mode) {
+            window.currentMode = mode;
+            
+            // Update button states
+            document.getElementById('demoBtn').classList.toggle('active', mode === 'demo');
+            document.getElementById('proxyBtn').classList.toggle('active', mode === 'proxy');
+            
+            // Show/hide proxy config
+            document.getElementById('proxyConfig').style.display = 
+                mode === 'proxy' ? 'flex' : 'none';
+            
+            // Update status message
+            const messages = {
+                'demo': 'ℹ️ Demo režim: Zobrazují se ukázková data pro demonstraci rozhraní.',
+                'proxy': '🔗 Proxy režim: Připojení k proxy serveru pro skutečná data. Ujistěte se, že server běží!'
+            };
+            
+            showStatus(messages[mode], 'info');
+        }
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            if (message) {
+                statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+            } else {
+                statusDiv.innerHTML = '';
+            }
+        }
+    </script>
+
+    <!-- PyScript Code -->
+    <script type="py" config='{"packages": ["pyodide-http"]}'>
+import js
+from pyodide.http import pyfetch
+import json
+from pyodide.ffi import create_proxy
+
+class UradPraceSearcher:
+    """Search Úřad práce job listings - PyScript version with proxy support"""
+    
+    def __init__(self, mode='demo', proxy_url=None):
+        self.mode = mode
+        self.proxy_url = proxy_url or "http://localhost:5000/api/jobs"
+        self.base_url = "https://www.uradprace.cz/api/volnamista"
+        
+    async def search_jobs(self, keyword=None, location=None, limit=20, exclude_driver_license=False,
+                         min_salary=None, max_salary=None, education=None):
+        """Search for jobs with filters"""
+        
+        if self.mode == 'demo':
+            # Demo mode: return mock data
+            return self._get_mock_data(keyword, location, limit, exclude_driver_license, 
+                                      min_salary, max_salary, education)
+        else:
+            # Proxy mode: try to fetch real data
+            return await self._fetch_real_data(keyword, location, limit, exclude_driver_license,
+                                              min_salary, max_salary, education)
+    
+    async def _fetch_real_data(self, keyword, location, limit, exclude_driver_license,
+                              min_salary, max_salary, education):
+        """Fetch real data via proxy"""
+        
+        # Build URL with parameters
+        params = []
+        if keyword:
+            params.append(f"keyword={keyword}")
+        if location:
+            params.append(f"location={location}")
+        params.append(f"limit={limit}")
+        if exclude_driver_license:
+            params.append("exclude_driver_license=true")
+        if min_salary:
+            params.append(f"min_salary={min_salary}")
+        if max_salary:
+            params.append(f"max_salary={max_salary}")
+        if education:
+            params.append(f"education={education}")
+        
+        url = self.proxy_url
+        if params:
+            url += "?" + "&".join(params)
+        
+        try:
+            print(f"Fetching from proxy: {url}")
+            response = await pyfetch(url, method="GET")
+            
+            if response.status == 200:
+                data = await response.json()
+                
+                # Parse based on response structure
+                if isinstance(data, dict):
+                    if 'results' in data:
+                        jobs = self._parse_api_response(data)
+                    elif 'error' in data:
+                        print(f"Proxy error: {data.get('error')}")
+                        return []
+                    else:
+                        jobs = self._parse_api_response(data)
+                    
+                    # Apply filters on client side
+                    if exclude_driver_license:
+                        jobs = self._filter_driver_license(jobs)
+                    if min_salary or max_salary:
+                        jobs = self._filter_salary(jobs, min_salary, max_salary)
+                    if education:
+                        jobs = self._filter_education(jobs, education)
+                    
+                    return jobs
+                else:
+                    return []
+            else:
+                print(f"Proxy returned status {response.status}")
+                return []
+                
+        except Exception as e:
+            print(f"Error fetching real data: {e}")
+            return []
+    
+    def _parse_api_response(self, data):
+        """Parse API JSON response"""
+        jobs = []
+        
+        results = data.get('results', []) if isinstance(data, dict) else []
+        
+        for item in results:
+            job = {
+                'title': item.get('pozice', item.get('title', 'N/A')),
+                'employer': item.get('zamestnavatel', item.get('employer', 'N/A')),
+                'location': item.get('misto', item.get('location', 'N/A')),
+                'salary': item.get('mzda', item.get('salary', 'N/A')),
+                'type': item.get('uvazek', item.get('type', 'N/A')),
+                'posted': item.get('datum', item.get('posted', 'N/A')),
+                'url': item.get('url', ''),
+                'description': item.get('popis', item.get('description', ''))
+            }
+            jobs.append(job)
+        
+        return jobs
+    
+    def _filter_driver_license(self, jobs):
+        """
+        Filter out jobs that require a driver's license
+        Checks for common Czech terms related to driving requirements
+        """
+        driver_keywords = [
+            'řidič', 'ridic', 'řidičský průkaz', 'ridicsky prukaz', 'řp',
+            'vozidlo', 'auto', 'doprava', 'řízení', 'řidičák', 'ridicak',
+            'kategorie', 'c+e', 'c e', 'b+e', 'driving', 'driver', 'license',
+            'vzv', 'vysokozdvižný vozík', 'vysokozdvizny vozik'
+        ]
+        
+        filtered_jobs = []
+        for job in jobs:
+            # Check title and description for driver-related keywords
+            title_lower = job.get('title', '').lower()
+            description_lower = job.get('description', '').lower()
+            
+            # Skip if any driver keyword is found
+            has_driver_requirement = False
+            for keyword in driver_keywords:
+                if keyword in title_lower or keyword in description_lower:
+                    has_driver_requirement = True
+                    break
+            
+            if not has_driver_requirement:
+                filtered_jobs.append(job)
+        
+        return filtered_jobs
+    
+    def _filter_salary(self, jobs, min_salary, max_salary):
+        """
+        Filter jobs by salary range
+        Extracts salary from text and compares with min/max
+        """
+        import re
+        
+        filtered_jobs = []
+        for job in jobs:
+            salary_text = job.get('salary', '')
+            if not salary_text or salary_text == 'N/A':
+                # Include jobs without salary info if no strict filtering needed
+                filtered_jobs.append(job)
+                continue
+            
+            # Extract numbers from salary text (e.g., "30 000 - 45 000 Kč")
+            numbers = re.findall(r'\d+[\s\d]*', salary_text.replace(' ', ''))
+            if not numbers:
+                filtered_jobs.append(job)
+                continue
+            
+            # Convert to integers
+            salaries = []
+            for num_str in numbers:
+                try:
+                    salary = int(num_str.replace(' ', ''))
+                    salaries.append(salary)
+                except:
+                    pass
+            
+            if not salaries:
+                filtered_jobs.append(job)
+                continue
+            
+            # Use the average or minimum salary from the range
+            job_salary = min(salaries) if len(salaries) > 0 else salaries[0]
+            
+            # Check if salary is within range
+            if min_salary and job_salary < min_salary:
+                continue
+            if max_salary and job_salary > max_salary:
+                continue
+            
+            filtered_jobs.append(job)
+        
+        return filtered_jobs
+    
+    def _filter_education(self, jobs, education):
+        """
+        Filter jobs by education level
+        Maps education levels to Czech terms and checks requirements
+        """
+        education_keywords = {
+            'basic': ['základní', 'zakladni'],
+            'vocational': ['vyučen', 'vyucen', 'střední odborné', 'stredni odborne', 'sou'],
+            'secondary': ['maturita', 'střední s maturitou', 'stredni s maturitou', 'sš'],
+            'higher': ['vyšší odborné', 'vyssi odborne', 'vos'],
+            'bachelor': ['bakalář', 'bakalar', 'bc.', 'vysokoškolské', 'vysokoskolske'],
+            'master': ['magistr', 'mgr.', 'ing.', 'vysokoškolské', 'vysokoskolske'],
+            'phd': ['doktor', 'ph.d.', 'phd']
+        }
+        
+        if education not in education_keywords:
+            return jobs
+        
+        keywords = education_keywords[education]
+        filtered_jobs = []
+        
+        for job in jobs:
+            title_lower = job.get('title', '').lower()
+            description_lower = job.get('description', '').lower()
+            
+            # If no education mentioned, include the job
+            has_education_mention = False
+            text = title_lower + ' ' + description_lower
+            
+            for edu_level in education_keywords.values():
+                for keyword in edu_level:
+                    if keyword in text:
+                        has_education_mention = True
+                        break
+                if has_education_mention:
+                    break
+            
+            if not has_education_mention:
+                filtered_jobs.append(job)
+                continue
+            
+            # Check if job matches selected education level
+            matches = False
+            for keyword in keywords:
+                if keyword in text:
+                    matches = True
+                    break
+            
+            if matches:
+                filtered_jobs.append(job)
+        
+        return filtered_jobs
+    
+    def _get_mock_data(self, keyword=None, location=None, limit=20, exclude_driver_license=False,
+                      min_salary=None, max_salary=None, education=None):
+        """Generate mock data for demonstration"""
+        
+        mock_jobs = [
+            {
+                'title': 'Logistický koordinátor',
+                'employer': 'ABC Logistics s.r.o.',
+                'location': 'Praha 9',
+                'salary': '35 000 - 45 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '10.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example1',
+                'description': 'Hledáme zkušeného logistického koordinátora...'
+            },
+            {
+                'title': 'Skladník/Řidič VZV',
+                'employer': 'Warehouse Solutions a.s.',
+                'location': 'Praha 10',
+                'salary': '28 000 - 32 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '09.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example2',
+                'description': 'Nabízíme pozici skladníka s řidičským průkazem...'
+            },
+            {
+                'title': 'IT Administrator',
+                'employer': 'Tech Solutions s.r.o.',
+                'location': 'Brno',
+                'salary': '40 000 - 55 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '08.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example3',
+                'description': 'Hledáme IT administrátora pro správu sítě...'
+            },
+            {
+                'title': 'Účetní',
+                'employer': 'Finance Group s.r.o.',
+                'location': 'Praha 1',
+                'salary': '35 000 - 42 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '07.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example4',
+                'description': 'Nabízíme pozici účetního ve stabilní společnosti...'
+            },
+            {
+                'title': 'Řidič kategorie C+E',
+                'employer': 'Transport Express a.s.',
+                'location': 'Ostrava',
+                'salary': '45 000 - 60 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '06.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example5',
+                'description': 'Hledáme řidiče pro mezinárodní přepravu...'
+            },
+            {
+                'title': 'Vedoucí skladu',
+                'employer': 'Distribution Center s.r.o.',
+                'location': 'Praha - Východ',
+                'salary': '50 000 - 65 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '05.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example6',
+                'description': 'Nabízíme pozici vedoucího skladu v moderním DC...'
+            },
+            {
+                'title': 'Programátor Python',
+                'employer': 'Software House s.r.o.',
+                'location': 'Brno',
+                'salary': '55 000 - 75 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '04.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example7',
+                'description': 'Hledáme Python programátora pro vývoj aplikací...'
+            },
+            {
+                'title': 'Operátor logistiky',
+                'employer': 'Logistics Pro a.s.',
+                'location': 'Praha 5',
+                'salary': '30 000 - 38 000 Kč',
+                'type': 'Plný úvazek',
+                'posted': '03.02.2026',
+                'url': 'https://www.uradprace.cz/detail-pozice-example8',
+                'description': 'Nabízíme pozici operátora v logistickém centru...'
+            }
+        ]
+        
+        # Filter by keyword and location
+        filtered_jobs = []
+        for job in mock_jobs:
+            include = True
+            
+            if keyword:
+                keyword_lower = keyword.lower()
+                if not (keyword_lower in job['title'].lower() or 
+                       keyword_lower in job['description'].lower()):
+                    include = False
+            
+            if location and include:
+                location_lower = location.lower()
+                if location_lower not in job['location'].lower():
+                    include = False
+            
+            if include:
+                filtered_jobs.append(job)
+        
+        # Apply driver license filter if requested
+        if exclude_driver_license:
+            filtered_jobs = self._filter_driver_license(filtered_jobs)
+        
+        # Apply salary filter if requested
+        if min_salary or max_salary:
+            filtered_jobs = self._filter_salary(filtered_jobs, min_salary, max_salary)
+        
+        # Apply education filter if requested
+        if education:
+            filtered_jobs = self._filter_education(filtered_jobs, education)
+        
+        return filtered_jobs[:limit]
+
+
+def display_results(jobs):
+    """Display search results"""
+    results_div = js.document.getElementById('results')
+    
+    if not jobs or len(jobs) == 0:
+        results_div.innerHTML = '''
+            <div class="no-results">
+                <h3>😔 Žádné výsledky</h3>
+                <p>Zkuste změnit kritéria vyhledávání.</p>
+            </div>
+        '''
+        return
+    
+    html = f'<h2 style="margin-bottom: 30px; color: #333;">Nalezeno {len(jobs)} pracovních míst</h2>'
+    
+    for i, job in enumerate(jobs):
+        meta_items = []
+        
+        if job.get('employer'):
+            meta_items.append(f'<div class="meta-item"><span class="meta-label">🏢 Zaměstnavatel:</span><span>{job["employer"]}</span></div>')
+        if job.get('location'):
+            meta_items.append(f'<div class="meta-item"><span class="meta-label">📍 Místo:</span><span>{job["location"]}</span></div>')
+        if job.get('salary'):
+            meta_items.append(f'<div class="meta-item"><span class="meta-label">💰 Mzda:</span><span>{job["salary"]}</span></div>')
+        if job.get('type'):
+            meta_items.append(f'<div class="meta-item"><span class="meta-label">⏰ Typ:</span><span>{job["type"]}</span></div>')
+        if job.get('posted'):
+            meta_items.append(f'<div class="meta-item"><span class="meta-label">📅 Zveřejněno:</span><span>{job["posted"]}</span></div>')
+        
+        url_html = f'<div style="margin-top: 15px;"><a href="{job["url"]}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">Zobrazit detail →</a></div>' if job.get('url') else ''
+        
+        html += f'''
+            <div class="job-card">
+                <div class="job-title">{i + 1}. {job.get("title", "Bez názvu")}</div>
+                <div class="job-meta">
+                    {"".join(meta_items)}
+                </div>
+                {url_html}
+            </div>
+        '''
+    
+    results_div.innerHTML = html
+
+
+async def handle_search(event):
+    """Handle form submission"""
+    event.preventDefault()
+    
+    # Get form values
+    keyword = js.document.getElementById('keyword').value
+    location = js.document.getElementById('location').value
+    limit = int(js.document.getElementById('limit').value)
+    exclude_driver_license = js.document.getElementById('excludeDriverLicense').checked
+    
+    # Get salary filters
+    min_salary = js.document.getElementById('minSalary').value
+    max_salary = js.document.getElementById('maxSalary').value
+    min_salary = int(min_salary) if min_salary else None
+    max_salary = int(max_salary) if max_salary else None
+    
+    # Get education filter
+    education = js.document.getElementById('education').value
+    if education == '':
+        education = None
+    
+    # Get current mode from global JavaScript variable
+    mode = js.window.currentMode
+    
+    # Get proxy URL if in proxy mode
+    proxy_url = None
+    if mode == 'proxy':
+        proxy_url = js.document.getElementById('proxyUrl').value
+    
+    # Show loading
+    loading_div = js.document.getElementById('loading')
+    results_div = js.document.getElementById('results')
+    search_btn = js.document.getElementById('searchBtn')
+    
+    loading_div.classList.add('active')
+    results_div.innerHTML = ''
+    search_btn.disabled = True
+    
+    try:
+        # Create searcher and search
+        searcher = UradPraceSearcher(mode=mode, proxy_url=proxy_url)
+        jobs = await searcher.search_jobs(keyword=keyword, location=location, limit=limit, 
+                                         exclude_driver_license=exclude_driver_license,
+                                         min_salary=min_salary, max_salary=max_salary,
+                                         education=education)
+        
+        # Hide loading
+        loading_div.classList.remove('active')
+        search_btn.disabled = False
+        
+        # Display results
+        display_results(jobs)
+        
+        # Show status
+        if jobs:
+            status_msg = f"✓ Nalezeno {len(jobs)} pracovních míst"
+            if mode == 'demo':
+                status_msg += " (ukázková data)"
+            js.showStatus(status_msg, "success")
+        else:
+            if mode == 'proxy':
+                js.showStatus("⚠️ Žádné výsledky z proxy serveru. Zkontrolujte, zda server běží.", "error")
+            else:
+                js.showStatus("ℹ️ Žádné výsledky odpovídající kritériím.", "info")
+        
+    except Exception as e:
+        # Hide loading
+        loading_div.classList.remove('active')
+        search_btn.disabled = False
+        
+        # Show error
+        js.showStatus(f"⚠️ Chyba při vyhledávání: {str(e)}", "error")
+        print(f"Error: {e}")
+
+
+# Set up event listener
+form = js.document.getElementById('searchForm')
+form.addEventListener('submit', create_proxy(handle_search))
+
+# Show initial message
+js.showStatus("ℹ️ Demo režim: Zobrazují se ukázková data pro demonstraci rozhraní.", "info")
+
+print("PyScript job search application ready!")
+print("Mode switching available: Demo (mock data) or Proxy (real data)")
+    </script>
+</body>
+</html>

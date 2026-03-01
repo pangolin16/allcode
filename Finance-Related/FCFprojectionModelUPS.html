@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sysco (SYY) Interactive Valuation</title>
+    <style>
+        :root {
+            --primary: #004a99; /* Sysco Blue */
+            --secondary: #e31837; /* Sysco Red */
+            --bg: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-dark: #1a1a1a;
+            --border: #d1d9e0;
+            --accent: #002d5e;
+        }
+
+        body {
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border: 1px solid var(--border);
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        h2 {
+            margin-top: 0;
+            font-size: 0.85rem;
+            color: #5d5d5d;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex; flex-direction: column; gap: 5px;
+        }
+
+        label { font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+
+        input {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            outline-color: var(--secondary);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th { text-align: left; color: #5d5d5d; font-size: 0.85rem; padding: 12px 8px; border-bottom: 2px solid var(--primary); }
+
+        td { padding: 12px 8px; border-bottom: 1px solid var(--border); }
+
+        .highlight-card {
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .intrinsic-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 10px 0;
+        }
+        
+        .sub-val { color: #b0c4de; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <header>
+        <h1 style="margin:0; font-size: 1.3rem; letter-spacing: 0.5px;">Sysco Corporation (SYY) DCF Model</h1>
+        <div style="font-weight: 900; background: white; padding: 6px 14px; border-radius: 4px; color: var(--primary);">SYY</div>
+    </header>
+
+    <section class="card">
+        <h2>Valuation Assumptions</h2>
+        <div class="input-grid">
+            <div class="input-group">
+                <label>TTM Revenue ($M)</label>
+                <input type="number" id="baseRev" value="82030">
+            </div>
+            <div class="input-group">
+                <label>Est. Annual Growth (%)</label>
+                <input type="number" id="growth" value="4.0">
+            </div>
+            <div class="input-group">
+                <label>Target FCF Margin (%)</label>
+                <input type="number" id="margin" value="2.5">
+            </div>
+            <div class="input-group">
+                <label>Discount Rate / WACC (%)</label>
+                <input type="number" id="wacc" value="7.5">
+            </div>
+            <div class="input-group">
+                <label>Terminal EV/FCF Multiple</label>
+                <input type="number" id="multiple" value="18">
+            </div>
+            <div class="input-group">
+                <label>Net Debt ($M)</label>
+                <input type="number" id="debt" value="10500">
+            </div>
+            <div class="input-group">
+                <label>Shares Outstanding (M)</label>
+                <input type="number" id="shares" value="482">
+            </div>
+        </div>
+    </section>
+
+    <section class="card highlight-card">
+        <h2 style="color: #b0c4de; border-color: #335c8a;">Intrinsic Value Per Share</h2>
+        <div class="intrinsic-value" id="pricePerShare">$0.00</div>
+        <p id="valuationLabel" class="sub-val">Enterprise Value: $0.00 M</p>
+    </section>
+
+    <section class="card full-width">
+        <h2>Cash Flow Projection (5-Year Forecast)</h2>
+        <table id="projectionTable">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Projected Revenue</th>
+                    <th>Free Cash Flow</th>
+                    <th>Discounted PV</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</div>
+
+<script>
+    const ids = ['baseRev', 'growth', 'margin', 'wacc', 'multiple', 'debt', 'shares'];
+    
+    function calculateDCF() {
+        const baseRev = parseFloat(document.getElementById('baseRev').value);
+        const growth = parseFloat(document.getElementById('growth').value) / 100;
+        const margin = parseFloat(document.getElementById('margin').value) / 100;
+        const wacc = parseFloat(document.getElementById('wacc').value) / 100;
+        const multiple = parseFloat(document.getElementById('multiple').value);
+        const debt = parseFloat(document.getElementById('debt').value);
+        const shares = parseFloat(document.getElementById('shares').value);
+
+        let tableBody = '';
+        let totalPVFCF = 0;
+        let currentRev = baseRev;
+
+        for (let i = 1; i <= 5; i++) {
+            currentRev *= (1 + growth);
+            const fcf = currentRev * margin;
+            const pv = fcf / Math.pow((1 + wacc), i);
+            totalPVFCF += pv;
+
+            tableBody += `
+                <tr>
+                    <td>Year ${i}</td>
+                    <td>$${currentRev.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                    <td>$${fcf.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                    <td>$${pv.toLocaleString(undefined, {maximumFractionDigits: 0})} M</td>
+                </tr>
+            `;
+
+            if (i === 5) {
+                const terminalValue = fcf * multiple;
+                const pvTerminalValue = terminalValue / Math.pow((1 + wacc), 5);
+                const enterpriseValue = totalPVFCF + pvTerminalValue;
+                const equityValue = enterpriseValue - debt; 
+                const price = equityValue / shares;
+
+                document.getElementById('pricePerShare').innerText = `$${price.toFixed(2)}`;
+                document.getElementById('valuationLabel').innerText = `Enterprise Value: $${enterpriseValue.toLocaleString(undefined, {maximumFractionDigits: 0})} M`;
+            }
+        }
+        document.querySelector('#projectionTable tbody').innerHTML = tableBody;
+    }
+
+    ids.forEach(id => document.getElementById(id).addEventListener('input', calculateDCF));
+    calculateDCF();
+</script>
+
+</body>
+</html>
