@@ -1,33 +1,93 @@
 """
 Custom search tool for Úřad práce ČR job listings
-Scrapes real job data from the website
+Uses the official JSON data source from data.mpsv.cz
 """
 
 import requests
-from bs4 import BeautifulSoup
-import json
 from typing import List, Dict, Optional
-from urllib.parse import urlencode
 import re
 import urllib3
-import time
+import json
 
 # Suppress SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class UradPraceSearcher:
-    """Search Úřad práce job listings"""
+    """Search Úřad práce job listings using the official JSON data"""
     
     def __init__(self):
+        self.data_url = "https://data.mpsv.cz/od/soubory/volna-mista/volna-mista.json"
         self.base_url = "https://www.uradprace.cz"
-        self.api_url = "https://www.uradprace.cz/api/v2/job-offers"  # Real API endpoint
+        
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'Accept': 'application/json',
-            'Accept-Language': 'cs-CZ,cs;q=0.9',
-            'Referer': 'https://www.uradprace.cz/volna-mista-v-cr',
         })
+        
+        # Cache the data
+        self.all_jobs = []
+        self._load_data()
+    
+    def _load_data(self):
+        """Load job data from the JSON source"""
+        try:
+            print(f"\n📥 Loading job data from {self.data_url}...")
+            
+            response = self.session.get(
+                self.data_url,
+                timeout=30,
+                verify=False,
+                allow_redirects=True
+            )
+            
+            print(f"   Status: {response.status_code}")
+            print(f"   Content-Type: {response.headers.get('Content-Type', 'Unknown')}")
+            print(f"   Content length: {len(response.content)} bytes")
+            
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    print(f"   Response type: {type(data).__name__}")
+                    
+                    if isinstance(data, dict):
+                        print(f"   Response keys: {list(data.keys())}")
+                    elif isinstance(data, list):
+                        print(f"   Response is a list with {len(data)} items")
+                    
+                    self.all_jobs = self._parse_response(data)
+                    
+                    if self.all_jobs:
+                        print(f"✅ Successfully loaded {len(self.all_jobs)} jobs!")
+                        # Show sample
+                        print(f"\n   Sample job:")
+                        sample = self.all_jobs[0]
+                        print(f"   Title: {sample['title']}")
+                        print(f"   Employer: {sample['employer']}")
+                        print(f"   Salary: {sample['salary']}")
+                    else:
+                        print(f"⚠️  Loaded JSON but found 0 jobs")
+                        print(f"   This might mean the JSON structure is different")
+                
+                except json.JSONDecodeError as e:
+                    print(f"❌ Invalid JSON: {e}")
+                    print(f"   Response preview: {response.text[:200]}")
+            else:
+                print(f"⚠️  HTTP {response.status_code}")
+                print(f"   Response: {response.text[:200]}")
+                self.all_jobs = []
+        
+        except requests.exceptions.ConnectionError:
+            print(f"❌ Connection error - cannot reach {self.data_url}")
+            self.all_jobs = []
+        except requests.exceptions.Timeout:
+            print(f"❌ Timeout - data source is too slow")
+            self.all_jobs = []
+        except Exception as e:
+            print(f"❌ Error loading data: {e}")
+            import traceback
+            traceback.print_exc()
+            self.all_jobs = []
     
     def search_jobs(self, 
                    keyword: Optional[str] = None,
@@ -37,275 +97,228 @@ class UradPraceSearcher:
                    min_salary: Optional[int] = None,
                    max_salary: Optional[int] = None,
                    education: Optional[str] = None) -> List[Dict]:
-        """
-        Search for jobs with custom filters
-        """
+        """Search for jobs with custom filters"""
         
-        print(f"\n🔍 Searching for jobs...")
+        print(f"\n🔍 Searching in {len(self.all_jobs)} jobs...")
+        
+        if not self.all_jobs:
+            print(f"⚠️  No jobs loaded! Trying to reload...")
+            self._load_data()
+        
         if keyword:
             print(f"   Keyword: {keyword}")
         if location:
             print(f"   Location: {location}")
+        if min_salary:
+            print(f"   Min Salary: {min_salary} CZK")
+        if max_salary:
+            print(f"   Max Salary: {max_salary} CZK")
         
-        # Try different API approaches
-        jobs = []
+        # Start with all jobs
+        jobs = self.all_jobs.copy()
         
-        # Try approach 1: Main page with embedded data
-        jobs = self._scrape_main_page(keyword, location, limit * 2)
+        # Filter by keyword
+        if keyword:
+            keyword_lower = keyword.lower()
+            jobs = [j for j in jobs if keyword_lower in j['title'].lower() or 
+                   keyword_lower in j['description'].lower() or
+                   keyword_lower in j['employer'].lower()]
+            print(f"   After keyword filter: {len(jobs)} jobs")
         
-        # Try approach 2: Direct API call
-        if not jobs or len(jobs) < 5:
-            jobs = self._try_api_endpoints(keyword, location, limit * 2)
+        # Filter by location
+        if location:
+            location_lower = location.lower()
+            jobs = [j for j in jobs if location_lower in j['location'].lower()]
+            print(f"   After location filter: {len(jobs)} jobs")
         
-        print(f"📊 Found {len(jobs)} job listings")
+        print(f"📊 Found {len(jobs)} jobs before special filters")
         
-        # Apply filters
+        # Apply special filters
         if jobs:
             if exclude_driver_license:
+                before = len(jobs)
                 jobs = self._filter_driver_license(jobs)
-                print(f"   After driver license filter: {len(jobs)}")
+                print(f"   After driver license filter: {before} → {len(jobs)}")
+            
             if min_salary or max_salary:
+                before = len(jobs)
                 jobs = self._filter_salary(jobs, min_salary, max_salary)
-                print(f"   After salary filter: {len(jobs)}")
+                print(f"   After salary filter: {before} → {len(jobs)}")
+            
             if education:
+                before = len(jobs)
                 jobs = self._filter_education(jobs, education)
-                print(f"   After education filter: {len(jobs)}")
+                print(f"   After education filter: {before} → {len(jobs)}")
         
+        print(f"📊 Final: {len(jobs)} jobs")
         return jobs[:limit]
     
-    def _scrape_main_page(self, keyword: Optional[str], location: Optional[str], limit: int) -> List[Dict]:
-        """Scrape jobs from the main page"""
-        try:
-            print("   📄 Scraping main page...")
-            
-            url = f"{self.base_url}/volna-mista-v-cr"
-            params = {}
-            
-            if keyword:
-                params['q'] = keyword
-            if location:
-                params['location'] = location
-            
-            if params:
-                url += f"?{urlencode(params)}"
-            
-            response = self.session.get(url, timeout=15, verify=False)
-            response.encoding = 'utf-8'
-            
-            if response.status_code != 200:
-                print(f"   ⚠️  HTTP {response.status_code}")
-                return []
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            jobs = []
-            
-            # Look for all links that might be job listings
-            # Find all elements that contain job information
-            for link in soup.find_all('a', href=re.compile(r'/nabidka/|/volna-mista')):
-                href = link.get('href', '')
-                text = link.get_text(strip=True)
-                
-                # Skip if text is too short or empty
-                if not text or len(text) < 3 or text.isdigit():
-                    continue
-                
-                # Check if this looks like a job listing
-                if '/nabidka/' in href or any(word in text.lower() for word in 
-                    ['pracovník', 'specialista', 'vývojář', 'engineer', 'senior', 'junior']):
-                    
-                    job = {
-                        "title": text,
-                        "employer": "",
-                        "location": location or "",
-                        "salary": "",
-                        "type": "Plný úvazek",
-                        "posted": "",
-                        "url": href if href.startswith('http') else self.base_url + href,
-                        "description": text,
-                    }
-                    
-                    jobs.append(job)
-            
-            print(f"   Found {len(jobs)} jobs from main page")
-            return jobs[:limit]
-        
-        except Exception as e:
-            print(f"   ⚠️  Error: {e}")
-            return []
-    
-    def _try_api_endpoints(self, keyword: Optional[str], location: Optional[str], limit: int) -> List[Dict]:
-        """Try different API endpoints"""
-        
-        endpoints = [
-            "https://www.uradprace.cz/api/v2/job-offers",
-            "https://up.gov.cz/api/v1/job-offers",
-            "https://api.apitalks.store/volna-pracovni-mista",
-            "https://www.uradprace.cz/api/jobs",
-        ]
-        
-        for endpoint in endpoints:
-            try:
-                print(f"   📡 Trying {endpoint}...")
-                
-                params = {
-                    'limit': limit,
-                    'offset': 0,
-                    'sort': '-id'
-                }
-                
-                if keyword:
-                    params['q'] = keyword
-                    params['query'] = keyword
-                    params['search'] = keyword
-                
-                if location:
-                    params['location'] = location
-                    params['city'] = location
-                
-                response = self.session.get(endpoint, params=params, timeout=10, verify=False)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    jobs = self._parse_api_response(data)
-                    
-                    if jobs:
-                        print(f"   Found {len(jobs)} jobs from API")
-                        return jobs
-                
-            except Exception as e:
-                continue
-        
-        return []
-    
-    def _parse_api_response(self, data) -> List[Dict]:
-        """Parse API response"""
+    def _parse_response(self, data: Dict) -> List[Dict]:
+        """Parse the JSON response"""
         jobs = []
         
         try:
-            # Handle different response structures
+            # Find the items array in different possible keys
+            items = None
+            
             if isinstance(data, list):
                 items = data
+                print(f"   Data is a list")
             elif isinstance(data, dict):
-                # Try different response formats
-                items = (data.get('results') or 
-                        data.get('data') or 
-                        data.get('items') or 
-                        data.get('jobs') or 
-                        data.get('volna_mista') or 
-                        data.get('offers') or [])
-            else:
+                print(f"   Data is a dict with keys: {list(data.keys())}")
+                
+                # Try different possible keys for items
+                for key in ['polozky', 'items', 'content', 'data', 'results', 'jobs', 'offers', 'volna_mista', 'nabidky']:
+                    if key in data:
+                        items = data[key]
+                        print(f"   Found items under key: '{key}'")
+                        break
+            
+            if not items:
+                print(f"   ⚠️  Could not find items in response")
                 return []
             
             if not isinstance(items, list):
+                print(f"   ⚠️  Items is not a list, it's a {type(items).__name__}")
                 return []
             
-            for item in items:
+            print(f"   Parsing {len(items)} items...")
+            
+            for idx, item in enumerate(items):
                 if not isinstance(item, dict):
                     continue
                 
-                job = {
-                    "title": (item.get("position") or item.get("title") or 
-                             item.get("pozice") or item.get("job_title") or ""),
-                    "employer": (item.get("company") or item.get("employer") or 
-                               item.get("zamestnavatel") or item.get("company_name") or ""),
-                    "location": (item.get("location") or item.get("city") or 
-                               item.get("misto") or item.get("mesto") or ""),
-                    "salary": (item.get("salary") or item.get("mzda") or 
-                              item.get("wage") or item.get("plat") or ""),
-                    "type": (item.get("employment_type") or item.get("type") or 
-                            item.get("uvazek") or item.get("job_type") or "Plný úvazek"),
-                    "posted": (item.get("posted_date") or item.get("posted") or 
-                              item.get("datum") or item.get("date") or ""),
-                    "url": (item.get("url") or item.get("link") or item.get("href") or "#"),
-                    "description": (item.get("description") or item.get("popis") or 
-                                  item.get("summary") or ""),
-                }
+                try:
+                    # Extract salary
+                    salary_from = item.get('mzdaOd') or item.get('salaryMin') or item.get('salary_from')
+                    salary_to = item.get('mzdaDo') or item.get('salaryMax') or item.get('salary_to')
+                    
+                    salary_text = ""
+                    if salary_from and salary_to:
+                        salary_text = f"{salary_from} - {salary_to} Kč/měsíc"
+                    elif salary_from:
+                        salary_text = f"Od {salary_from} Kč/měsíc"
+                    elif salary_to:
+                        salary_text = f"Do {salary_to} Kč/měsíc"
+                    
+                    # Get education
+                    education_info = item.get('vzdelani') or item.get('education') or {}
+                    education_name = ""
+                    if isinstance(education_info, dict):
+                        education_name = education_info.get('nazev') or education_info.get('name') or ''
+                    elif isinstance(education_info, str):
+                        education_name = education_info
+                    
+                    # Extract fields
+                    title = item.get('nazevPozice') or item.get('title') or item.get('position') or ''
+                    employer = item.get('nazevFirmy') or item.get('employer') or item.get('company') or ''
+                    location = item.get('mistoVykonuPrace') or item.get('location') or item.get('city') or ''
+                    job_id = item.get('id') or item.get('offerId') or ''
+                    description = item.get('popis') or item.get('description') or ''
+                    
+                    # Convert salary to int
+                    try:
+                        salary_from = int(str(salary_from).replace(' ', '')) if salary_from else 0
+                        salary_to = int(str(salary_to).replace(' ', '')) if salary_to else 0
+                    except:
+                        salary_from = 0
+                        salary_to = 0
+                    
+                    # Build job object
+                    job = {
+                        "id": str(job_id),
+                        "title": title.strip() if title else '',
+                        "employer": employer.strip() if employer else '',
+                        "location": location.strip() if location else '',
+                        "salary": salary_text.strip() if salary_text else '',
+                        "salary_from": salary_from,
+                        "salary_to": salary_to,
+                        "type": (item.get('typPozice') or item.get('type') or '').strip(),
+                        "posted": (item.get('datumZverejneni') or item.get('publishedDate') or '').strip(),
+                        "education": education_name.strip() if education_name else '',
+                        "url": f"https://www.uradprace.cz/volne-miste/{job_id}" if job_id else "#",
+                        "description": (description[:500] if description else '').strip(),
+                    }
+                    
+                    if job['title']:
+                        jobs.append(job)
                 
-                if job['title']:
-                    jobs.append(job)
-        
+                except Exception as e:
+                    if idx < 3:  # Only log first few errors
+                        print(f"   ⚠️  Error parsing item {idx}: {e}")
+            
+            print(f"   ✅ Successfully parsed {len(jobs)} jobs")
+                    
         except Exception as e:
-            print(f"   Error parsing API: {e}")
+            print(f"   ❌ Parse error: {e}")
+            import traceback
+            traceback.print_exc()
         
         return jobs
     
     def _filter_driver_license(self, jobs: List[Dict]) -> List[Dict]:
         """Filter out jobs requiring a driver's license"""
-        driver_keywords = [
+        keywords = [
             "řidič", "ridic", "řidičský", "ridicsky", "řp",
-            "vozidlo", "auto", "doprava", "řízení", "řidičák",
-            "kategorie", "c+e", "b+e", "driving", "driver",
-            "vozík", "vozik"
+            "vozidlo", "auto", "doprava", "řízení",
+            "vozík", "vozik", "řidičák", "driver", "driving",
+            "kategorie c+e", "kategorie c e", "kategorie b+e", "řidičský průkaz"
         ]
         
         filtered = []
         for job in jobs:
-            title = str(job.get("title", "")).lower()
-            desc = str(job.get("description", "")).lower()
-            text = title + " " + desc
+            text = (job.get('title', '') + ' ' + job.get('description', '')).lower()
+            has_driver = any(kw.lower() in text for kw in keywords)
             
-            if not any(kw.lower() in text for kw in driver_keywords):
+            if not has_driver:
                 filtered.append(job)
         
         return filtered
     
-    def _filter_salary(self, jobs: List[Dict], min_salary: Optional[int], max_salary: Optional[int]) -> List[Dict]:
-        """Filter jobs by salary range"""
+    def _filter_salary(self, jobs: List[Dict], min_sal: Optional[int], max_sal: Optional[int]) -> List[Dict]:
+        """Filter by salary - STRICT filtering"""
         filtered = []
         
         for job in jobs:
-            salary_text = str(job.get("salary", ""))
+            sal_from = job.get('salary_from') or 0
+            sal_to = job.get('salary_to') or 0
             
-            if not salary_text or salary_text == "":
-                filtered.append(job)
+            # If no salary data, exclude it
+            if sal_from == 0 and sal_to == 0:
                 continue
             
-            # Extract numbers from salary
-            numbers = re.findall(r"\d+", salary_text.replace(" ", "").replace(",", ""))
-            
-            if not numbers:
-                filtered.append(job)
-                continue
-            
-            try:
-                # Get minimum salary from the range
-                min_num = min(int(n) for n in numbers if n)
-                
-                if min_salary and min_num < min_salary:
+            # Check minimum salary
+            if min_sal:
+                effective_max = sal_to if sal_to > 0 else sal_from
+                if effective_max < min_sal:
                     continue
-                if max_salary and min_num > max_salary:
+            
+            # Check maximum salary
+            if max_sal:
+                if sal_from > max_sal:
                     continue
-                
-                filtered.append(job)
-            except:
-                filtered.append(job)
+            
+            filtered.append(job)
         
         return filtered
     
     def _filter_education(self, jobs: List[Dict], education: str) -> List[Dict]:
-        """Filter jobs by education level"""
-        education_keywords = {
-            "basic": ["základní", "zakladni"],
-            "vocational": ["vyučen", "střední odborné", "sou", "odborné učiliště"],
-            "secondary": ["maturita", "střední s maturitou", "sš"],
+        """Filter by education level"""
+        keywords = {
+            "basic": ["základní"],
+            "vocational": ["vyučen", "střední odborné", "sou"],
+            "secondary": ["maturita", "střední s maturitou"],
             "higher": ["vyšší odborné", "vos"],
-            "bachelor": ["bakalář", "bc.", "vysokoškolské", "vysokoškolské vzdělání"],
-            "master": ["magistr", "mgr.", "ing.", "vysokoškolské"],
+            "bachelor": ["bakalář", "bc."],
+            "master": ["magistr", "mgr.", "ing."],
             "phd": ["doktor", "ph.d.", "phd"],
         }
         
-        if education not in education_keywords:
+        if education not in keywords:
             return jobs
         
-        keywords = education_keywords[education]
-        filtered = []
-        
-        for job in jobs:
-            text = (str(job.get("title", "")).lower() + " " + 
-                   str(job.get("description", "")).lower())
-            
-            # Check if matches education level
-            if any(kw.lower() in text for kw in keywords):
-                filtered.append(job)
-        
-        return filtered
+        keywords_to_match = keywords[education]
+        return [j for j in jobs if any(
+            kw.lower() in (j.get('education', '') + ' ' + j.get('title', '') + ' ' + j.get('description', '')).lower()
+            for kw in keywords_to_match
+        )]

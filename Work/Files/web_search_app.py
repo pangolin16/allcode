@@ -1,24 +1,109 @@
 """
 Flask web application for searching Úřad práce ČR job listings
-Provides a simple web interface with location and keyword filters
 """
 from flask import Flask, render_template_string, request, jsonify
 from urad_prace_search import UradPraceSearcher
-import json
-import requests
+import logging
+import traceback
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 searcher = UradPraceSearcher()
 
-# Simple test to verify connection on startup
-try:
-    test_url = "https://www.uradprace.cz/volna-mista-v-cr"
-    requests.get(test_url, verify=False, timeout=5)
-    print("✅ Connection to Úřad práce is working.")
-except Exception as e:
-    print(f"⚠️ Startup connection test failed: {e}")
+# Enable CORS and handle errors
+@app.before_request
+def before_request():
+    """Log all requests"""
+    logger.info(f"Request: {request.method} {request.path}")
 
-# HTML Template
+@app.after_request
+def after_request(response):
+    """Add CORS headers to all responses"""
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,HEAD')
+    response.headers.add('X-Content-Type-Options', 'nosniff')
+    return response
+
+@app.route('/api/search', methods=['GET', 'POST', 'OPTIONS'])
+def search():
+    """API endpoint for job search"""
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        # Get parameters from either query string or form data
+        keyword = request.args.get('keyword', '').strip() or request.form.get('keyword', '').strip()
+        location = request.args.get('location', '').strip() or request.form.get('location', '').strip()
+        
+        try:
+            limit = int(request.args.get('limit', 20) or request.form.get('limit', 20))
+        except:
+            limit = 20
+        
+        exclude_driver = (request.args.get('exclude_driver_license', 'false').lower() == 'true' or
+                         request.form.get('exclude_driver_license', 'false').lower() == 'true')
+        
+        try:
+            min_salary = int(request.args.get('min_salary', 0) or request.form.get('min_salary', 0))
+            min_salary = min_salary if min_salary > 0 else None
+        except:
+            min_salary = None
+        
+        try:
+            max_salary = int(request.args.get('max_salary', 0) or request.form.get('max_salary', 0))
+            max_salary = max_salary if max_salary > 0 else None
+        except:
+            max_salary = None
+        
+        education = (request.args.get('education', '') or request.form.get('education', '')).strip() or None
+        
+        logger.info(f"Search params: keyword={keyword}, location={location}, limit={limit}, min={min_salary}, max={max_salary}")
+        
+        # Perform search
+        jobs = searcher.search_jobs(
+            keyword=keyword if keyword else None,
+            location=location if location else None,
+            limit=limit,
+            exclude_driver_license=exclude_driver,
+            min_salary=min_salary,
+            max_salary=max_salary,
+            education=education
+        )
+        
+        logger.info(f"Search returned {len(jobs)} jobs")
+        
+        return jsonify({
+            'success': True,
+            'jobs': jobs,
+            'count': len(jobs),
+            'message': f'Found {len(jobs)} job listings'
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Search error: {e}")
+        logger.error(traceback.format_exc())
+        
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'jobs': [],
+            'count': 0,
+            'message': f'Error: {str(e)}'
+        }), 500
+
+@app.route('/health', methods=['GET'])
+def health():
+    """Health check endpoint"""
+    return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
+
+@app.route('/')
+def index():
+    """Main page"""
+    return render_template_string(HTML_TEMPLATE)
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="cs">
@@ -27,256 +112,142 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Úřad práce ČR - Vyhledávač pracovních míst</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            padding: 20px; 
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
             overflow: hidden;
         }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 40px; 
+            text-align: center; 
         }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .search-form { padding: 40px; background: #f8f9fa; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-family: inherit;
         }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-        
-        .search-form {
-            padding: 40px;
-            background: #f8f9fa;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .search-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
+        input:focus, select:focus { outline: none; border-color: #667eea; background: #fafafa; }
+        .search-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 18px; 
+            font-weight: 600; 
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
         }
-        
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .search-btn:active {
-            transform: translateY(0);
-        }
-        
-        .results {
-            padding: 40px;
-        }
-        
-        .job-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 25px;
+        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .results { padding: 40px; }
+        .job-card { 
+            background: white; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 25px; 
             margin-bottom: 20px;
             transition: all 0.3s;
         }
-        
-        .job-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
-            transform: translateY(-3px);
+        .job-card:hover { 
+            border-color: #667eea; 
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2); 
+            transform: translateY(-2px);
         }
-        
-        .job-title {
-            font-size: 1.5em;
-            color: #333;
-            margin-bottom: 10px;
+        .job-number { color: #999; font-size: 0.9em; }
+        .job-title { 
+            font-size: 1.4em; 
+            margin: 10px 0; 
             word-break: break-word;
         }
-        
-        .job-title a {
-            color: #667eea;
-            text-decoration: none;
-            word-break: break-word;
-        }
-        
-        .job-title a:hover {
-            text-decoration: underline;
-        }
-        
-        .job-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .meta-label {
+        .job-title a { 
+            color: #667eea; 
+            text-decoration: none; 
             font-weight: 600;
-            color: #667eea;
-            font-size: 0.9em;
         }
-        
-        .meta-value {
-            color: #555;
-            word-break: break-word;
-            padding: 5px 0;
-        }
-        
-        .job-description {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-left: 4px solid #667eea;
-            border-radius: 4px;
-            color: #555;
+        .job-title a:hover { text-decoration: underline; }
+        .job-meta { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 15px; 
+            margin-top: 15px; 
             font-size: 0.95em;
-            line-height: 1.5;
+        }
+        .meta-item { 
+            padding: 10px; 
+            background: #f5f5f5; 
+            border-left: 4px solid #667eea; 
+            border-radius: 4px;
+        }
+        .meta-label { 
+            font-weight: 600; 
+            color: #667eea; 
+            margin-bottom: 5px;
+        }
+        .meta-value { 
+            color: #555; 
             word-break: break-word;
         }
-        
-        .job-url {
-            margin-top: 15px;
-            padding: 12px;
-            background: #e8f0ff;
+        .loading { 
+            text-align: center; 
+            padding: 40px; 
+            display: none; 
+        }
+        .spinner { 
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #667eea; 
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 20px; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        .no-results { 
+            text-align: center; 
+            padding: 60px 40px; 
+            color: #666; 
+        }
+        .error { 
+            padding: 20px; 
+            background-color: #f8d7da; 
+            border: 2px solid #f5c6cb; 
+            color: #721c24; 
+            border-radius: 8px; 
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+        .success {
+            padding: 15px;
+            background-color: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .job-url-label {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 8px;
-            display: block;
-            font-size: 0.9em;
-        }
-        
-        .job-url a {
-            color: #667eea;
-            word-break: break-all;
-            text-decoration: none;
-            font-size: 0.85em;
-            display: block;
-        }
-        
-        .job-url a:hover {
-            text-decoration: underline;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 60px 40px;
-            color: #666;
-        }
-        
-        .no-results h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        
-        .example-searches {
-            background: #f0f4ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .example-searches h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .example-searches ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .example-searches li {
-            padding: 5px 0;
-            color: #555;
-        }
-        
-        .example-searches li:before {
-            content: "→ ";
-            color: #667eea;
-            font-weight: bold;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -290,89 +261,167 @@ HTML_TEMPLATE = """
         <div class="search-form">
             <form id="searchForm">
                 <div class="form-group">
-                    <label for="keyword">🏷️ Klíčové slovo (např. logistika, IT, účetní):</label>
-                    <input type="text" id="keyword" name="keyword" placeholder="Zadejte klíčové slovo...">
+                    <label for="keyword">🏷️ Klíčové slovo (volitelné):</label>
+                    <input type="text" id="keyword" name="keyword" placeholder="např. Python, IT, účetní...">
                 </div>
                 
                 <div class="form-group">
-                    <label for="location">📍 Místo (např. Praha, Brno, Ostrava):</label>
-                    <input type="text" id="location" name="location" placeholder="Zadejte město nebo region...">
+                    <label for="location">📍 Místo (volitelné):</label>
+                    <input type="text" id="location" name="location" placeholder="např. Praha, Brno, Ostrava...">
                 </div>
                 
                 <div class="form-group">
                     <label for="minSalary">💰 Minimální mzda (Kč/měsíc):</label>
-                    <input type="number" id="minSalary" name="minSalary" placeholder="např. 30000" min="0" step="1000">
+                    <input type="number" id="minSalary" name="minSalary" placeholder="0" min="0" step="1000">
                 </div>
                 
                 <div class="form-group">
                     <label for="maxSalary">💰 Maximální mzda (Kč/měsíc):</label>
-                    <input type="number" id="maxSalary" name="maxSalary" placeholder="např. 50000" min="0" step="1000">
+                    <input type="number" id="maxSalary" name="maxSalary" placeholder="0" min="0" step="1000">
                 </div>
                 
                 <div class="form-group">
-                    <label for="education">🎓 Požadované vzdělání:</label>
-                    <select id="education" name="education">
-                        <option value="">Všechny</option>
-                        <option value="basic">Základní</option>
-                        <option value="vocational">Vyučení / Střední odborné</option>
-                        <option value="secondary">Střední s maturitou</option>
-                        <option value="higher">Vyšší odborné</option>
-                        <option value="bachelor">Vysokoškolské (Bc.)</option>
-                        <option value="master">Vysokoškolské (Mgr./Ing.)</option>
-                        <option value="phd">Doktorské (Ph.D.)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="limit">📊 Počet výsledků:</label>
-                    <select id="limit" name="limit">
-                        <option value="10">10</option>
-                        <option value="20" selected>20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="excludeDriverLicense" name="excludeDriverLicense" 
-                               style="width: auto; cursor: pointer;">
-                        <span>🚗 Vyloučit nabídky vyžadující řidičský průkaz</span>
+                    <label for="excludeDriver">
+                        <input type="checkbox" id="excludeDriver" name="excludeDriver"> 
+                        🚗 Vyloučit nabídky vyžadující řidičský průkaz
                     </label>
                 </div>
                 
-                <button type="submit" class="search-btn">Hledat pracovní místa</button>
+                <button type="submit" class="search-btn" id="searchBtn">Hledat pracovní místa</button>
             </form>
-            
-            <div class="example-searches">
-                <h4>💡 Příklady vyhledávání:</h4>
-                <ul>
-                    <li>Klíčové slovo: "logistika" + Místo: "Praha"</li>
-                    <li>Klíčové slovo: "IT" + Min. mzda: 40000 Kč</li>
-                    <li>Vzdělání: "Vysokoškolské (Bc.)" + Místo: "Brno"</li>
-                    <li>Min. mzda: 35000 + Max. mzda: 50000 (rozsah platů)</li>
-                    <li>Zaškrtnout "Vyloučit ŘP" pro pozice bez požadavku na řidičský průkaz</li>
-                </ul>
-            </div>
         </div>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Vyhledávání pracovních míst...</p>
+            <p><strong>Hledám pracovní nabídky...</strong></p>
         </div>
         
         <div class="results" id="results"></div>
     </div>
     
     <script>
-        // Helper function to safely convert to string and escape HTML
-        function safeText(value) {
-            if (value === null || value === undefined) {
-                return '';
+        // Add debug logging
+        console.log('Page loaded');
+        
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            const keyword = document.getElementById('keyword').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const minSalary = document.getElementById('minSalary').value.trim();
+            const maxSalary = document.getElementById('maxSalary').value.trim();
+            const excludeDriver = document.getElementById('excludeDriver').checked;
+            
+            console.log('Form values:', { keyword, location, minSalary, maxSalary, excludeDriver });
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').innerHTML = '';
+            
+            try {
+                // Build query string
+                const params = new URLSearchParams();
+                if (keyword) params.append('keyword', keyword);
+                if (location) params.append('location', location);
+                if (minSalary) params.append('min_salary', minSalary);
+                if (maxSalary) params.append('max_salary', maxSalary);
+                if (excludeDriver) params.append('exclude_driver_license', 'true');
+                params.append('limit', '100');
+                
+                const url = `/api/search?${params.toString()}`;
+                console.log('Fetching:', url);
+                
+                // Fetch with better error handling
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Display results
+                if (data.success === false || data.error) {
+                    document.getElementById('results').innerHTML = 
+                        `<div class="error">❌ Chyba: ${data.error || data.message}</div>`;
+                } else if (data.jobs && data.jobs.length > 0) {
+                    displayResults(data.jobs);
+                } else {
+                    document.getElementById('results').innerHTML = 
+                        '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').innerHTML = 
+                    `<div class="error">❌ Chyba: ${error.message}</div>`;
             }
-            // Convert to string if needed
-            const text = String(value);
-            // Escape HTML special characters
+        });
+        
+        function displayResults(jobs) {
+            const div = document.getElementById('results');
+            
+            if (!jobs || jobs.length === 0) {
+                div.innerHTML = '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
+                return;
+            }
+            
+            let html = `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek</div>`;
+            
+            jobs.forEach((job, i) => {
+                const title = job.title || 'Bez názvu';
+                const url = job.url || '#';
+                const salary = job.salary || 'Mzda neuvedena';
+                const location = job.location || '';
+                const employer = job.employer || '';
+                
+                html += `
+                    <div class="job-card">
+                        <div class="job-number">#${i + 1}</div>
+                        <div class="job-title">
+                            <a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>
+                        </div>
+                        <div class="job-meta">
+                            ${salary ? `
+                                <div class="meta-item">
+                                    <div class="meta-label">💰 Mzda</div>
+                                    <div class="meta-value">${escapeHtml(salary)}</div>
+                                </div>
+                            ` : ''}
+                            ${location ? `
+                                <div class="meta-item">
+                                    <div class="meta-label">📍 Místo</div>
+                                    <div class="meta-value">${escapeHtml(location)}</div>
+                                </div>
+                            ` : ''}
+                            ${employer ? `
+                                <div class="meta-item">
+                                    <div class="meta-label">🏢 Zaměstnavatel</div>
+                                    <div class="meta-value">${escapeHtml(employer)}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            div.innerHTML = html;
+        }
+        
+        function escapeHtml(text) {
             const map = {
                 '&': '&amp;',
                 '<': '&lt;',
@@ -380,184 +429,19 @@ HTML_TEMPLATE = """
                 '"': '&quot;',
                 "'": '&#039;'
             };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-        
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const keyword = document.getElementById('keyword').value;
-            const location = document.getElementById('location').value;
-            const limit = document.getElementById('limit').value;
-            const excludeDriverLicense = document.getElementById('excludeDriverLicense').checked;
-            const minSalary = document.getElementById('minSalary').value;
-            const maxSalary = document.getElementById('maxSalary').value;
-            const education = document.getElementById('education').value;
-            
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('results').innerHTML = '';
-            
-            try {
-                const params = new URLSearchParams();
-                if (keyword) params.append('keyword', keyword);
-                if (location) params.append('location', location);
-                params.append('limit', limit);
-                if (excludeDriverLicense) params.append('exclude_driver_license', 'true');
-                if (minSalary) params.append('min_salary', minSalary);
-                if (maxSalary) params.append('max_salary', maxSalary);
-                if (education) params.append('education', education);
-                
-                const response = await fetch(`/api/search?${params}`);
-                const data = await response.json();
-                
-                // Hide loading
-                document.getElementById('loading').style.display = 'none';
-                
-                displayResults(data.jobs);
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('results').innerHTML = 
-                    '<div class="no-results"><h3>Chyba při vyhledávání</h3><p>Zkuste to prosím znovu.</p></div>';
-            }
-        });
-        
-        function displayResults(jobs) {
-            const resultsDiv = document.getElementById('results');
-            
-            if (!jobs || jobs.length === 0) {
-                resultsDiv.innerHTML = `
-                    <div class="no-results">
-                        <h3>😔 Žádné výsledky</h3>
-                        <p>Zkuste změnit kritéria vyhledávání.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = `<h2 style="margin-bottom: 30px; color: #333;">Nalezeno ${jobs.length} pracovních míst</h2>`;
-            
-            jobs.forEach((job, index) => {
-                // Safely handle all job properties
-                const title = safeText(job.title || 'Bez názvu');
-                const employer = safeText(job.employer || '');
-                const location = safeText(job.location || '');
-                const salary = safeText(job.salary || '');
-                const type = safeText(job.type || '');
-                const posted = safeText(job.posted || '');
-                const description = safeText(job.description || '');
-                const url = safeText(job.url || '');
-                
-                const hasUrl = url && url !== '#' && url !== '';
-                
-                html += `
-                    <div class="job-card">
-                        <div class="job-title">
-                            ${index + 1}. 
-                            ${hasUrl ? 
-                                `<a href="${url}" target="_blank" title="Otevřít nabídku práce">${title}</a>` 
-                                : title
-                            }
-                        </div>
-                        
-                        <div class="job-meta">
-                            ${employer ? `
-                                <div class="meta-item">
-                                    <span class="meta-label">🏢 Zaměstnavatel</span>
-                                    <span class="meta-value">${employer}</span>
-                                </div>
-                            ` : ''}
-                            ${location ? `
-                                <div class="meta-item">
-                                    <span class="meta-label">📍 Místo</span>
-                                    <span class="meta-value">${location}</span>
-                                </div>
-                            ` : ''}
-                            ${salary ? `
-                                <div class="meta-item">
-                                    <span class="meta-label">💰 Mzda</span>
-                                    <span class="meta-value">${salary}</span>
-                                </div>
-                            ` : ''}
-                            ${type ? `
-                                <div class="meta-item">
-                                    <span class="meta-label">⏰ Typ práce</span>
-                                    <span class="meta-value">${type}</span>
-                                </div>
-                            ` : ''}
-                            ${posted ? `
-                                <div class="meta-item">
-                                    <span class="meta-label">📅 Zveřejněno</span>
-                                    <span class="meta-value">${posted}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        ${description ? `
-                            <div class="job-description">
-                                <strong>Popis:</strong><br>
-                                ${description.substring(0, 500)}${description.length > 500 ? '...' : ''}
-                            </div>
-                        ` : ''}
-                        
-                        ${hasUrl ? `
-                            <div class="job-url">
-                                <span class="job-url-label">🔗 Odkaz na nabídku:</span>
-                                <a href="${url}" target="_blank">${url}</a>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            
-            resultsDiv.innerHTML = html;
+            return String(text).replace(/[&<>"']/g, m => map[m]);
         }
     </script>
 </body>
 </html>
 """
 
-@app.route('/')
-def index():
-    """Render the main search page"""
-    return render_template_string(HTML_TEMPLATE)
-
-@app.route('/api/search')
-def search():
-    """API endpoint for job search"""
-    keyword = request.args.get('keyword')
-    location = request.args.get('location')
-    limit = int(request.args.get('limit', 20))
-    
-    # These parameters are extracted from the request
-    exclude_driver_license = request.args.get('exclude_driver_license', 'false').lower() == 'true'
-    min_salary = request.args.get('min_salary')
-    max_salary = request.args.get('max_salary')
-    min_salary = int(min_salary) if min_salary else None
-    max_salary = int(max_salary) if max_salary else None
-    education = request.args.get('education') or None
-
-    jobs = searcher.search_jobs(
-        keyword=keyword, 
-        location=location, 
-        limit=limit,
-        exclude_driver_license=exclude_driver_license,
-        min_salary=min_salary,
-        max_salary=max_salary,
-        education=education
-    )
-    
-    return jsonify({
-        'jobs': jobs,
-        'count': len(jobs)
-    })
-
 if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("Úřad práce ČR - Web Search Application")
-    print("="*60)
-    print("\nStarting web server...")
-    print("Open your browser and go to: http://localhost:5000")
+    print("\n" + "="*70)
+    print("🚀 Úřad práce ČR - Vyhledávač pracovních míst")
+    print("="*70)
+    print("\n📍 Server running at: http://localhost:5000")
+    print("🌐 Open your browser and visit: http://localhost:5000")
+    print("\n" + "="*70 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
