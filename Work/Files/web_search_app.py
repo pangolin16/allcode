@@ -63,6 +63,9 @@ def search():
         raw_shifts     = (request.args.get('exclude_shifts', '') or request.form.get('exclude_shifts', '')).strip()
         exclude_shifts = [s.strip() for s in raw_shifts.split(',') if s.strip()] if raw_shifts else None
 
+        raw_regions = (request.args.get('regions', '') or request.form.get('regions', '')).strip()
+        regions     = [r.strip() for r in raw_regions.split(',') if r.strip()] if raw_regions else None
+
         logger.info(f"Search: keyword={keyword} location={location} limit={limit} "
                     f"min={min_salary} max={max_salary} full_time={full_time_only} "
                     f"shifts_excl={exclude_shifts}")
@@ -78,6 +81,7 @@ def search():
             exclude_isco=exclude_isco,
             full_time_only=full_time_only,
             exclude_shifts=exclude_shifts,
+            regions=regions,
         )
 
         logger.info(f"Search returned {len(jobs)} jobs")
@@ -245,6 +249,27 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="form-group">
+                    <label for="regions">🗺️ Kraj (volitelné, lze vybrat více):</label>
+                    <select id="regions" multiple size="5" style="height:auto;">
+                        <option value="Kraj/19">Praha</option>
+                        <option value="Kraj/27">Středočeský kraj</option>
+                        <option value="Kraj/35">Jihočeský kraj</option>
+                        <option value="Kraj/43">Plzeňský kraj</option>
+                        <option value="Kraj/51">Karlovarský kraj</option>
+                        <option value="Kraj/60">Ústecký kraj</option>
+                        <option value="Kraj/78">Liberecký kraj</option>
+                        <option value="Kraj/86">Královéhradecký kraj</option>
+                        <option value="Kraj/94">Pardubický kraj</option>
+                        <option value="Kraj/108">Kraj Vysočina</option>
+                        <option value="Kraj/116">Jihomoravský kraj</option>
+                        <option value="Kraj/124">Olomoucký kraj</option>
+                        <option value="Kraj/132">Moravskoslezský kraj</option>
+                        <option value="Kraj/141">Zlínský kraj</option>
+                    </select>
+                    <small style="color:#888; margin-top:4px; display:block;">Ctrl+klik pro výběr více krajů. Bez výběru = všechny kraje.</small>
+                </div>
+
+                <div class="form-group">
                     <label for="minSalary">💰 Minimální mzda (Kč/měsíc):</label>
                     <input type="number" id="minSalary" placeholder="0" min="0" step="1000">
                 </div>
@@ -315,6 +340,7 @@ HTML_TEMPLATE = """
             const fullTimeOnly  = document.getElementById('fullTimeOnly').checked;
             const excludeIsco   = document.getElementById('excludeIsco').value.trim();
             const checkedShifts = [...document.querySelectorAll('.shiftCheck:checked')].map(cb => cb.value);
+            const selectedRegions = [...document.querySelectorAll('#regions option:checked')].map(o => o.value);
 
             document.getElementById('loading').style.display = 'block';
             document.getElementById('results').innerHTML = '';
@@ -329,6 +355,7 @@ HTML_TEMPLATE = """
                 if (fullTimeOnly)          params.append('full_time_only', 'true');
                 if (excludeIsco)           params.append('exclude_isco', excludeIsco);
                 if (checkedShifts.length)  params.append('exclude_shifts', checkedShifts.join(','));
+                if (selectedRegions.length) params.append('regions', selectedRegions.join(','));
                 params.append('limit', '250');
 
                 const response = await fetch(`/api/search?${params.toString()}`, {

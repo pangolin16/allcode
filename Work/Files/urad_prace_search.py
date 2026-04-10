@@ -271,6 +271,15 @@ class UradPraceSearcher:
             for e in ppr if isinstance(e, dict) and e.get("id")
         ]
 
+        # Region (kraj) — from adresa.kraj.id inside pracoviste
+        kraj_id = ""
+        misto_raw = item.get("mistoVykonuPrace") or {}
+        for _p in (misto_raw.get("pracoviste") or []):
+            _kraj = ((_p.get("adresa") or {}).get("kraj") or {})
+            if _kraj.get("id"):
+                kraj_id = _kraj["id"]
+                break
+
         smennost_raw = item.get("smennost")
         if isinstance(smennost_raw, list):
             shift_ids = [e.get("id","").split("/")[-1] for e in smennost_raw if isinstance(e,dict) and e.get("id")]
@@ -291,6 +300,7 @@ class UradPraceSearcher:
             "type":        job_type,
             "ppr_ids":     ppr_ids,
             "shift_ids":   shift_ids,
+            "kraj_id":     kraj_id,
             "posted":      posted,
             "education":   education,
             "isco_code":   isco_code,
@@ -312,7 +322,8 @@ class UradPraceSearcher:
                     education: Optional[str] = None,
                     exclude_isco: Optional[str] = None,
                     full_time_only: bool = False,
-                    exclude_shifts: Optional[list] = None) -> List[Dict]:
+                    exclude_shifts: Optional[list] = None,
+                    regions: Optional[list] = None) -> List[Dict]:
 
         print(f"\nSearch: kw={keyword!r} loc={location!r} sal={min_salary}-{max_salary} "
               f"driver_excl={exclude_driver_license} edu={education!r}")
@@ -369,6 +380,10 @@ class UradPraceSearcher:
         if exclude_shifts:
             jobs = self._filter_shifts(jobs, exclude_shifts)
             print(f"  after shift filter:         {len(jobs):,}")
+
+        if regions:
+            jobs = self._filter_regions(jobs, regions)
+            print(f"  after region filter:        {len(jobs):,}")
 
         print(f"  => {len(jobs):,} results (returning up to {limit})")
         return jobs[:limit]
@@ -544,3 +559,33 @@ class UradPraceSearcher:
             elif shift_ids - excluded:
                 result.append(job)
         return result
+
+    # Confirmed mapping from live data (kraj ID -> region name)
+    KRAJ_MAP = {
+        'Kraj/19':  'Praha',
+        'Kraj/27':  'Středočeský kraj',
+        'Kraj/35':  'Jihočeský kraj',
+        'Kraj/43':  'Plzeňský kraj',
+        'Kraj/51':  'Karlovarský kraj',
+        'Kraj/60':  'Ústecký kraj',
+        'Kraj/78':  'Liberecký kraj',
+        'Kraj/86':  'Královéhradecký kraj',
+        'Kraj/94':  'Pardubický kraj',
+        'Kraj/108': 'Kraj Vysočina',
+        'Kraj/116': 'Jihomoravský kraj',
+        'Kraj/124': 'Olomoucký kraj',
+        'Kraj/132': 'Moravskoslezský kraj',
+        'Kraj/141': 'Zlínský kraj',
+    }
+
+    @staticmethod
+    def _filter_regions(jobs, regions):
+        """
+        Keep only jobs in the given regions.
+        regions is a list of Kraj IDs, e.g. ["Kraj/19", "Kraj/116"].
+        Jobs with no region info are always kept.
+        """
+        if not regions:
+            return jobs
+        allowed = set(regions)
+        return [j for j in jobs if not j.get("kraj_id") or j["kraj_id"] in allowed]
