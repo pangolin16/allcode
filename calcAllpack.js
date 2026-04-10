@@ -196,3 +196,6 @@ else if(s4<10){document.getElementById("output4").innerHTML="#"}
       
       console.log('Input fields cleared');
     });
+
+
+
