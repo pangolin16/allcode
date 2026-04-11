@@ -25,13 +25,57 @@ def format_to_quarter(date_index):
     return quarters
 
 
-def get_period_labels(df):
+def format_large_value(value):
+    if pd.isna(value):
+        return ""
+    num = float(value)
+    sign = "-" if num < 0 else ""
+    num = abs(num)
+    if num >= 1_000_000_000:
+        return f"{sign}{num / 1_000_000_000:.2f}B"
+    if num >= 1_000_000:
+        return f"{sign}{num / 1_000_000:.2f}M"
+    if num >= 1_000:
+        return f"{sign}{num / 1_000:.2f}K"
+    return f"{sign}{num:,.0f}"
+
+
+def format_percentage_label(value):
+    if pd.isna(value):
+        return ""
+    return f"{value:.1f}%"
+
+
+def format_period_label(date_index, frequency="quarter"):
+    if frequency == "annual":
+        labels = []
+        for date in date_index:
+            if pd.isna(date):
+                labels.append("N/A")
+            else:
+                d = pd.to_datetime(date)
+                labels.append(str(d.year))
+        return labels
+    return format_to_quarter(date_index)
+
+
+def find_column(df, keywords):
+    if df is None:
+        return None
+    for col in df.columns:
+        lower = col.lower()
+        if all(keyword in lower for keyword in keywords):
+            return col
+    return None
+
+
+def get_period_labels(df, frequency="quarter"):
     """Find the best date/period index for chart labels."""
     if isinstance(df.index, pd.PeriodIndex):
-        return format_to_quarter(df.index.to_timestamp())
+        return format_period_label(df.index.to_timestamp(), frequency=frequency)
 
     if isinstance(df.index, pd.DatetimeIndex):
-        return format_to_quarter(df.index)
+        return format_period_label(df.index, frequency=frequency)
 
     if df.index.inferred_type in ("string", "unicode"):
         values = [str(x) for x in df.index]
@@ -39,7 +83,7 @@ def get_period_labels(df):
             return values
         parsed_index = pd.to_datetime(df.index, errors="coerce")
         if parsed_index.notna().all():
-            return format_to_quarter(parsed_index)
+            return format_period_label(parsed_index, frequency=frequency)
 
     if df.index.inferred_type in ("integer", "mixed-integer"):
         years = [int(x) for x in df.index if str(x).isdigit() and 1900 <= int(x) <= 2100]
@@ -63,7 +107,7 @@ def get_period_labels(df):
         if col in df.columns:
             parsed_col = pd.to_datetime(df[col], errors="coerce")
             if parsed_col.notna().all():
-                return format_to_quarter(parsed_col)
+                return format_period_label(parsed_col, frequency=frequency)
 
     for col in df.columns:
         values = df[col].astype(str)
@@ -73,429 +117,394 @@ def get_period_labels(df):
     return [str(x) for x in df.index]
 
 
-def format_large_value(value):
-    if pd.isna(value):
-        return ""
-    num = float(value)
-    sign = "-" if num < 0 else ""
-    num = abs(num)
-    if num >= 1_000_000_000:
-        return f"{sign}{num / 1_000_000_000:.2f}B"
-    if num >= 1_000_000:
-        return f"{sign}{num / 1_000_000:.2f}M"
-    if num >= 1_000:
-        return f"{sign}{num / 1_000:.2f}K"
-    return f"{sign}{num:,.0f}"
+METRIC_OPTIONS = [
+    "Price",
+    "Revenues",
+    "Gross Profit",
+    "Operating Income",
+    "EBITDA",
+    "Net Earnings",
+    "EPS",
+    "Free Cash Flow",
+    "Operating Cash Flow",
+    "Total Assets",
+    "Total Liabilities",
+    "Total Equity",
+    "Cash & Equivalents",
+    "Revenue Growth",
+    "Earnings Growth",
+    "Net Income Growth",
+    "EPS Growth",
+    "Gross Margin",
+    "Operating Margin",
+    "Net Margins",
+    "Current Ratio",
+    "Quick Ratio",
+    "Debt to Equity",
+    "Return on Assets",
+    "Return on Equity",
+    "GMV per buyer",
+    "GMV",
+    "GMV growth",
+    "unique active buyers",
+    "Active seller count",
+    "NPS score",
+    "Advertising take rate",
+    "Advertising revenue",
+    "Advertising revenue growth rate",
+    "Annual Items per Buyer",
+    "Customer acquisition cost",
+    "Avg. Ticket (AOV)",
+    "website Traffic Share",
+    "market share",
+    "Non performing loans past 90 days due",
+    "15-90 Day NPL",
+    "Net Interest Margin After Losses",
+    "customer deposits amount",
+    "Total Customers",
+    "Monthly Active Users (MAU) in Fintech",
+    "Net Revenue Margin on TPV (Fintech Take Rate)",
+    "Float & Deposits Growth",
+]
+
+MANUAL_METRICS = [
+    "GMV per buyer",
+    "GMV",
+    "GMV growth",
+    "unique active buyers",
+    "Active seller count",
+    "NPS score",
+    "Advertising take rate",
+    "Advertising revenue",
+    "Advertising revenue growth rate",
+    "Annual Items per Buyer",
+    "Customer acquisition cost",
+    "Avg. Ticket (AOV)",
+    "website Traffic Share",
+    "market share",
+    "Non performing loans past 90 days due",
+    "15-90 Day NPL",
+    "Net Interest Margin After Losses",
+    "customer deposits amount",
+    "Total Customers",
+    "Monthly Active Users (MAU) in Fintech",
+    "Net Revenue Margin on TPV (Fintech Take Rate)",
+    "Float & Deposits Growth",
+]
+
+API_METRICS = [m for m in METRIC_OPTIONS if m not in MANUAL_METRICS]
 
 
-def format_percentage_label(value):
-    if pd.isna(value):
-        return ""
-    return f"{value:.1f}%"
+def get_price_series(ticker, start_date, end_date):
+    df = obb.equity.price.historical(
+        ticker,
+        start_date=start_date,
+        end_date=end_date,
+        provider="yfinance"
+    ).to_dataframe()
+    return df['close'] if 'close' in df.columns else None
+
+
+def get_metric_series(ticker_data, metric):
+    income = ticker_data.get("income")
+    balance = ticker_data.get("balance")
+    cash = ticker_data.get("cash")
+
+    if metric == "Revenues":
+        col = find_column(income, ["revenue"]) or find_column(income, ["sales"])
+        return income[col] if col is not None else None
+
+    if metric == "Gross Profit":
+        col = find_column(income, ["gross", "profit"])
+        return income[col] if col is not None else None
+
+    if metric == "Operating Income":
+        col = find_column(income, ["operating", "income"])
+        return income[col] if col is not None else None
+
+    if metric == "EBITDA":
+        col = find_column(income, ["ebitda"])
+        return income[col] if col is not None else None
+
+    if metric in ["Net Income", "Net Earnings"]:
+        col = find_column(income, ["net", "income"]) or find_column(income, ["net_income"])
+        return income[col] if col is not None else None
+
+    if metric == "EPS":
+        col = find_column(income, ["eps"]) or find_column(income, ["earnings", "per", "share"])
+        return income[col] if col is not None else None
+
+    if metric == "Operating Cash Flow":
+        col = find_column(cash, ["operating", "cash"])
+        return cash[col] if col is not None else None
+
+    if metric == "Free Cash Flow":
+        col = find_column(cash, ["free", "cash"])
+        return cash[col] if col is not None else None
+
+    if metric == "Cash & Equivalents":
+        col = find_column(balance, ["cash"]) or find_column(balance, ["cash", "equivalents"])
+        return balance[col] if col is not None else None
+
+    if metric == "Total Assets":
+        col = find_column(balance, ["total", "assets"])
+        return balance[col] if col is not None else None
+
+    if metric == "Total Liabilities":
+        col = find_column(balance, ["total", "liabilities"])
+        return balance[col] if col is not None else None
+
+    if metric == "Total Equity":
+        col = find_column(balance, ["total", "equity"]) or find_column(balance, ["shareholders", "equity"])
+        return balance[col] if col is not None else None
+
+    if metric == "Gross Margin":
+        revenue = get_metric_series(ticker_data, "Revenues")
+        gross_profit = get_metric_series(ticker_data, "Gross Profit")
+        return (gross_profit / revenue) * 100 if revenue is not None and gross_profit is not None else None
+
+    if metric == "Operating Margin":
+        revenue = get_metric_series(ticker_data, "Revenues")
+        operating_income = get_metric_series(ticker_data, "Operating Income")
+        return (operating_income / revenue) * 100 if revenue is not None and operating_income is not None else None
+
+    if metric in ["Net Margin", "Net Margins"]:
+        revenue = get_metric_series(ticker_data, "Revenues")
+        net_income = get_metric_series(ticker_data, "Net Income")
+        return (net_income / revenue) * 100 if revenue is not None and net_income is not None else None
+
+    if metric == "Revenue Growth":
+        series = get_metric_series(ticker_data, "Revenues")
+        return series.pct_change() * 100 if series is not None else None
+
+    if metric in ["Net Income Growth", "Earnings Growth"]:
+        series = get_metric_series(ticker_data, "Net Income")
+        return series.pct_change() * 100 if series is not None else None
+
+    if metric == "EPS Growth":
+        series = get_metric_series(ticker_data, "EPS")
+        return series.pct_change() * 100 if series is not None else None
+
+    if metric == "Current Ratio":
+        current_assets = find_column(balance, ["current", "assets"])
+        current_liabilities = find_column(balance, ["current", "liabilities"])
+        if current_assets is not None and current_liabilities is not None:
+            return balance[current_assets] / balance[current_liabilities]
+        return None
+
+    if metric == "Quick Ratio":
+        current_liabilities = find_column(balance, ["current", "liabilities"])
+        quick_assets = None
+        for col in balance.columns:
+            lower = col.lower()
+            if "cash" in lower and "equivalent" in lower:
+                quick_assets = col
+                break
+        if quick_assets is None:
+            quick_assets = find_column(balance, ["cash"]) or find_column(balance, ["cash", "equivalents"])
+        if current_liabilities is not None and quick_assets is not None:
+            return balance[quick_assets] / balance[current_liabilities]
+        return None
+
+    if metric == "Debt to Equity":
+        total_liabilities = get_metric_series(ticker_data, "Total Liabilities")
+        total_equity = get_metric_series(ticker_data, "Total Equity")
+        return total_liabilities / total_equity if total_liabilities is not None and total_equity is not None else None
+
+    if metric == "Return on Assets":
+        net_income = get_metric_series(ticker_data, "Net Income")
+        total_assets = get_metric_series(ticker_data, "Total Assets")
+        return (net_income / total_assets) * 100 if net_income is not None and total_assets is not None else None
+
+    if metric == "Return on Equity":
+        net_income = get_metric_series(ticker_data, "Net Income")
+        total_equity = get_metric_series(ticker_data, "Total Equity")
+        return (net_income / total_equity) * 100 if net_income is not None and total_equity is not None else None
+
+    return None
 
 
 st.set_page_config(page_title="Stock Price Comparison", layout="wide")
 st.title("📈 Stock Price Comparison & Metrics")
 
-# Tab selection
-tab1, tab2 = st.tabs(["Price Comparison", "Financial Metrics"])
+st.set_page_config(page_title="Stock Analysis & Metrics", layout="wide")
+st.title("📈 Stock Analysis & Metrics")
 
-with tab1:
-    # Date range picker
-    col_date1, col_date2 = st.columns(2)
-    with col_date1:
-        start_date = st.date_input("Start Date", value=datetime.now() - timedelta(days=365))
-    with col_date2:
-        end_date = st.date_input("End Date", value=datetime.now())
+# Date range for price
+col_date1, col_date2 = st.columns(2)
+with col_date1:
+    start_date = st.date_input("Start Date", value=datetime.now() - timedelta(days=365))
+with col_date2:
+    end_date = st.date_input("End Date", value=datetime.now())
 
-    # Multiple stock inputs
-    st.subheader("Enter Stock Tickers")
-    col1, col2, col3, col4 = st.columns(4)
-    tickers = []
+# Ticker input
+ticker_input = st.text_input("Search Company Ticker", "AAPL", placeholder="e.g. AAPL")
 
-    with col1:
-        ticker1 = st.text_input(
-            "Stock 1",
-            "AAPL",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-        )
-        st.caption("Company 1")
-        if ticker1:
-            tickers.append(ticker1.upper())
-
-    with col2:
-        ticker2 = st.text_input(
-            "Stock 2",
-            "MSFT",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-        )
-        st.caption("Company 2")
-        if ticker2:
-            tickers.append(ticker2.upper())
-
-    with col3:
-        ticker3 = st.text_input(
-            "Stock 3",
-            "",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-        )
-        st.caption("Company 3")
-        if ticker3:
-            tickers.append(ticker3.upper())
-
-    with col4:
-        ticker4 = st.text_input(
-            "Stock 4",
-            "",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-        )
-        st.caption("Company 4")
-        if ticker4:
-            tickers.append(ticker4.upper())
-
-    if tickers:
-        try:
-            with st.spinner("Fetching data..."):
-                # Create figure
+if ticker_input:
+    ticker = ticker_input.upper()
+    
+    # Metric selector
+    metrics_to_compare = st.multiselect(
+        "Select Metrics",
+        METRIC_OPTIONS,
+        default=["Price", "Revenues", "Net Earnings"]
+    )
+    
+    if metrics_to_compare:
+        # Provider and period
+        col_a, col_b = st.columns([1, 1])
+        with col_a:
+            provider = st.selectbox(
+                "Fundamentals Provider",
+                ["yfinance", "fmp"],
+                index=0,
+                help="yfinance works without API keys; fmp may require FMP_API_KEY in your environment."
+            )
+        with col_b:
+            period_type = st.radio(
+                "Frequency",
+                ["Quarterly (Q/Q)", "Annual (Y/Y)"],
+                index=0,
+                horizontal=True
+            )
+        
+        selected_period = "quarter" if period_type.startswith("Quarterly") else "annual"
+        
+        # Manual data inputs
+        manual_data = {}
+        for metric in metrics_to_compare:
+            if metric in MANUAL_METRICS:
+                with st.expander(f"Manual Input for {metric}"):
+                    st.write("Enter data manually. Format: Period,Value (one per line, e.g. 2023,100)")
+                    data_input = st.text_area(f"Data for {metric}", "", key=f"manual_{metric}")
+                    if data_input.strip():
+                        lines = data_input.strip().split('\n')
+                        periods = []
+                        values = []
+                        for line in lines:
+                            if ',' in line:
+                                parts = line.split(',', 1)
+                                if len(parts) == 2:
+                                    p, v = parts
+                                    periods.append(p.strip())
+                                    try:
+                                        values.append(float(v.strip()))
+                                    except ValueError:
+                                        values.append(0.0)
+                        if periods and values:
+                            manual_data[metric] = pd.Series(values, index=periods)
+        
+        # Fetch API data
+        with st.spinner("Fetching data..."):
+            metrics_data = {}
+            ticker_data = {}
+            for func, key_name in [
+                (obb.equity.fundamental.income, "income"),
+                (obb.equity.fundamental.balance, "balance"),
+                (obb.equity.fundamental.cash, "cash"),
+            ]:
+                try:
+                    df = func(
+                        ticker,
+                        provider=provider,
+                        period=selected_period,
+                    ).to_dataframe(index="period_ending")
+                    ticker_data[key_name] = normalize_financial_df(df)
+                except Exception:
+                    ticker_data[key_name] = pd.DataFrame()
+            
+            metrics_data[ticker] = ticker_data
+        
+        # Chart each selected metric
+        for metric in metrics_to_compare:
+            series = None
+            if metric == "Price":
+                series = get_price_series(ticker, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
+            elif metric in API_METRICS:
+                series = get_metric_series(metrics_data.get(ticker, {}), metric)
+            elif metric in manual_data:
+                series = manual_data[metric]
+            
+            if series is not None and not series.empty:
                 fig = go.Figure()
                 
-                # Fetch data for each ticker and add to chart
-                for ticker in tickers:
-                    df = obb.equity.price.historical(
-                        ticker,
-                        start_date=start_date.strftime("%Y-%m-%d"),
-                        end_date=end_date.strftime("%Y-%m-%d"),
-                        provider="yfinance"
-                    ).to_dataframe()
-                    
+                if metric == "Price":
+                    # Line chart for price
                     fig.add_trace(go.Scatter(
-                        x=df.index,
-                        y=df["close"],
+                        x=series.index,
+                        y=series,
                         mode="lines",
                         name=ticker,
                         line=dict(width=2)
                     ))
+                    fig.update_layout(
+                        template="plotly_white",
+                        title=metric,
+                        xaxis_title="Date",
+                        yaxis_title="Price (USD)",
+                        hovermode="x unified",
+                        height=420
+                    )
+                else:
+                    # Bar or line chart for other metrics
+                    if metric in manual_data:
+                        labels = list(series.index)
+                    else:
+                        labels = get_period_labels(series.to_frame(), frequency=selected_period)
+                    
+                    is_percentage_metric = (
+                        "Growth" in metric or 
+                        "Margin" in metric or 
+                        metric in ["Current Ratio", "Quick Ratio", "Debt to Equity", "Return on Assets", "Return on Equity"]
+                    )
+                    
+                    if is_percentage_metric:
+                        fig.add_trace(go.Scatter(
+                            x=labels,
+                            y=series,
+                            mode="lines+markers+text",
+                            name=ticker,
+                            line=dict(width=2),
+                            text=[
+                                format_percentage_label(v) if "Growth" in metric or "Margin" in metric or metric in ["Return on Assets", "Return on Equity"] else f"{v:.2f}"
+                                for v in series
+                            ],
+                            textposition="top center"
+                        ))
+                        yaxis_title = metric + (" (%)" if "Growth" in metric or "Margin" in metric or metric in ["Return on Assets", "Return on Equity"] else "")
+                        fig.update_layout(
+                            template="plotly_white",
+                            xaxis_type="category",
+                            xaxis_title="Period",
+                            yaxis_title=yaxis_title,
+                            hovermode="x unified",
+                            height=420
+                        )
+                    else:
+                        fig.add_trace(go.Bar(
+                            x=labels,
+                            y=series,
+                            name=ticker,
+                            text=[format_large_value(v) for v in series],
+                            textposition="auto",
+                            texttemplate="%{text}"
+                        ))
+                        fig.update_layout(
+                            template="plotly_white",
+                            barmode="group",
+                            xaxis_type="category",
+                            xaxis_title="Period",
+                            yaxis_title=metric,
+                            yaxis_tickformat="~s",
+                            hovermode="x unified",
+                            height=420
+                        )
                 
-                # Update layout with white background
-                fig.update_layout(
-                    title="Stock Price Comparison",
-                    xaxis_title="Date",
-                    yaxis_title="Price (USD)",
-                    hovermode="x unified",
-                    template="plotly_white",
-                    height=600,
-                    font=dict(size=12)
-                )
-                
+                st.subheader(metric)
                 st.plotly_chart(fig, use_container_width=True)
-
-        except Exception as e:
-            st.error(f"Error: {e}")
-
-with tab2:
-    st.subheader("Financial Metrics Comparison")
-    
-    # Stock inputs for metrics
-    st.markdown("#### Search Companies")
-    col1, col2, col3, col4 = st.columns(4)
-    metric_tickers = []
-
-    with col1:
-        m_ticker1 = st.text_input(
-            "Company 1",
-            "AAPL",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-            key="m1",
-        )
-        st.caption("Company 1")
-        if m_ticker1:
-            metric_tickers.append(m_ticker1.upper())
-
-    with col2:
-        m_ticker2 = st.text_input(
-            "Company 2",
-            "MSFT",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-            key="m2",
-        )
-        st.caption("Company 2")
-        if m_ticker2:
-            metric_tickers.append(m_ticker2.upper())
-
-    with col3:
-        m_ticker3 = st.text_input(
-            "Company 3",
-            "",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-            key="m3",
-        )
-        st.caption("Company 3")
-        if m_ticker3:
-            metric_tickers.append(m_ticker3.upper())
-
-    with col4:
-        m_ticker4 = st.text_input(
-            "Company 4",
-            "",
-            placeholder="Search ticker",
-            label_visibility="collapsed",
-            key="m4",
-        )
-        st.caption("Company 4")
-        if m_ticker4:
-            metric_tickers.append(m_ticker4.upper())
-
-    # Metric selection
-    st.subheader("Select Metrics to Compare")
-    metrics_to_compare = st.multiselect(
-        "Metrics",
-        ["Revenues", "Revenue Growth", "Net Earnings", "Earnings Growth", "Net Margins"],
-        default=["Revenues", "Net Earnings"]
-    )
-
-    if metric_tickers and metrics_to_compare:
-        try:
-            with st.spinner("Fetching financial data..."):
-                metrics_data = {}
-                
-                # Fetch financial data for each ticker
-                for ticker in metric_tickers:
-                    income_statement = obb.equity.fundamental.income(
-                        ticker,
-                        provider="yfinance"
-                    ).to_dataframe(index="period_ending")
-                    
-                    if income_statement is not None and not income_statement.empty:
-                        if not isinstance(income_statement.index, pd.DatetimeIndex):
-                            income_statement.index = pd.to_datetime(
-                                income_statement.index, errors="coerce"
-                            )
-                        income_statement = income_statement.sort_index(ascending=True)
-                        metrics_data[ticker] = income_statement
-                
-                # Debug info - show available data
-                if metrics_data:
-                    with st.expander("📊 Debug Info - Available Data Columns"):
-                        for ticker, df in metrics_data.items():
-                            st.write(f"**{ticker}**: {len(df)} records")
-                            st.write(f"Columns: {list(df.columns)}")
-                            st.write(f"Date range: {df.index[0]} to {df.index[-1]}")
-
-                # Display metrics in separate charts
-                if "Revenues" in metrics_to_compare:
-                    st.subheader("Revenues")
-                    fig_rev = go.Figure()
-                    has_revenue_data = False
-                    for ticker in metric_tickers:
-                        if ticker in metrics_data:
-                            df = metrics_data[ticker]
-                            # Try different column names for revenue
-                            revenue_col = None
-                            for col in df.columns:
-                                if 'revenue' in col.lower() or 'sales' in col.lower():
-                                    revenue_col = col
-                                    break
-                            
-                            if revenue_col is not None:
-                                has_revenue_data = True
-                                quarter_labels = get_period_labels(df)
-                                fig_rev.add_trace(go.Bar(
-                                    x=quarter_labels,
-                                    y=df[revenue_col],
-                                    name=ticker,
-                                    text=[format_large_value(v) for v in df[revenue_col]],
-                                    textposition="auto",
-                                    texttemplate="%{text}"
-                                ))
-                    
-                    if has_revenue_data:
-                        fig_rev.update_layout(
-                            template="plotly_white",
-                            hovermode="x unified",
-                            height=400,
-                            barmode="group",
-                            xaxis_type="category",
-                            xaxis_title="Period",
-                            yaxis_title="Revenue (USD)",
-                            yaxis_tickformat="~s"
-                        )
-                        st.plotly_chart(fig_rev, use_container_width=True)
-                    else:
-                        st.warning("No revenue data available for selected companies")
-
-                if "Revenue Growth" in metrics_to_compare:
-                    st.subheader("Revenue Growth")
-                    fig_rev_growth = go.Figure()
-                    has_growth_data = False
-                    for ticker in metric_tickers:
-                        if ticker in metrics_data:
-                            df = metrics_data[ticker]
-                            # Find revenue column
-                            revenue_col = None
-                            for col in df.columns:
-                                if 'revenue' in col.lower() or 'sales' in col.lower():
-                                    revenue_col = col
-                                    break
-                            
-                            if revenue_col is not None:
-                                revenue_growth = df[revenue_col].pct_change() * 100
-                                quarter_labels = get_period_labels(df)
-                                has_growth_data = True
-                                fig_rev_growth.add_trace(go.Scatter(
-                                    x=quarter_labels,
-                                    y=revenue_growth,
-                                    mode="lines+markers+text",
-                                    name=ticker,
-                                    line=dict(width=2),
-                                    text=[format_percentage_label(v) for v in revenue_growth],
-                                    textposition="top center"
-                                ))
-                    
-                    if has_growth_data:
-                        fig_rev_growth.update_layout(
-                            template="plotly_white",
-                            hovermode="x unified",
-                            height=400,
-                            xaxis_type="category",
-                            xaxis_title="Period",
-                            yaxis_title="Revenue Growth (%)"
-                        )
-                        st.plotly_chart(fig_rev_growth, use_container_width=True)
-                    else:
-                        st.warning("No revenue growth data available")
-
-                if "Net Earnings" in metrics_to_compare:
-                    st.subheader("Net Earnings")
-                    fig_earnings = go.Figure()
-                    has_earnings_data = False
-                    for ticker in metric_tickers:
-                        if ticker in metrics_data:
-                            df = metrics_data[ticker]
-                            # Try different column names for net income
-                            earnings_col = None
-                            for col in df.columns:
-                                if 'net_income' in col.lower() or 'net income' in col.lower():
-                                    earnings_col = col
-                                    break
-                            
-                            if earnings_col is not None:
-                                has_earnings_data = True
-                                quarter_labels = get_period_labels(df)
-                                fig_earnings.add_trace(go.Bar(
-                                    x=quarter_labels,
-                                    y=df[earnings_col],
-                                    name=ticker,
-                                    text=[format_large_value(v) for v in df[earnings_col]],
-                                    textposition="auto",
-                                    texttemplate="%{text}"
-                                ))
-                    
-                    if has_earnings_data:
-                        fig_earnings.update_layout(
-                            template="plotly_white",
-                            hovermode="x unified",
-                            height=400,
-                            barmode="group",
-                            xaxis_type="category",
-                            xaxis_title="Period",
-                            yaxis_title="Net Earnings (USD)",
-                            yaxis_tickformat="~s"
-                        )
-                        st.plotly_chart(fig_earnings, use_container_width=True)
-                    else:
-                        st.warning("No net earnings data available for selected companies")
-
-                if "Earnings Growth" in metrics_to_compare:
-                    st.subheader("Earnings Growth")
-                    fig_earnings_growth = go.Figure()
-                    has_earnings_growth_data = False
-                    for ticker in metric_tickers:
-                        if ticker in metrics_data:
-                            df = metrics_data[ticker]
-                            # Find net income column
-                            earnings_col = None
-                            for col in df.columns:
-                                if 'net_income' in col.lower() or 'net income' in col.lower():
-                                    earnings_col = col
-                                    break
-                            
-                            if earnings_col is not None:
-                                earnings_growth = df[earnings_col].pct_change() * 100
-                                quarter_labels = get_period_labels(df)
-                                has_earnings_growth_data = True
-                                fig_earnings_growth.add_trace(go.Scatter(
-                                    x=quarter_labels,
-                                    y=earnings_growth,
-                                    mode="lines+markers+text",
-                                    name=ticker,
-                                    line=dict(width=2),
-                                    text=[format_percentage_label(v) for v in earnings_growth],
-                                    textposition="top center"
-                                ))
-                    
-                    if has_earnings_growth_data:
-                        fig_earnings_growth.update_layout(
-                            template="plotly_white",
-                            hovermode="x unified",
-                            height=400,
-                            xaxis_type="category",
-                            xaxis_title="Period",
-                            yaxis_title="Earnings Growth (%)"
-                        )
-                        st.plotly_chart(fig_earnings_growth, use_container_width=True)
-                    else:
-                        st.warning("No earnings growth data available")
-
-                if "Net Margins" in metrics_to_compare:
-                    st.subheader("Net Margins")
-                    fig_margins = go.Figure()
-                    has_margin_data = False
-                    for ticker in metric_tickers:
-                        if ticker in metrics_data:
-                            df = metrics_data[ticker]
-                            # Find revenue and net income columns
-                            revenue_col = None
-                            earnings_col = None
-                            for col in df.columns:
-                                if 'revenue' in col.lower() or 'sales' in col.lower():
-                                    revenue_col = col
-                                if 'net_income' in col.lower() or 'net income' in col.lower():
-                                    earnings_col = col
-                            
-                            if revenue_col is not None and earnings_col is not None:
-                                net_margin = (df[earnings_col] / df[revenue_col]) * 100
-                                quarter_labels = get_period_labels(df)
-                                has_margin_data = True
-                                fig_margins.add_trace(go.Scatter(
-                                    x=quarter_labels,
-                                    y=net_margin,
-                                    mode="lines+markers+text",
-                                    name=ticker,
-                                    line=dict(width=2),
-                                    text=[format_percentage_label(v) for v in net_margin],
-                                    textposition="top center"
-                                ))
-                    
-                    if has_margin_data:
-                        fig_margins.update_layout(
-                            template="plotly_white",
-                            hovermode="x unified",
-                            height=400,
-                            xaxis_type="category",
-                            xaxis_title="Period",
-                            yaxis_title="Net Margin (%)"
-                        )
-                        st.plotly_chart(fig_margins, use_container_width=True)
-                    else:
-                        st.warning("No net margin data available")
-
-        except Exception as e:
-            st.error(f"Error fetching financial data: {e}")
-            st.info("Note: Make sure the ticker symbols are correct and financial data is available.")
+            else:
+                st.warning(f"No data available for {metric}.")
+    else:
+        st.info("Select at least one metric to analyze.")
+else:
+    st.info("Enter a ticker symbol to get started.")
