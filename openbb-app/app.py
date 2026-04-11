@@ -3,17 +3,10 @@ from openbb import obb
 import plotly.express as px
 import os
 
-# Set provider credentials
-obb.user.credentials.fmp_api_key = os.getenv("FRED_API_KEY")
+# Set provider credentials via env vars (keep secrets out of source code)
+obb.user.credentials.fred_api_key = os.getenv("FRED_API_KEY")
+obb.user.credentials.alpha_vantage_api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
 
-
-
-obb.user.credentials.set(
-    {
-        "alpha_vantage_api_key": "YOUR_KEY",
-        "fred_api_key": "a7febb3893d76b71c576a2c774bf4fe5",
-    }
-)
 st.set_page_config(page_title="OpenBB Dashboard", layout="wide")
 st.title("📈 Financial Dashboard")
 

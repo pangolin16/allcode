@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/michal/Documents/gitpage/allcode/.venv
+set -gx VIRTUAL_ENV /home/michal/Documents/gitpage/allcode/openbb-app/.venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

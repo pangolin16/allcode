@@ -1,0 +1,15 @@
+{ pkgs ? import <nixpkgs> {} }:
+
+pkgs.mkShell {
+  buildInputs = [
+    (pkgs.python3.withPackages (ps: with ps; [
+      streamlit
+      # Add other dependencies here, e.g., pandas, numpy
+      pandas
+    ]))
+  ];
+
+  shellHook = ''
+    echo "Streamlit environment loaded!"
+  '';
+}
