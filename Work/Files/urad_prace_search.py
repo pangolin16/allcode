@@ -288,66 +288,66 @@ class UradPraceSearcher:
         else:
             shift_ids = []
 
-            # Languages: try several possible fields and also fall back to scanning
-            # descriptive text. Normalize into short tokens for filtering.
-            languages_found = []
-            # Common field names that may contain language info
-            for key in ("jazykoveZnalosti", "jazyk", "pozadovanaJazykovaZnalost", "jazykovaZnalost", "jazykove_znalosti"):
-                val = item.get(key)
-                if not val:
-                    continue
-                if isinstance(val, str):
-                    if val.strip():
-                        languages_found.append(val.strip())
-                elif isinstance(val, dict):
-                    # dict may contain 'jazyk' or 'nazev'
-                    lang_text = _extract(val.get("jazyk") or val.get("nazev") or val.get("name"))
-                    if lang_text:
-                        languages_found.append(lang_text)
-                elif isinstance(val, list):
-                    for e in val:
-                        if isinstance(e, dict):
-                            languages_found.append(_extract(e.get("jazyk") or e.get("nazev") or e.get("name") or e))
-                        else:
-                            languages_found.append(_extract(e))
+        # Languages: try several possible fields and also fall back to scanning
+        # descriptive text. Normalize into short tokens for filtering.
+        languages_found = []
+        # Common field names that may contain language info
+        for key in ("jazykoveZnalosti", "jazyk", "pozadovanaJazykovaZnalost", "jazykovaZnalost", "jazykove_znalosti"):
+            val = item.get(key)
+            if not val:
+                continue
+            if isinstance(val, str):
+                if val.strip():
+                    languages_found.append(val.strip())
+            elif isinstance(val, dict):
+                # dict may contain 'jazyk' or 'nazev'
+                lang_text = _extract(val.get("jazyk") or val.get("nazev") or val.get("name"))
+                if lang_text:
+                    languages_found.append(lang_text)
+            elif isinstance(val, list):
+                for e in val:
+                    if isinstance(e, dict):
+                        languages_found.append(_extract(e.get("jazyk") or e.get("nazev") or e.get("name") or e))
+                    else:
+                        languages_found.append(_extract(e))
 
-            # Also look in description/title for explicit language mentions
-            text_scan = _normalize((item.get("upresnujiciInformace") or item.get("popis") or "") + " " + title)
-            explicit_langs = []
-            for raw in languages_found:
-                n = _normalize(raw)
-                if n:
-                    explicit_langs.append(n)
+        # Also look in description/title for explicit language mentions
+        text_scan = _normalize((item.get("upresnujiciInformace") or item.get("popis") or "") + " " + title)
+        explicit_langs = []
+        for raw in languages_found:
+            n = _normalize(raw)
+            if n:
+                explicit_langs.append(n)
 
-            # Combine explicit langs and any mentions found in text
-            combined = set(explicit_langs)
-            # quick keyword checks for common languages
-            lang_keyword_map = {
-                "czech": ["cest", "cesk"],
-                "slovak": ["slov"],
-                "english": ["angl", "english"],
-                "french": ["franc"],
-                "spanish": ["span", "espan"],
-            }
-            # If keywords appear in scanned text, add them
+        # Combine explicit langs and any mentions found in text
+        combined = set(explicit_langs)
+        # quick keyword checks for common languages
+        lang_keyword_map = {
+            "czech": ["cest", "cesk"],
+            "slovak": ["slov"],
+            "english": ["angl", "english"],
+            "french": ["franc"],
+            "spanish": ["span", "espan"],
+        }
+        # If keywords appear in scanned text, add them
+        for slug, kws in lang_keyword_map.items():
+            for kw in kws:
+                if kw in text_scan:
+                    combined.add(slug)
+                    break
+
+        # Also map explicit language names to slugs
+        for n in explicit_langs:
             for slug, kws in lang_keyword_map.items():
-                for kw in kws:
-                    if kw in text_scan:
-                        combined.add(slug)
-                        break
+                if any(k in n for k in kws):
+                    combined.add(slug)
+                    break
+            else:
+                # keep other languages as their normalized form
+                combined.add(n)
 
-            # Also map explicit language names to slugs
-            for n in explicit_langs:
-                for slug, kws in lang_keyword_map.items():
-                    if any(k in n for k in kws):
-                        combined.add(slug)
-                        break
-                else:
-                    # keep other languages as their normalized form
-                    combined.add(n)
-
-            # Build a searchable text blob for languages (used for passive mentions)
-            language_search = text_scan
+        # Build a searchable text blob for languages (used for passive mentions)
+        language_search = text_scan
 
         return {
             "id":          job_id,
