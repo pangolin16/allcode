@@ -63,12 +63,16 @@ def search():
         raw_shifts     = (request.args.get('exclude_shifts', '') or request.form.get('exclude_shifts', '')).strip()
         exclude_shifts = [s.strip() for s in raw_shifts.split(',') if s.strip()] if raw_shifts else None
 
+        # exclude_languages arrives as comma-separated slugs: "english,czech,other"
+        raw_langs = (request.args.get('exclude_languages', '') or request.form.get('exclude_languages', '')).strip()
+        exclude_languages = [s.strip() for s in raw_langs.split(',') if s.strip()] if raw_langs else None
+
         raw_regions = (request.args.get('regions', '') or request.form.get('regions', '')).strip()
         regions     = [r.strip() for r in raw_regions.split(',') if r.strip()] if raw_regions else None
 
         logger.info(f"Search: keyword={keyword} location={location} limit={limit} "
                     f"min={min_salary} max={max_salary} full_time={full_time_only} "
-                    f"shifts_excl={exclude_shifts}")
+                    f"shifts_excl={exclude_shifts} langs_excl={exclude_languages}")
 
         jobs = searcher.search_jobs(
             keyword=keyword if keyword else None,
@@ -81,12 +85,15 @@ def search():
             exclude_isco=exclude_isco,
             full_time_only=full_time_only,
             exclude_shifts=exclude_shifts,
+            exclude_languages=exclude_languages,
             regions=regions,
         )
 
-        logger.info(f"Search returned {len(jobs)} jobs")
+        employer_count = len({j.get('employer') for j in jobs if j.get('employer')})
+        logger.info(f"Search returned {len(jobs)} jobs from {employer_count} employers")
         return jsonify({'success': True, 'jobs': jobs, 'count': len(jobs),
-                        'message': f'Found {len(jobs)} job listings'}), 200
+                'employer_count': employer_count,
+                'message': f'Found {len(jobs)} job listings'}), 200
 
     except Exception as e:
         logger.error(f"Search error: {e}")
@@ -310,6 +317,18 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="form-group">
+                    <label>🗣️ Vyloučit podle požadované jazykové znalosti:</label>
+                    <div class="shift-grid">
+                        <label><input type="checkbox" class="langCheck" value="czech">   Čeština</label>
+                        <label><input type="checkbox" class="langCheck" value="slovak">  Slovenština</label>
+                        <label><input type="checkbox" class="langCheck" value="english"> Angličtina</label>
+                        <label><input type="checkbox" class="langCheck" value="french">   Francouzština</label>
+                        <label><input type="checkbox" class="langCheck" value="spanish">  Španělština</label>
+                        <label><input type="checkbox" class="langCheck" value="other">    Ostatní</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="excludeIsco">🚫 Vyloučit CS-ISCO kódy (jeden per řádek, rozsahy jako 11110-35229):</label>
                     <textarea id="excludeIsco" rows="4"
                         placeholder="72241&#10;72242&#10;11110-35229"
@@ -340,6 +359,7 @@ HTML_TEMPLATE = """
             const fullTimeOnly  = document.getElementById('fullTimeOnly').checked;
             const excludeIsco   = document.getElementById('excludeIsco').value.trim();
             const checkedShifts = [...document.querySelectorAll('.shiftCheck:checked')].map(cb => cb.value);
+            const checkedLangs  = [...document.querySelectorAll('.langCheck:checked')].map(cb => cb.value);
             const selectedRegions = [...document.querySelectorAll('#regions option:checked')].map(o => o.value);
 
             document.getElementById('loading').style.display = 'block';
@@ -355,6 +375,7 @@ HTML_TEMPLATE = """
                 if (fullTimeOnly)          params.append('full_time_only', 'true');
                 if (excludeIsco)           params.append('exclude_isco', excludeIsco);
                 if (checkedShifts.length)  params.append('exclude_shifts', checkedShifts.join(','));
+                if (checkedLangs.length)   params.append('exclude_languages', checkedLangs.join(','));
                 if (selectedRegions.length) params.append('regions', selectedRegions.join(','));
                 params.append('limit', '250');
 
@@ -372,7 +393,8 @@ HTML_TEMPLATE = """
                     document.getElementById('results').innerHTML =
                         `<div class="error">❌ Chyba: ${data.error || data.message}</div>`;
                 } else if (data.jobs && data.jobs.length > 0) {
-                    displayResults(data.jobs);
+                    const employerCount = data.employer_count ?? new Set(data.jobs.map(j => j.employer).filter(Boolean)).size;
+                    displayResults(data.jobs, employerCount);
                 } else {
                     document.getElementById('results').innerHTML =
                         '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
@@ -384,9 +406,9 @@ HTML_TEMPLATE = """
             }
         });
 
-        function displayResults(jobs) {
+        function displayResults(jobs, employerCount) {
             const div = document.getElementById('results');
-            let html = `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek</div>`;
+            let html = `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek od <strong>${employerCount}</strong> zaměstnavatelů</div>`;
             jobs.forEach((job, i) => {
                 const title    = job.title    || 'Bez názvu';
                 const url      = job.url      || '#';

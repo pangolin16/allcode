@@ -288,6 +288,67 @@ class UradPraceSearcher:
         else:
             shift_ids = []
 
+            # Languages: try several possible fields and also fall back to scanning
+            # descriptive text. Normalize into short tokens for filtering.
+            languages_found = []
+            # Common field names that may contain language info
+            for key in ("jazykoveZnalosti", "jazyk", "pozadovanaJazykovaZnalost", "jazykovaZnalost", "jazykove_znalosti"):
+                val = item.get(key)
+                if not val:
+                    continue
+                if isinstance(val, str):
+                    if val.strip():
+                        languages_found.append(val.strip())
+                elif isinstance(val, dict):
+                    # dict may contain 'jazyk' or 'nazev'
+                    lang_text = _extract(val.get("jazyk") or val.get("nazev") or val.get("name"))
+                    if lang_text:
+                        languages_found.append(lang_text)
+                elif isinstance(val, list):
+                    for e in val:
+                        if isinstance(e, dict):
+                            languages_found.append(_extract(e.get("jazyk") or e.get("nazev") or e.get("name") or e))
+                        else:
+                            languages_found.append(_extract(e))
+
+            # Also look in description/title for explicit language mentions
+            text_scan = _normalize((item.get("upresnujiciInformace") or item.get("popis") or "") + " " + title)
+            explicit_langs = []
+            for raw in languages_found:
+                n = _normalize(raw)
+                if n:
+                    explicit_langs.append(n)
+
+            # Combine explicit langs and any mentions found in text
+            combined = set(explicit_langs)
+            # quick keyword checks for common languages
+            lang_keyword_map = {
+                "czech": ["cest", "cesk"],
+                "slovak": ["slov"],
+                "english": ["angl", "english"],
+                "french": ["franc"],
+                "spanish": ["span", "espan"],
+            }
+            # If keywords appear in scanned text, add them
+            for slug, kws in lang_keyword_map.items():
+                for kw in kws:
+                    if kw in text_scan:
+                        combined.add(slug)
+                        break
+
+            # Also map explicit language names to slugs
+            for n in explicit_langs:
+                for slug, kws in lang_keyword_map.items():
+                    if any(k in n for k in kws):
+                        combined.add(slug)
+                        break
+                else:
+                    # keep other languages as their normalized form
+                    combined.add(n)
+
+            # Build a searchable text blob for languages (used for passive mentions)
+            language_search = text_scan
+
         return {
             "id":          job_id,
             "title":       title,
@@ -306,6 +367,8 @@ class UradPraceSearcher:
             "isco_code":   isco_code,
             "url":         f"https://up.gov.cz/volna-mista-v-cr#/volna-mista-detail/{job_id}" if job_id else "#",
             "description": desc,
+            "languages":   list(combined),
+            "language_search": language_search,
         }
 
     # ------------------------------------------------------------------
@@ -323,10 +386,11 @@ class UradPraceSearcher:
                     exclude_isco: Optional[str] = None,
                     full_time_only: bool = False,
                     exclude_shifts: Optional[list] = None,
+                    exclude_languages: Optional[list] = None,
                     regions: Optional[list] = None) -> List[Dict]:
 
         print(f"\nSearch: kw={keyword!r} loc={location!r} sal={min_salary}-{max_salary} "
-              f"driver_excl={exclude_driver_license} edu={education!r}")
+              f"driver_excl={exclude_driver_license} edu={education!r} langs={exclude_languages}")
 
         if not self.all_jobs:
             print("No jobs cached - reloading...")
@@ -380,6 +444,10 @@ class UradPraceSearcher:
         if exclude_shifts:
             jobs = self._filter_shifts(jobs, exclude_shifts)
             print(f"  after shift filter:         {len(jobs):,}")
+
+        if exclude_languages:
+            jobs = self._filter_languages(jobs, exclude_languages)
+            print(f"  after language filter:      {len(jobs):,}")
 
         if regions:
             jobs = self._filter_regions(jobs, regions)
@@ -558,6 +626,60 @@ class UradPraceSearcher:
                 result.append(job)
             elif shift_ids - excluded:
                 result.append(job)
+        return result
+
+    @staticmethod
+    def _filter_languages(jobs, exclude_languages):
+        """
+        Exclude jobs that require languages in the exclude list.
+        exclude_languages is a list of slugs: czech, slovak, english, french, spanish, other
+        Jobs with no language info are kept unless a passive mention in text matches.
+        """
+        if not exclude_languages:
+            return jobs
+        excluded = {s.lower() for s in exclude_languages}
+        known = {"czech", "slovak", "english", "french", "spanish"}
+
+        # keyword map (same as parsing)
+        lang_keyword_map = {
+            "czech": ["cest", "cesk"],
+            "slovak": ["slov"],
+            "english": ["angl", "english"],
+            "french": ["franc"],
+            "spanish": ["span", "espan"],
+        }
+
+        result = []
+        for job in jobs:
+            job_langs = set((job.get("languages") or []))
+            lang_text = _normalize(job.get("language_search") or "" )
+
+            should_exclude = False
+
+            # If 'other' is requested, exclude jobs that mention any language
+            # not in the known set.
+            if "other" in excluded:
+                for l in job_langs:
+                    if l and l not in known:
+                        should_exclude = True
+                        break
+
+            # Check explicit known languages and passive mentions
+            for slug in (excluded & known):
+                if slug in job_langs:
+                    should_exclude = True
+                    break
+                # check passive mentions in language_search text
+                for kw in lang_keyword_map.get(slug, []):
+                    if kw in lang_text:
+                        should_exclude = True
+                        break
+                if should_exclude:
+                    break
+
+            if not should_exclude:
+                result.append(job)
+
         return result
 
     # Confirmed mapping from live data (kraj ID -> region name)
