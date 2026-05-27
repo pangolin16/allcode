@@ -1,0 +1,4 @@
+shell.nix
+.venv/
+__pycache__/
+readme.md
