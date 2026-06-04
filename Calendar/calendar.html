@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="calendar.css">
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohcurrrenGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohcurrrenGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohcurrrenGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer"
     />
@@ -15,130 +19,162 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
         rel="stylesheet"
     />
+    <style>
+        #login-gate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+        #login-gate p {
+            color: #555;
+            font-size: 1rem;
+        }
+        #google-signin-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s;
+        }
+        #google-signin-btn:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
 </head>
-<body> <input id="passwordInput" type="password" />
-  <button onclick="checkPassword()"   id="submitBtn">Submit</button>
-     <div id="content" style="display: none;">
-<div class="container">
-    <div class="left">
-        <div class="calendar">
-            <div class="month">
-                <i class="fas fa-angle-left prev"></i>
-                <div class="date">December 2015</div>
-                <i class="fas fa-angle-right next"></i>
-            </div>
-            <div class="weekdays">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-            </div>
-            <div class="days"></div>
-            <div class="goto-today">
-                <div class="goto">
-                    <input type="text" placeholder="mm/yyyy" class="date-input" />
-                    <button class="goto-btn">Go</button>
-                </div>
-                <button class="today-btn">Today</button>
-                <button id="saveBtn" onclick="saveToFirestore()">Save</button>
-<a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
+<body>
 
-            </div>
-        </div>
-    </div>
-    <div class="right">
-        <div class="today-date">
-            <div class="event-day">Wed</div>
-            <div class="event-date">12th December 2022</div>
-        </div>
-        <div class="events"></div>
-        <div class="add-event-wrapper">
-            <div class="add-event-header">
-                <div class="title">Add Event</div>
-                <i class="fas fa-times close"></i>
-            </div>
-            <div class="add-event-body">
-                <div class="add-event-input">
-                    <input type="text" placeholder="Event Name" class="event-name" />
-                </div>
-                <div class="add-event-input">
-                    <input
-                        type="text"
-                        placeholder="Event Time From"
-                        class="event-time-from"
-                    />
-                </div>
-                <div class="add-event-input">
-                    <input
-                        type="text"
-                        placeholder="Event Time To"
-                        class="event-time-to"
-                    />
-                </div>
-            </div>
-            <div class="add-event-footer">
-                <button class="add-event-btn">Add Event</button>
-            </div>
-        </div>
-    </div>
-    <button class="add-event">
-        <i class="fas fa-plus"></i>
+  <div id="login-gate">
+    <p>Sign in to access the calendar</p>
+    <button id="google-signin-btn">
+      <i class="fa-brands fa-google"></i> Sign in with Google
     </button>
-</div>
+  </div>
 
-<div class="credits"></div>
-</div>
-
+  <div id="content" style="display: none;">
+    <div class="container">
+        <div class="left">
+            <div class="calendar">
+                <div class="month">
+                    <i class="fas fa-angle-left prev"></i>
+                    <div class="date">December 2015</div>
+                    <i class="fas fa-angle-right next"></i>
+                </div>
+                <div class="weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div class="days"></div>
+                <div class="goto-today">
+                    <div class="goto">
+                        <input type="text" placeholder="mm/yyyy" class="date-input" />
+                        <button class="goto-btn">Go</button>
+                    </div>
+                    <button class="today-btn">Today</button>
+                    <button id="saveBtn" onclick="saveToFirestore()">Save</button>
+                    <a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="today-date">
+                <div class="event-day">Wed</div>
+                <div class="event-date">12th December 2022</div>
+            </div>
+            <div class="events"></div>
+            <div class="add-event-wrapper">
+                <div class="add-event-header">
+                    <div class="title">Add Event</div>
+                    <i class="fas fa-times close"></i>
+                </div>
+                <div class="add-event-body">
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Name" class="event-name" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Time From" class="event-time-from" />
+                    </div>
+                    <div class="add-event-input">
+                        <input type="text" placeholder="Event Time To" class="event-time-to" />
+                    </div>
+                </div>
+                <div class="add-event-footer">
+                    <button class="add-event-btn">Add Event</button>
+                </div>
+            </div>
+        </div>
+        <button class="add-event">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    <div class="credits"></div>
+  </div>
 
 <script type="module">
-
-
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
+        authDomain: "pangolin-f37fa.firebaseapp.com",
+        projectId: "pangolin-f37fa",
+        storageBucket: "pangolin-f37fa.firebasestorage.app",
+        messagingSenderId: "880099895366",
+        appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
+        measurementId: "G-M31Q6C45FX"
+    };
 
-       import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-       
-  const firebaseConfig = {
-
-    apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
-
-    authDomain: "pangolin-f37fa.firebaseapp.com",
-
-    projectId: "pangolin-f37fa",
-
-    storageBucket: "pangolin-f37fa.firebasestorage.app",
-
-    messagingSenderId: "880099895366",
-
-    appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
-
-    measurementId: "G-M31Q6C45FX"
-
-  };
-
-
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-  // Function to save JSON data to Firestore
-  window.saveToFirestore = async function() {
+    // Auth gate
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('login-gate').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            await loadFromFirestore();
+            scheduleNotifications();
+        } else {
+            document.getElementById('login-gate').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
+        }
+    });
+
+    document.getElementById('google-signin-btn').addEventListener('click', () => {
+        signInWithPopup(auth, provider).catch(console.error);
+    });
+
+    // Save events to Firestore
+    window.saveToFirestore = async function() {
         const data0 = localStorage.getItem("events");
         if (!data0) {
             console.error("No events found in local storage.");
             return;
         }
 
-        // Parse the JSON string to an array
         const eventsArray = JSON.parse(data0);
         const eventsObject = {};
 
-        // Convert array to object and check for undefined values
         eventsArray.forEach(item => {
             if (item.year && item.month && item.day && item.events) {
                 const dateKey = `${item.year}-${String(item.month).padStart(2, '0')}-${String(item.day).padStart(2, '0')}`;
@@ -148,137 +184,71 @@
             }
         });
 
-        console.log(eventsObject);
-
         if (Object.keys(eventsObject).length === 0) {
             console.error("No valid events to save.");
             return;
         }
 
-        // Specify the document ID you want to overwrite
-        const docId = "calDec";  // Change this to your actual document ID
-
         try {
-            // Use setDoc to overwrite the document
-            await setDoc(doc(db, "calendar0", docId), eventsObject);
-            console.log("Document written with ID: ", docId);
+            await setDoc(doc(db, "calendar0", "calDec"), eventsObject);
+            console.log("Saved to Firestore.");
         } catch (error) {
             console.error("Error writing document: ", error);
         }
     };
-    // Function to load JSON data from Firestore and save it to localStorage
-window.onload = async function() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "calendar0"));
-        const eventsArray = [];
 
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            // Iterate over each date key in the document
-            for (const dateKey in data) {
-                // Assuming the dateKey is in 'YYYY-MM-DD' format
-                const [year, month, day] = dateKey.split('-').map(Number);
-                const events = data[dateKey];
-                
-                // Push the formatted event object to the eventsArray
-                eventsArray.push({
-                    day: day,
-                    month: month,
-                    year: year,
-                    events: events
-                });
-            }
-            console.log(`${doc.id} => ${JSON.stringify(data)}`);
-        });
+    // Load events from Firestore into localStorage
+    async function loadFromFirestore() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "calendar0"));
+            const eventsArray = [];
 
-        // Save the array to localStorage
-        localStorage.setItem("events", JSON.stringify(eventsArray));
-        console.log("Data saved to localStorage.");
+            querySnapshot.forEach((document) => {
+                const data = document.data();
+                for (const dateKey in data) {
+                    const [year, month, day] = dateKey.split('-').map(Number);
+                    eventsArray.push({ day, month, year, events: data[dateKey] });
+                }
+            });
 
-    } catch (error) {
-        console.error("Error loading documents: ", error);
+            localStorage.setItem("events", JSON.stringify(eventsArray));
+            console.log("Data loaded from Firestore.");
+        } catch (error) {
+            console.error("Error loading documents: ", error);
+        }
     }
-};
 
+    function scheduleNotifications() {
+        const calendarEntries = JSON.parse(localStorage.getItem("events") || "[]");
 
-
-
-const calendarEntries = localStorage.getItem("events")
-        // Function to check for calendar entries and trigger notifications
         function checkCalendarEntries() {
             const today = new Date();
-            const dateString = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-            if (calendarEntries[dateString]) {
-                showNotification(calendarEntries[dateString]);
-            }
+            const dateString = today.toISOString().split('T')[0];
+            const entry = calendarEntries.find(e =>
+                `${e.year}-${String(e.month).padStart(2,'0')}-${String(e.day).padStart(2,'0')}` === dateString
+            );
+            if (entry) showNotification(JSON.stringify(entry.events));
         }
 
-        // Function to show a notification
-        function showNotification(entry) {
+        function showNotification(body) {
             if (Notification.permission === "granted") {
-                new Notification("Today's Entry", {
-                    body: entry,
-                    icon: 'your-icon-url.png' // Optional: Add an icon URL
-                });
+                new Notification("Today's Entry", { body });
             } else if (Notification.permission !== "denied") {
                 Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        new Notification("Today's Entry", {
-                            body: entry,
-                            icon: 'your-icon-url.png' // Optional: Add an icon URL
-                        });
-                    }
+                    if (permission === "granted") new Notification("Today's Entry", { body });
                 });
             }
         }
 
-        // Check for entries every day at midnight
-        function setDailyCheck() {
-            const now = new Date();
-            const nextCheck = new Date();
-            nextCheck.setHours(24, 0, 0, 0); // Set to the next midnight
-
-            const timeUntilNextCheck = nextCheck - now;
-            setTimeout(() => {
-                checkCalendarEntries();
-                setInterval(checkCalendarEntries, 24 * 60 * 60 * 1000); // Check every 24 hours
-            }, timeUntilNextCheck);
-        }
-
-        // Start the daily check
-        setDailyCheck();
-
-
-
-
-
-
+        const now = new Date();
+        const nextMidnight = new Date();
+        nextMidnight.setHours(24, 0, 0, 0);
+        setTimeout(() => {
+            checkCalendarEntries();
+            setInterval(checkCalendarEntries, 24 * 60 * 60 * 1000);
+        }, nextMidnight - now);
+    }
 </script>
 <script src="calendar.js"></script>
 </body>
 </html>
-  <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-  <script>
-    const password = "open";
-    const hash = CryptoJS.SHA256(password).toString();
-
-    function checkPassword() {
-      const inputPassword = document.getElementById("passwordInput").value;
-      const inputHash = CryptoJS.SHA256(inputPassword).toString();
-
-      if (inputHash === hash) {
-        document.getElementById("content").style.display = "block";
-        document.getElementById("passwordInput").style.display = "none";
-        document.getElementById("submitBtn").style.display = "none";
-      } else {
-        alert("Incorrect password");
-      }
-    }
-        // Add this event listener to handle pressing Enter
-    document.getElementById("passwordInput").addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        checkPassword();
-      }
-    });
-  </script>

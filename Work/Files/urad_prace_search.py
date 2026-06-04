@@ -8,8 +8,84 @@ from typing import List, Dict, Optional
 import urllib3
 import unicodedata
 import re
+import json
+import os
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# ORS API key — set via environment variable ORS_API_KEY or pass directly.
+import os as _os
+_ORS_API_KEY = _os.environ.get("ORS_API_KEY", "")
+
+
+def is_point_in_polygon(x: float, y: float, poly: list) -> bool:
+    """Determine if point (x=lon, y=lat) is inside polygon coordinates list [[lon, lat], ...]"""
+    num = len(poly)
+    j = num - 1
+    c = False
+    for i in range(num):
+        if ((poly[i][1] > y) != (poly[j][1] > y)) and \
+                (x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]):
+            c = not c
+        j = i
+    return c
+
+
+def get_ors_isochrone(lat: float, lon: float, max_minutes: int, mode: str, api_key: str = "") -> tuple:
+    """
+    Fetch an isochrone polygon from OpenRouteService.
+    Returns (polygon, error_message):
+      polygon       — list of [lon, lat] pairs, or [] on failure
+      error_message — None on success, descriptive string on failure
+    """
+    key = api_key or _ORS_API_KEY
+    if not key:
+        msg = "ORS_API_KEY není nastaven — přidejte ho do .env souboru"
+        print(f"  WARNING: {msg}")
+        return [], msg
+
+    profile_map = {"car": "driving-car", "bike": "cycling-regular", "walk": "foot-walking"}
+    profile = profile_map.get(mode, "driving-car")
+
+    url = f"https://api.openrouteservice.org/v2/isochrones/{profile}"
+    headers = {"Authorization": key, "Content-Type": "application/json"}
+    body = {
+        "locations": [[lon, lat]],
+        "range": [min(int(max_minutes) * 60, 3600)],  # ORS free tier cap: 3600s (60 min)
+        "range_type": "time"
+    }
+    try:
+        print(f"  ORS POST {url}")
+        print(f"  ORS body: {body}")
+        resp = requests.post(url, json=body, headers=headers, timeout=10)
+        print(f"  ORS response: HTTP {resp.status_code}")
+        if resp.status_code == 200:
+            geojson = resp.json()
+            coords = geojson['features'][0]['geometry']['coordinates'][0]
+            print(f"  ORS polygon: {len(coords)} vertices")
+            return coords, None
+        else:
+            # Surface the actual ORS error message (JSON or plain text)
+            try:
+                err_body = resp.json()
+                detail = err_body.get("error", {})
+                if isinstance(detail, dict):
+                    msg = detail.get("message") or str(detail)
+                else:
+                    msg = str(detail)
+            except Exception:
+                msg = resp.text[:300]
+            full = f"HTTP {resp.status_code}: {msg}"
+            print(f"  ORS error: {full}")
+            return [], full
+    except requests.exceptions.Timeout:
+        msg = "ORS API timeout (>10s) — zkuste znovu"
+        print(f"  ORS: {msg}")
+        return [], msg
+    except Exception as e:
+        msg = f"Síťová chyba: {e}"
+        print(f"  ORS: {msg}")
+        return [], msg
 
 
 def _normalize(text: str) -> str:
@@ -44,18 +120,21 @@ def _extract(value) -> str:
 
 def _extract_location(misto, obec_lookup=None):
     """
-    Returns (display, search_text) from mistoVykonuPrace.
+    Returns (display, search_text, lat, lon) from mistoVykonuPrace.
 
     display     - clean city name shown to the user
     search_text - ALL raw text from every address field, used for filtering.
                   This catches cities that appear only inside street address
                   strings like "Delnicka 1253/37, 43191 Vejprty" where the
                   city is not in dodatekAdresy but is in the full address.
+    lat, lon    - WGS84 coordinates (float), 0.0 if not available.
     """
     if not isinstance(misto, dict):
-        return "", ""
+        return "", "", 0.0, 0.0
     if obec_lookup is None:
         obec_lookup = {}
+
+    lat, lon = 0.0, 0.0
 
     display_candidates = []
     all_text_parts = []
@@ -74,6 +153,30 @@ def _extract_location(misto, obec_lookup=None):
                 all_text_parts.append(city_hint)
 
         adresa = pracoviste.get("adresa") or {}
+
+        # Extract WGS84 coordinates (first pracoviste that has them wins)
+        if lat == 0.0 and lon == 0.0:
+            wgs = adresa.get("wgs84") or {}
+            if isinstance(wgs, dict):
+                try:
+                    _lat = float(wgs.get("lat") or wgs.get("latitude") or wgs.get("zemepisnaSirka") or 0)
+                    _lon = float(wgs.get("lon") or wgs.get("lng") or wgs.get("longitude") or wgs.get("zemepisnaDelka") or 0)
+                    if _lat and _lon:
+                        lat, lon = _lat, _lon
+                except (TypeError, ValueError):
+                    pass
+            # Also try geometrie / vysledek_ruian style: [lon, lat] array
+            if lat == 0.0:
+                for coord_key in ("geometrie", "vysledek_ruian", "souradnice"):
+                    coords = adresa.get(coord_key) or pracoviste.get(coord_key)
+                    if isinstance(coords, list) and len(coords) >= 2:
+                        try:
+                            _lon2, _lat2 = float(coords[0]), float(coords[1])
+                            if _lat2 and _lon2:
+                                lat, lon = _lat2, _lon2
+                                break
+                        except (TypeError, ValueError):
+                            pass
 
         # Add city-level fields to search text ONLY — NOT ulice (street name).
         # Including street names causes false matches, e.g. street "Litvínovská"
@@ -133,7 +236,7 @@ def _extract_location(misto, obec_lookup=None):
             seen.add(key)
             unique.append(c)
 
-    return ", ".join(unique), " ".join(all_text_parts)
+    return ", ".join(unique), " ".join(all_text_parts), lat, lon
 
 
 def _to_int(value) -> int:
@@ -161,6 +264,64 @@ class UradPraceSearcher:
     # Loading
     # ------------------------------------------------------------------
 
+    # ------------------------------------------------------------------
+    # PSC -> (lat, lon) geocoding cache
+    # ------------------------------------------------------------------
+
+    PSC_CACHE_FILE = "psc_coords_cache.json"
+
+    def _load_psc_cache(self) -> dict:
+        if os.path.exists(self.PSC_CACHE_FILE):
+            try:
+                with open(self.PSC_CACHE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def _save_psc_cache(self, cache: dict):
+        try:
+            with open(self.PSC_CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(cache, f, ensure_ascii=False)
+        except Exception as e:
+            print(f"  Warning: could not save PSC cache: {e}")
+
+    def _geocode_psc_batch(self, psc_set: set, existing_cache: dict) -> dict:
+        """
+        Geocode all PSC codes not already in cache using Nominatim.
+        Returns updated cache dict.
+        """
+        cache = dict(existing_cache)
+        missing = [p for p in psc_set if p and p not in cache]
+        if not missing:
+            return cache
+
+        print(f"  Geocoding {len(missing):,} new PSC codes via Nominatim...")
+        headers = {"User-Agent": "UradPraceJobSearch/1.0 (psc-geocoder)"}
+        ok = 0
+        for i, psc in enumerate(missing):
+            try:
+                url = "https://nominatim.openstreetmap.org/search"
+                params = {"postalcode": psc, "country": "cz", "format": "json", "limit": 1}
+                r = requests.get(url, params=params, headers=headers, timeout=8)
+                results = r.json()
+                if results:
+                    cache[psc] = [float(results[0]["lat"]), float(results[0]["lon"])]
+                    ok += 1
+                else:
+                    cache[psc] = None  # mark as "tried but not found"
+            except Exception as e:
+                print(f"    PSC {psc} geocode error: {e}")
+                cache[psc] = None
+            # Nominatim rate limit: max 1 req/s
+            if i % 50 == 49:
+                print(f"    ... {i+1}/{len(missing)} ({ok} found so far)")
+            import time
+            time.sleep(1.05)
+
+        print(f"  Geocoded {ok}/{len(missing)} PSC codes successfully.")
+        return cache
+
     def _load_data(self):
         print("\nLoading job data...")
         try:
@@ -180,9 +341,7 @@ class UradPraceSearcher:
 
             print(f"  Parsing {len(items):,} items...")
 
-            # Pass 1: build obec_id -> city_name lookup from items that have text.
-            # e.g. "Obec/563404" -> "Vejprty" (learned from an item whose
-            # dodatekAdresy = "Vejprty" and adresa.obec.id = "Obec/563404")
+            # Pass 1: build obec_id -> city_name lookup
             obec_lookup = {}
             for it in items:
                 if not isinstance(it, dict):
@@ -195,44 +354,66 @@ class UradPraceSearcher:
                     obec_id = (adresa.get("obec") or {}).get("id") or ""
                     if not obec_id:
                         continue
-                    # Collect candidate city names from text fields
                     dodatek = (adresa.get("dodatekAdresy") or "").strip()
                     if dodatek and obec_id not in obec_lookup:
-                        # Strip full street addresses — only keep short values
-                        import re as _re
-                        clean = _re.sub(r'(?i)^(okres|mesto|m\u011bsto|obec|cast obce)\s+', '', dodatek).strip()
-                        # Reject if it looks like a street address (contains digits)
+                        clean = re.sub(r'(?i)^(okres|mesto|město|obec|cast obce)\s+', '', dodatek).strip()
                         if clean and not any(c.isdigit() for c in clean):
                             obec_lookup[obec_id] = clean
 
             print(f"  Built obec lookup: {len(obec_lookup):,} entries")
 
-            # Pass 2: parse all items, passing the lookup for ID resolution
-            parsed = [self._parse_item(i, obec_lookup) for i in items if isinstance(i, dict)]
+            # Pass 2: collect all unique PSC codes present in the data
+            psc_set = set()
+            for it in items:
+                if not isinstance(it, dict):
+                    continue
+                misto = it.get("mistoVykonuPrace") or {}
+                for p in (misto.get("pracoviste") or []):
+                    if not isinstance(p, dict):
+                        continue
+                    psc = str((p.get("adresa") or {}).get("psc") or "").strip()
+                    if psc:
+                        psc_set.add(psc)
+            print(f"  Found {len(psc_set):,} unique PSC codes.")
+
+            # Pass 3: load disk cache, geocode missing PSCs, save back
+            psc_cache = self._load_psc_cache()
+            cached_before = sum(1 for v in psc_cache.values() if v)
+            print(f"  PSC cache: {len(psc_cache):,} entries ({cached_before:,} with coords).")
+            psc_cache = self._geocode_psc_batch(psc_set, psc_cache)
+            self._save_psc_cache(psc_cache)
+
+            # Pass 4: parse all items
+            parsed = [self._parse_item(i, obec_lookup, psc_cache) for i in items if isinstance(i, dict)]
             self.all_jobs = [j for j in parsed if j["title"]]
 
-            # Quick location sanity check
-            with_loc = sum(1 for j in self.all_jobs if j["location"])
-            print(f"  Loaded {len(self.all_jobs):,} jobs ({with_loc:,} have a location).")
+            with_loc    = sum(1 for j in self.all_jobs if j["location"])
+            with_coords = sum(1 for j in self.all_jobs if j.get("lat"))
+            print(f"  Loaded {len(self.all_jobs):,} jobs | {with_loc:,} with location | {with_coords:,} with coords.")
 
             if self.all_jobs:
                 s = self.all_jobs[0]
-                print(f"  Sample: {s['title']} | {s['employer']} | location={s['location']!r} | {s['salary']}")
-
-            # Show first 5 extracted locations so you can verify
-            print("  Location samples:")
-            for j in self.all_jobs[:5]:
-                print(f"    {j['location']!r}")
+                print(f"  Sample: {s['title']} | {s['location']!r} | lat={s.get('lat')} lon={s.get('lon')}")
 
         except Exception as e:
-            import traceback
             print(f"  Error loading data: {e}")
+            import traceback
             traceback.print_exc()
 
-    def _parse_item(self, item: dict, obec_lookup: dict = None) -> Dict:
+
+    def _parse_item(self, item: dict, obec_lookup: dict = None, psc_cache: dict = None) -> Dict:
         title    = _extract(item.get("pozadovanaProfese") or item.get("nazevPozice") or item.get("pozice"))
         employer = _extract(item.get("zamestnavatel") or item.get("nazevFirmy"))
-        location, location_search = _extract_location(item.get("mistoVykonuPrace"), obec_lookup or {})
+        location, location_search, lat, lon = _extract_location(item.get("mistoVykonuPrace"), obec_lookup or {})
+
+        # If _extract_location found no coords (MPSV data has none), look up by PSC
+        if (not lat or not lon) and psc_cache:
+            misto_raw = item.get("mistoVykonuPrace") or {}
+            for _p in (misto_raw.get("pracoviste") or []):
+                psc = str((_p.get("adresa") or {}).get("psc") or "").strip()
+                if psc and psc_cache.get(psc):
+                    lat, lon = psc_cache[psc]
+                    break
 
         salary_from = _to_int(item.get("mesicniMzdaOd") or item.get("mzdaOd"))
         salary_to   = _to_int(item.get("mesicniMzdaDo") or item.get("mzdaDo"))
@@ -312,7 +493,8 @@ class UradPraceSearcher:
                         languages_found.append(_extract(e))
 
         # Also look in description/title for explicit language mentions
-        text_scan = _normalize((item.get("upresnujiciInformace") or item.get("popis") or "") + " " + title)
+        info_text = _extract(item.get("upresnujiciInformace") or item.get("popis") or "")
+        text_scan = _normalize(info_text + " " + title)
         explicit_langs = []
         for raw in languages_found:
             n = _normalize(raw)
@@ -355,6 +537,8 @@ class UradPraceSearcher:
             "employer":    employer,
             "location":    location,
             "location_search": location_search,
+            "lat":         lat,
+            "lon":         lon,
             "salary":      salary_text,
             "salary_from": salary_from,
             "salary_to":   salary_to,
@@ -387,10 +571,17 @@ class UradPraceSearcher:
                     full_time_only: bool = False,
                     exclude_shifts: Optional[list] = None,
                     exclude_languages: Optional[list] = None,
-                    regions: Optional[list] = None) -> List[Dict]:
+                    exclude_education: Optional[list] = None,
+                    regions: Optional[list] = None,
+                    lat_center: Optional[float] = None,
+                    lon_center: Optional[float] = None,
+                    max_minutes: Optional[int] = None,
+                    travel_mode: str = 'car',
+                    ors_api_key: str = "") -> List[Dict]:
 
         print(f"\nSearch: kw={keyword!r} loc={location!r} sal={min_salary}-{max_salary} "
-              f"driver_excl={exclude_driver_license} edu={education!r} langs={exclude_languages}")
+              f"driver_excl={exclude_driver_license} edu={education!r} langs={exclude_languages} edus_excl={exclude_education} "
+              f"isochrone=({lat_center},{lon_center},{max_minutes}min,{travel_mode})")
 
         if not self.all_jobs:
             print("No jobs cached - reloading...")
@@ -404,8 +595,59 @@ class UradPraceSearcher:
             jobs = [j for j in jobs if kw in _normalize(j["title"])]
             print(f"  after keyword (title only): {len(jobs):,}")
 
-        # LOCATION: normalised substring match
-        if location:
+        # ISOCHRONE: travel-time polygon filter (replaces plain text location when coords available)
+        isochrone_polygon = None
+        iso_status = {
+            "requested": False,
+            "geocoded": lat_center is not None,
+            "polygon_fetched": False,
+            "polygon_vertices": 0,
+            "jobs_with_coords": 0,
+            "jobs_without_coords": 0,
+            "error": None,
+            "mode": travel_mode,
+            "max_minutes": max_minutes,
+            "lat": lat_center,
+            "lon": lon_center,
+        }
+
+        if lat_center is not None and lon_center is not None and max_minutes:
+            iso_status["requested"] = True
+            print(f"  Fetching isochrone: {max_minutes} min by {travel_mode} from ({lat_center}, {lon_center})")
+            isochrone_polygon, ors_error = get_ors_isochrone(lat_center, lon_center, max_minutes, travel_mode, ors_api_key)
+            if isochrone_polygon:
+                iso_status["polygon_fetched"] = True
+                iso_status["polygon_vertices"] = len(isochrone_polygon)
+                print(f"  Isochrone polygon: {len(isochrone_polygon)} vertices")
+                before = len(jobs)
+                result = []
+                no_coords = 0
+                for j in jobs:
+                    jlat, jlon = j.get("lat", 0.0), j.get("lon", 0.0)
+                    if jlat and jlon:
+                        if is_point_in_polygon(jlon, jlat, isochrone_polygon):
+                            result.append(j)
+                    else:
+                        no_coords += 1
+                        # No coordinates — fallback to text match if location text provided
+                        if location:
+                            loc = _normalize(location)
+                            import re as _re
+                            loc_pattern = _re.compile(r'(?<![a-z0-9])' + _re.escape(loc) + r'(?![a-z0-9])')
+                            if loc_pattern.search(_normalize(j["location_search"] or j["location"])):
+                                result.append(j)
+                        else:
+                            result.append(j)
+                iso_status["jobs_with_coords"] = before - no_coords
+                iso_status["jobs_without_coords"] = no_coords
+                jobs = result
+                print(f"  after isochrone filter: {len(jobs):,} (was {before:,}, {no_coords} had no coords)")
+            else:
+                iso_status["error"] = ors_error or "ORS vrátil prázdný polygon"
+                print("  Isochrone fetch failed — falling back to text location filter")
+
+        # LOCATION: normalised substring match (skipped if isochrone succeeded)
+        if location and (isochrone_polygon is None or not isochrone_polygon):
             loc = _normalize(location)
             before = len(jobs)
             # Use whole-word matching so "Most" doesn't match "Mostkovice",
@@ -449,12 +691,17 @@ class UradPraceSearcher:
             jobs = self._filter_languages(jobs, exclude_languages)
             print(f"  after language filter:      {len(jobs):,}")
 
+        if exclude_education:
+            jobs = self._filter_exclude_education(jobs, exclude_education)
+            print(f"  after education exclusion:  {len(jobs):,}")
+
         if regions:
             jobs = self._filter_regions(jobs, regions)
             print(f"  after region filter:        {len(jobs):,}")
 
+        jobs.sort(key=lambda j: _normalize(j.get("title", "")))
         print(f"  => {len(jobs):,} results (returning up to {limit})")
-        return jobs[:limit]
+        return jobs[:limit], iso_status
 
     # ------------------------------------------------------------------
     # Filters
@@ -672,6 +919,58 @@ class UradPraceSearcher:
                 # check passive mentions in language_search text
                 for kw in lang_keyword_map.get(slug, []):
                     if kw in lang_text:
+                        should_exclude = True
+                        break
+                if should_exclude:
+                    break
+
+            if not should_exclude:
+                result.append(job)
+
+        return result
+
+    @staticmethod
+    def _filter_exclude_education(jobs, exclude_education):
+        """
+        Exclude jobs that require education levels in the exclude list.
+        exclude_education is a list of slugs:
+          zakladni      - basic/elementary
+          stredni       - secondary without maturita
+          maturita      - secondary with maturita
+          vyssiodborne  - higher vocational
+          bakalar       - university bachelor (Bc.)
+          magister      - university master (Mgr./Ing.)
+          doktor        - PhD/doctoral
+
+        Uses keyword matching against normalized education field.
+        """
+        if not exclude_education:
+            return jobs
+
+        excluded = {s.lower() for s in exclude_education}
+
+        # keyword map for matching
+        edu_keyword_map = {
+            "zakladni": ["zakladni", "zaklad"],
+            "stredni": ["stredni odborne", "sredni bez maturity", "ucni"],
+            "maturita": ["maturita", "stredni s maturitou"],
+            "vyssiodborne": ["vyssi odborne", "vos", "vysse odborne"],
+            "bakalar": ["bakalar", "bc.", "bc "],
+            "magister": ["magistr", "mgr.", "mgr ", "ing.", "ing "],
+            "doktor": ["doktor", "phd", "ph.d.", "postdok"],
+        }
+
+        result = []
+        for job in jobs:
+            edu_text = _normalize(job.get("education") or "")
+
+            should_exclude = False
+
+            # Check each excluded education level
+            for slug in excluded:
+                kws = edu_keyword_map.get(slug, [])
+                for kw in kws:
+                    if kw in edu_text:
                         should_exclude = True
                         break
                 if should_exclude:

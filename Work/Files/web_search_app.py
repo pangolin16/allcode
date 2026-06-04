@@ -5,12 +5,37 @@ from flask import Flask, render_template_string, request, jsonify
 from urad_prace_search import UradPraceSearcher
 import logging
 import traceback
+import requests as _req
+import os
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 searcher = UradPraceSearcher()
+
+ORS_API_KEY = os.environ.get("ORS_API_KEY", "")
+
+
+def geocode_address(address: str):
+    """
+    Geocode a free-text address to (lat, lon) using OSM Nominatim.
+    Returns (lat, lon) floats or (None, None) on failure.
+    """
+    try:
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {"q": address, "format": "json", "limit": 1, "countrycodes": "cz"}
+        headers = {"User-Agent": "UradPraceJobSearch/1.0 (job-search-app)"}
+        r = _req.get(url, params=params, headers=headers, timeout=8)
+        r.raise_for_status()
+        results = r.json()
+        if results:
+            return float(results[0]["lat"]), float(results[0]["lon"])
+    except Exception as e:
+        logger.warning(f"Geocoding failed for {address!r}: {e}")
+    return None, None
 
 @app.before_request
 def before_request():
@@ -67,14 +92,39 @@ def search():
         raw_langs = (request.args.get('exclude_languages', '') or request.form.get('exclude_languages', '')).strip()
         exclude_languages = [s.strip() for s in raw_langs.split(',') if s.strip()] if raw_langs else None
 
+        # exclude_education arrives as comma-separated slugs: "bakalar,magister"
+        raw_edus = (request.args.get('exclude_education', '') or request.form.get('exclude_education', '')).strip()
+        exclude_education = [s.strip() for s in raw_edus.split(',') if s.strip()] if raw_edus else None
+
         raw_regions = (request.args.get('regions', '') or request.form.get('regions', '')).strip()
         regions     = [r.strip() for r in raw_regions.split(',') if r.strip()] if raw_regions else None
 
+        # Travel-time / isochrone params
+        raw_max_minutes = (request.args.get('max_minutes', '') or request.form.get('max_minutes', '')).strip()
+        travel_mode     = (request.args.get('travel_mode', 'car') or request.form.get('travel_mode', 'car')).strip() or 'car'
+        lat_center, lon_center = None, None
+        max_minutes = None
+
+        if raw_max_minutes and raw_max_minutes != '0':
+            try:
+                max_minutes = int(raw_max_minutes)
+            except ValueError:
+                max_minutes = None
+
+        if location and max_minutes:
+            logger.info(f"Geocoding address: {location!r}")
+            lat_center, lon_center = geocode_address(location)
+            if lat_center:
+                logger.info(f"Geocoded to ({lat_center}, {lon_center})")
+            else:
+                logger.warning("Geocoding failed — falling back to text search")
+
         logger.info(f"Search: keyword={keyword} location={location} limit={limit} "
                     f"min={min_salary} max={max_salary} full_time={full_time_only} "
-                    f"shifts_excl={exclude_shifts} langs_excl={exclude_languages}")
+                    f"shifts_excl={exclude_shifts} langs_excl={exclude_languages} edus_excl={exclude_education} "
+                    f"isochrone=({lat_center},{lon_center},{max_minutes}min,{travel_mode})")
 
-        jobs = searcher.search_jobs(
+        jobs, iso_status = searcher.search_jobs(
             keyword=keyword if keyword else None,
             location=location if location else None,
             limit=limit,
@@ -86,13 +136,20 @@ def search():
             full_time_only=full_time_only,
             exclude_shifts=exclude_shifts,
             exclude_languages=exclude_languages,
+            exclude_education=exclude_education,
             regions=regions,
+            lat_center=lat_center,
+            lon_center=lon_center,
+            max_minutes=max_minutes,
+            travel_mode=travel_mode,
+            ors_api_key=ORS_API_KEY,
         )
 
         employer_count = len({j.get('employer') for j in jobs if j.get('employer')})
-        logger.info(f"Search returned {len(jobs)} jobs from {employer_count} employers")
+        logger.info(f"Search returned {len(jobs)} jobs from {employer_count} employers | isochrone: {iso_status}")
         return jsonify({'success': True, 'jobs': jobs, 'count': len(jobs),
                 'employer_count': employer_count,
+                'isochrone_status': iso_status,
                 'message': f'Found {len(jobs)} job listings'}), 200
 
     except Exception as e:
@@ -251,8 +308,32 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="form-group">
-                    <label for="location">📍 Místo (volitelné):</label>
-                    <input type="text" id="location" placeholder="např. Praha, Brno, Ostrava...">
+                    <label>📍 Místo / dojezdová vzdálenost (volitelné):</label>
+                    <div style="display:grid; grid-template-columns: 1fr 160px 160px; gap: 10px; align-items: end;">
+                        <div>
+                            <label for="location" style="font-size:0.85em; color:#666; font-weight:400;">Adresa / město</label>
+                            <input type="text" id="location" placeholder="např. Příbram, Chodov Praha...">
+                        </div>
+                        <div>
+                            <label for="max_minutes" style="font-size:0.85em; color:#666; font-weight:400;">Max. dojezd</label>
+                            <select id="max_minutes">
+                                <option value="0">Kdekoli</option>
+                                <option value="15">15 minut</option>
+                                <option value="30">30 minut</option>
+                                <option value="45">45 minut</option>
+                                <option value="60">60 minut</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="travel_mode" style="font-size:0.85em; color:#666; font-weight:400;">Dopravní prostředek</label>
+                            <select id="travel_mode">
+                                <option value="car">🚗 Auto</option>
+                                <option value="bike">🚲 Kolo</option>
+                                <option value="walk">🚶 Pěšky</option>
+                            </select>
+                        </div>
+                    </div>
+                    <small style="color:#888; margin-top:6px; display:block;">Dojezdový čas vyžaduje API klíč OpenRouteService (viz ORS_API_KEY). Bez něj se použije textové hledání.</small>
                 </div>
 
                 <div class="form-group">
@@ -329,6 +410,19 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="form-group">
+                    <label>🎓 Vyloučit podle požadovaného vzdělání:</label>
+                    <div class="shift-grid">
+                        <label><input type="checkbox" class="eduCheck" value="zakladni">      Základní vzdělání</label>
+                        <label><input type="checkbox" class="eduCheck" value="stredni">      Střední bez maturity</label>
+                        <label><input type="checkbox" class="eduCheck" value="maturita">     Střední s maturitou</label>
+                        <label><input type="checkbox" class="eduCheck" value="vyssiodborne"> Vyšší odborné</label>
+                        <label><input type="checkbox" class="eduCheck" value="bakalar">     Vysoká škola (Bc.)</label>
+                        <label><input type="checkbox" class="eduCheck" value="magister">    Vysoká škola (Mgr./Ing.)</label>
+                        <label><input type="checkbox" class="eduCheck" value="doktor">      Doktorský stupeň (PhD)</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="excludeIsco">🚫 Vyloučit CS-ISCO kódy (jeden per řádek, rozsahy jako 11110-35229):</label>
                     <textarea id="excludeIsco" rows="4"
                         placeholder="72241&#10;72242&#10;11110-35229"
@@ -353,6 +447,8 @@ HTML_TEMPLATE = """
 
             const keyword       = document.getElementById('keyword').value.trim();
             const location      = document.getElementById('location').value.trim();
+            const maxMinutes    = document.getElementById('max_minutes').value;
+            const travelMode    = document.getElementById('travel_mode').value;
             const minSalary     = document.getElementById('minSalary').value.trim();
             const maxSalary     = document.getElementById('maxSalary').value.trim();
             const excludeDriver = document.getElementById('excludeDriver').checked;
@@ -360,6 +456,7 @@ HTML_TEMPLATE = """
             const excludeIsco   = document.getElementById('excludeIsco').value.trim();
             const checkedShifts = [...document.querySelectorAll('.shiftCheck:checked')].map(cb => cb.value);
             const checkedLangs  = [...document.querySelectorAll('.langCheck:checked')].map(cb => cb.value);
+            const checkedEdus   = [...document.querySelectorAll('.eduCheck:checked')].map(cb => cb.value);
             const selectedRegions = [...document.querySelectorAll('#regions option:checked')].map(o => o.value);
 
             document.getElementById('loading').style.display = 'block';
@@ -369,6 +466,8 @@ HTML_TEMPLATE = """
                 const params = new URLSearchParams();
                 if (keyword)               params.append('keyword', keyword);
                 if (location)              params.append('location', location);
+                if (maxMinutes && maxMinutes !== '0') params.append('max_minutes', maxMinutes);
+                if (travelMode)            params.append('travel_mode', travelMode);
                 if (minSalary)             params.append('min_salary', minSalary);
                 if (maxSalary)             params.append('max_salary', maxSalary);
                 if (excludeDriver)         params.append('exclude_driver_license', 'true');
@@ -376,6 +475,7 @@ HTML_TEMPLATE = """
                 if (excludeIsco)           params.append('exclude_isco', excludeIsco);
                 if (checkedShifts.length)  params.append('exclude_shifts', checkedShifts.join(','));
                 if (checkedLangs.length)   params.append('exclude_languages', checkedLangs.join(','));
+                if (checkedEdus.length)    params.append('exclude_education', checkedEdus.join(','));
                 if (selectedRegions.length) params.append('regions', selectedRegions.join(','));
                 params.append('limit', '250');
 
@@ -394,10 +494,11 @@ HTML_TEMPLATE = """
                         `<div class="error">❌ Chyba: ${data.error || data.message}</div>`;
                 } else if (data.jobs && data.jobs.length > 0) {
                     const employerCount = data.employer_count ?? new Set(data.jobs.map(j => j.employer).filter(Boolean)).size;
-                    displayResults(data.jobs, employerCount);
+                    displayResults(data.jobs, employerCount, data.isochrone_status);
                 } else {
+                    const isoHtml = renderIsoStatus(data.isochrone_status);
                     document.getElementById('results').innerHTML =
-                        '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
+                        isoHtml + '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
@@ -406,9 +507,35 @@ HTML_TEMPLATE = """
             }
         });
 
-        function displayResults(jobs, employerCount) {
+        function renderIsoStatus(iso) {
+            if (!iso || !iso.requested) return '';
+            const modeLabel = {car: '🚗 Auto', bike: '🚲 Kolo', walk: '🚶 Pěšky'}[iso.mode] || iso.mode;
+
+            if (!iso.geocoded) {
+                return `<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:0.9em;">
+                    ⚠️ <strong>Izochrona:</strong> Geocódování adresy selhalo — použito textové hledání místo.
+                </div>`;
+            }
+            if (iso.geocoded && !iso.polygon_fetched) {
+                const errMsg = iso.error || 'Neznámá chyba ORS API';
+                return `<div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:0.9em;">
+                    ❌ <strong>Izochrona selhala:</strong> ${escapeHtml(errMsg)}<br>
+                    <small>Souřadnice středu: ${iso.lat?.toFixed(5)}, ${iso.lon?.toFixed(5)} | ${iso.max_minutes} min | ${modeLabel}</small><br>
+                    <small>Zkontrolujte ORS_API_KEY a dostupnost API. Bylo použito textové hledání místo.</small>
+                </div>`;
+            }
+            // Success
+            return `<div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:0.9em;">
+                ✅ <strong>Izochrona aktivní</strong> — ${iso.max_minutes} min | ${modeLabel}<br>
+                <small>Střed: ${iso.lat?.toFixed(5)}, ${iso.lon?.toFixed(5)} | Polygon: ${iso.polygon_vertices} vrcholů |
+                Nabídky se souřadnicemi (PSČ): ${iso.jobs_with_coords} | Bez souřadnic (textový fallback): ${iso.jobs_without_coords}</small>
+            </div>`;
+        }
+
+        function displayResults(jobs, employerCount, isoStatus) {
             const div = document.getElementById('results');
-            let html = `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek od <strong>${employerCount}</strong> zaměstnavatelů</div>`;
+            let html = renderIsoStatus(isoStatus);
+            html += `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek od <strong>${employerCount}</strong> zaměstnavatelů</div>`;
             jobs.forEach((job, i) => {
                 const title    = job.title    || 'Bez názvu';
                 const url      = job.url      || '#';
