@@ -731,12 +731,12 @@ class UradPraceSearcher:
     @staticmethod
     def _filter_education(jobs, education):
         edu_map = {
-            "basic":      ["zakladni"],
-            "vocational": ["vycucen", "stredni odborne", "sou"],
-            "secondary":  ["maturita", "stredni s maturitou"],
-            "higher":     ["vyssi odborne", "vos"],
-            "bachelor":   ["bakalar", "bc."],
-            "master":     ["magistr", "mgr.", "ing."],
+            "basic":      ["zakladni", "zaklad", "bezvzdel", "neuplzakl", "zaklpraktskol"],
+            "vocational": ["vycucen", "stredni odborne", "sou", "nizsi", "stredodbor", "stredodborvyuc"],
+            "secondary":  ["maturita", "stredni s maturitou", "usosmat", "/usv"],
+            "higher":     ["vyssi odborne", "vos", "vyssodbor"],
+            "bachelor":   ["bakalar", "bakal", "bc."],
+            "master":     ["magistr", "mgr.", "ing.", "vysoka"],
             "phd":        ["doktor", "ph.d.", "phd"],
         }
         kws = edu_map.get(education)
@@ -951,13 +951,13 @@ class UradPraceSearcher:
 
         # keyword map for matching
         edu_keyword_map = {
-            "zakladni": ["zakladni", "zaklad"],
-            "stredni": ["stredni odborne", "sredni bez maturity", "ucni"],
-            "maturita": ["maturita", "stredni s maturitou"],
-            "vyssiodborne": ["vyssi odborne", "vos", "vysse odborne"],
-            "bakalar": ["bakalar", "bc.", "bc "],
-            "magister": ["magistr", "mgr.", "mgr ", "ing.", "ing "],
-            "doktor": ["doktor", "phd", "ph.d.", "postdok"],
+            "zakladni":     ["zakladni", "zaklad", "bezvzdel", "neuplzakl", "zaklpraktskol"],
+            "stredni":      ["stredni odborne", "ucni", "nizsi", "stredodbor", "stredodborvyuc"],
+            "maturita":     ["maturita", "stredni s maturitou", "usosmat", "/usv"],
+            "vyssiodborne": ["vyssi odborne", "vos", "vyssodbor"],
+            "bakalar":      ["bakalar", "bakal", "bc.", "bc "],
+            "magister":     ["magistr", "mgr.", "mgr ", "ing.", "ing ", "vysoka"],
+            "doktor":       ["doktor", "phd", "ph.d.", "postdok"],
         }
 
         result = []
