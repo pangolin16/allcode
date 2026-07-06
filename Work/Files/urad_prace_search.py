@@ -258,6 +258,9 @@ class UradPraceSearcher:
             "Accept": "application/json",
         })
         self.all_jobs: List[Dict] = []
+        self.addr_cache: dict = {}
+        import threading as _thr
+        self._nominatim_lock = _thr.Lock()
         self._load_data()
 
     # ------------------------------------------------------------------
@@ -285,6 +288,91 @@ class UradPraceSearcher:
                 json.dump(cache, f, ensure_ascii=False)
         except Exception as e:
             print(f"  Warning: could not save PSC cache: {e}")
+
+    OBEC_CACHE_FILE = "obec_coords_cache.json"
+
+    def _load_obec_cache(self) -> dict:
+        if os.path.exists(self.OBEC_CACHE_FILE):
+            try:
+                with open(self.OBEC_CACHE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def _save_obec_cache(self, cache: dict):
+        try:
+            with open(self.OBEC_CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(cache, f, ensure_ascii=False)
+        except Exception as e:
+            print(f"  Warning: could not save obec cache: {e}")
+
+    def _build_obec_cache(self, items: list, psc_cache: dict, existing_cache: dict) -> dict:
+        """Build obec_id -> [lat, lon] cache.
+        Priority: (1) existing cache, (2) derive from PSC cache for same obec,
+        (3) Nominatim geocoding of RUIAN code for remaining.
+        """
+        import time as _time
+        cache = dict(existing_cache)
+
+        # Collect obec_id -> set of PSC codes (from jobs that have both)
+        obec_to_pscs: dict = {}
+        all_obec_ids: set = set()
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            misto = it.get("mistoVykonuPrace") or {}
+            for p in (misto.get("pracoviste") or []):
+                if not isinstance(p, dict):
+                    continue
+                adresa = p.get("adresa") or {}
+                obec_id = (adresa.get("obec") or {}).get("id") or ""
+                psc = str(adresa.get("psc") or "").strip()
+                if obec_id:
+                    all_obec_ids.add(obec_id)
+                    if psc:
+                        obec_to_pscs.setdefault(obec_id, set()).add(psc)
+                break
+
+        # Derive coords from PSC cache for obec_ids that share a PSC with another job
+        derived = 0
+        for obec_id, pscs in obec_to_pscs.items():
+            if obec_id not in cache:
+                for psc in pscs:
+                    if psc_cache.get(psc):
+                        cache[obec_id] = psc_cache[psc]
+                        derived += 1
+                        break
+        if derived:
+            print(f"  Derived coords for {derived:,} obec_ids from PSC cache.")
+
+        # Geocode remaining unknown obec_ids via Nominatim RUIAN lookup
+        missing = [oid for oid in all_obec_ids if oid not in cache]
+        if missing:
+            print(f"  Geocoding {len(missing):,} new obec_ids via Nominatim...")
+            headers = {"User-Agent": "UradPraceJobSearch/1.0 (obec-geocoder)"}
+            ok = 0
+            for i, obec_id in enumerate(missing):
+                ruian = obec_id.replace("Obec/", "").strip()
+                try:
+                    url = "https://nominatim.openstreetmap.org/search"
+                    params = {"q": ruian, "format": "json", "limit": 1, "countrycodes": "cz"}
+                    resp = requests.get(url, params=params, headers=headers, timeout=8)
+                    results = resp.json()
+                    if results:
+                        cache[obec_id] = [float(results[0]["lat"]), float(results[0]["lon"])]
+                        ok += 1
+                    else:
+                        cache[obec_id] = None
+                except Exception as e:
+                    print(f"    obec {obec_id} error: {e}")
+                    cache[obec_id] = None
+                if i % 50 == 49:
+                    print(f"    ... {i+1}/{len(missing)} ({ok} found so far)")
+                _time.sleep(1.05)
+            print(f"  Geocoded {ok}/{len(missing)} obec_ids successfully.")
+
+        return cache
 
     def _geocode_psc_batch(self, psc_set: set, existing_cache: dict) -> dict:
         """
@@ -321,6 +409,100 @@ class UradPraceSearcher:
 
         print(f"  Geocoded {ok}/{len(missing)} PSC codes successfully.")
         return cache
+
+    ADDRESS_CACHE_FILE = "address_coords_cache.json"
+
+    def _load_address_cache(self) -> dict:
+        if os.path.exists(self.ADDRESS_CACHE_FILE):
+            try:
+                with open(self.ADDRESS_CACHE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def _save_address_cache(self, cache: dict):
+        try:
+            with open(self.ADDRESS_CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(cache, f, ensure_ascii=False)
+        except Exception as e:
+            print(f"  Warning: could not save address cache: {e}")
+
+    def _geocode_addresses_background(self, items: list, addr_cache: dict, obec_lookup: dict = None):
+        """Background thread: geocode street-level addresses for all jobs.
+        Results are saved to disk and used on the next app restart.
+        """
+        import time as _time
+        headers = {"User-Agent": "UradPraceJobSearch/1.0 (address-geocoder)"}
+        new_entries = 0
+        ok = 0
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            misto = it.get("mistoVykonuPrace") or {}
+            for p in (misto.get("pracoviste") or []):
+                if not isinstance(p, dict):
+                    continue
+                adresa = p.get("adresa") or {}
+                kod = adresa.get("kodAdresnihoMista")
+                if not kod:
+                    break
+                key = str(kod)
+                if key in addr_cache and addr_cache[key] is not None:
+                    break  # already geocoded successfully
+                ulice_raw = adresa.get("ulice")
+                ulice_nazev = (
+                    ulice_raw.get("nazev") if isinstance(ulice_raw, dict)
+                    else str(ulice_raw or "")
+                ).strip()
+                cislo_dom = adresa.get("cisloDomovni")
+                cislo_ori = str(adresa.get("cisloOrientacni") or "").strip()
+                if cislo_dom and cislo_ori:
+                    cislo = f"{cislo_dom}/{cislo_ori}"
+                elif cislo_ori:
+                    cislo = cislo_ori
+                else:
+                    cislo = str(cislo_dom) if cislo_dom else ""
+                psc = str(adresa.get("psc") or "").strip()
+                if not ulice_nazev or not cislo:
+                    if key not in addr_cache:
+                        addr_cache[key] = None
+                    break
+                if psc:
+                    addr_str = f"{ulice_nazev} {cislo}, {psc}, Česko"
+                else:
+                    city = (adresa.get("dodatekAdresy") or "").strip()
+                    if not city and obec_lookup:
+                        city = obec_lookup.get(
+                            (adresa.get("obec") or {}).get("id", ""), "")
+                    if not city:
+                        if key not in addr_cache:
+                            addr_cache[key] = None
+                        break
+                    addr_str = f"{ulice_nazev} {cislo}, {city}, Česko"
+                try:
+                    with self._nominatim_lock:
+                        r = requests.get(
+                            "https://nominatim.openstreetmap.org/search",
+                            params={"q": addr_str, "format": "json", "limit": 1, "countrycodes": "cz"},
+                            headers=headers, timeout=8,
+                        )
+                        results = r.json()
+                    if results:
+                        addr_cache[key] = [float(results[0]["lat"]), float(results[0]["lon"])]
+                        ok += 1
+                    else:
+                        addr_cache[key] = None
+                except Exception:
+                    addr_cache[key] = None
+                new_entries += 1
+                if new_entries % 100 == 0:
+                    self._save_address_cache(addr_cache)
+                    print(f"  [addr-geocoder] {new_entries} processed, {ok} found so far")
+                _time.sleep(1.05)
+                break
+        self._save_address_cache(addr_cache)
+        print(f"  [addr-geocoder] finished: {new_entries} new entries, {ok} with coords.")
 
     def _load_data(self):
         print("\nLoading job data...")
@@ -383,13 +565,43 @@ class UradPraceSearcher:
             psc_cache = self._geocode_psc_batch(psc_set, psc_cache)
             self._save_psc_cache(psc_cache)
 
+            # Pass 3.5: build obec_id -> coords cache (covers jobs that have no PSC)
+            obec_cache = self._load_obec_cache()
+            obec_cache = self._build_obec_cache(items, psc_cache, obec_cache)
+            self._save_obec_cache(obec_cache)
+            obec_with_coords = sum(1 for v in obec_cache.values() if v)
+            print(f"  Obec cache: {len(obec_cache):,} entries ({obec_with_coords:,} with coords).")
+
+            # Pass 3.7: load address-level coords cache (built by background thread)
+            self.addr_cache = self._load_address_cache()
+            addr_with_coords = sum(1 for v in self.addr_cache.values() if v)
+            print(f"  Address cache: {len(self.addr_cache):,} entries ({addr_with_coords:,} with street-level coords).")
+
             # Pass 4: parse all items
-            parsed = [self._parse_item(i, obec_lookup, psc_cache) for i in items if isinstance(i, dict)]
+            parsed = [self._parse_item(i, obec_lookup, psc_cache, obec_cache, self.addr_cache) for i in items if isinstance(i, dict)]
             self.all_jobs = [j for j in parsed if j["title"]]
 
             with_loc    = sum(1 for j in self.all_jobs if j["location"])
             with_coords = sum(1 for j in self.all_jobs if j.get("lat"))
             print(f"  Loaded {len(self.all_jobs):,} jobs | {with_loc:,} with location | {with_coords:,} with coords.")
+
+            # Start background thread to geocode street addresses (updates self.addr_cache live)
+            import threading as _threading
+            needs_geocoding = any(
+                str((p.get("adresa") or {}).get("kodAdresnihoMista") or "")
+                not in self.addr_cache
+                for it in items if isinstance(it, dict)
+                for p in ((it.get("mistoVykonuPrace") or {}).get("pracoviste") or [])
+                if isinstance(p, dict) and (p.get("adresa") or {}).get("kodAdresnihoMista")
+            )
+            if needs_geocoding:
+                t = _threading.Thread(
+                    target=self._geocode_addresses_background,
+                    args=(items, self.addr_cache, obec_lookup),
+                    daemon=True, name="addr-geocoder",
+                )
+                t.start()
+                print("  Started background address geocoding.")
 
             if self.all_jobs:
                 s = self.all_jobs[0]
@@ -401,19 +613,44 @@ class UradPraceSearcher:
             traceback.print_exc()
 
 
-    def _parse_item(self, item: dict, obec_lookup: dict = None, psc_cache: dict = None) -> Dict:
+    def _parse_item(self, item: dict, obec_lookup: dict = None, psc_cache: dict = None, obec_cache: dict = None, addr_cache: dict = None) -> Dict:
         title    = _extract(item.get("pozadovanaProfese") or item.get("nazevPozice") or item.get("pozice"))
         employer = _extract(item.get("zamestnavatel") or item.get("nazevFirmy"))
         location, location_search, lat, lon = _extract_location(item.get("mistoVykonuPrace"), obec_lookup or {})
 
-        # If _extract_location found no coords (MPSV data has none), look up by PSC
+        misto_raw = item.get("mistoVykonuPrace") or {}
+
+        # Priority 1: street-level coords from address cache (most precise)
+        if addr_cache:
+            for _p in (misto_raw.get("pracoviste") or []):
+                kod = (_p.get("adresa") or {}).get("kodAdresnihoMista")
+                if kod:
+                    coords = addr_cache.get(str(kod))
+                    if coords:
+                        lat, lon = coords
+                        break
+
+        # Priority 2: PSC centroid (postal-code area)
         if (not lat or not lon) and psc_cache:
-            misto_raw = item.get("mistoVykonuPrace") or {}
             for _p in (misto_raw.get("pracoviste") or []):
                 psc = str((_p.get("adresa") or {}).get("psc") or "").strip()
                 if psc and psc_cache.get(psc):
                     lat, lon = psc_cache[psc]
                     break
+
+        # Priority 3: inner obec centroid (covers jobs with no PSC in source data)
+        if (not lat or not lon) and obec_cache:
+            for _p in (misto_raw.get("pracoviste") or []):
+                obec_id = ((_p.get("adresa") or {}).get("obec") or {}).get("id") or ""
+                if obec_id and obec_cache.get(obec_id):
+                    lat, lon = obec_cache[obec_id]
+                    break
+
+        # Priority 4: outer mistoVykonuPrace.obec (when pracoviste.adresa is null)
+        if (not lat or not lon) and obec_cache:
+            outer_obec = (misto_raw.get("obec") or {}).get("id", "")
+            if outer_obec and obec_cache.get(outer_obec):
+                lat, lon = obec_cache[outer_obec]
 
         salary_from = _to_int(item.get("mesicniMzdaOd") or item.get("mzdaOd"))
         salary_to   = _to_int(item.get("mesicniMzdaDo") or item.get("mzdaDo"))
@@ -531,6 +768,39 @@ class UradPraceSearcher:
         # Build a searchable text blob for languages (used for passive mentions)
         language_search = text_scan
 
+        # Extract address key + geocodeable string for on-demand geocoding in search_jobs
+        _addr_key = None
+        _addr_str = None
+        for _ap in (misto_raw.get("pracoviste") or []):
+            _adresa = _ap.get("adresa") or {}
+            _kod = _adresa.get("kodAdresnihoMista")
+            if _kod:
+                _addr_key = str(_kod)
+                _ulice_raw = _adresa.get("ulice")
+                _ulice_name = (_ulice_raw.get("nazev") if isinstance(_ulice_raw, dict) else str(_ulice_raw or "")).strip()
+                _cislo_dom = _adresa.get("cisloDomovni")
+                _cislo_ori = str(_adresa.get("cisloOrientacni") or "").strip()
+                # Prefer orientation number (street-facing) for geocoding; use dom/ori when both set
+                if _cislo_dom and _cislo_ori:
+                    _cislo = f"{_cislo_dom}/{_cislo_ori}"
+                elif _cislo_ori:
+                    _cislo = _cislo_ori
+                else:
+                    _cislo = str(_cislo_dom) if _cislo_dom else ""
+                _psc_v = str(_adresa.get("psc") or "").strip()
+                if _ulice_name and _cislo:
+                    if _psc_v:
+                        _addr_str = f"{_ulice_name} {_cislo}, {_psc_v}, Česko"
+                    else:
+                        # No PSC (common in Praha) — derive city from obec_lookup
+                        _city = (_adresa.get("dodatekAdresy") or "").strip()
+                        if not _city and obec_lookup:
+                            _city = obec_lookup.get(
+                                (_adresa.get("obec") or {}).get("id", ""), "")
+                        if _city:
+                            _addr_str = f"{_ulice_name} {_cislo}, {_city}, Česko"
+            break
+
         return {
             "id":          job_id,
             "title":       title,
@@ -539,6 +809,8 @@ class UradPraceSearcher:
             "location_search": location_search,
             "lat":         lat,
             "lon":         lon,
+            "_addr_key":   _addr_key,
+            "_addr_str":   _addr_str,
             "salary":      salary_text,
             "salary_from": salary_from,
             "salary_to":   salary_to,
@@ -558,6 +830,53 @@ class UradPraceSearcher:
     # ------------------------------------------------------------------
     # Search
     # ------------------------------------------------------------------
+
+    def _geocode_result_addresses_sync(self, jobs: list, max_new: int = 8) -> None:
+        """Apply cached address coords to result jobs and geocode uncached ones (sync, capped).
+        Always overrides PSC/obec-level coords with street-level precision when available.
+        Updates job dicts in place — affects self.all_jobs too (shallow copy).
+        """
+        import time as _time
+        headers = {"User-Agent": "UradPraceJobSearch/1.0 (on-demand-geocoder)"}
+        new_count = 0
+        for job in jobs:
+            addr_key = job.get("_addr_key")
+            if not addr_key:
+                continue
+            cached = self.addr_cache.get(addr_key)
+            if cached:
+                # Apply cached address coords (overrides PSC/obec centroid)
+                job["lat"], job["lon"] = cached
+                continue
+            addr_str = job.get("_addr_str")
+            if not addr_str or new_count >= max_new:
+                # addr_key explicitly None in cache with no usable addr_str → skip
+                continue
+            # Geocode: either never tried, or previously cached None (e.g. old code skipped
+            # psc=null addresses) but now we have a city-based addr_str to try instead
+            try:
+                with self._nominatim_lock:
+                    r = requests.get(
+                        "https://nominatim.openstreetmap.org/search",
+                        params={"q": addr_str, "format": "json", "limit": 1, "countrycodes": "cz"},
+                        headers=headers, timeout=8,
+                    )
+                    results = r.json()
+                if results:
+                    coords = [float(results[0]["lat"]), float(results[0]["lon"])]
+                    self.addr_cache[addr_key] = coords
+                    job["lat"], job["lon"] = coords
+                else:
+                    self.addr_cache[addr_key] = None
+            except Exception as e:
+                print(f"  on-demand geocode error for {addr_str!r}: {e}")
+                self.addr_cache[addr_key] = None
+            new_count += 1
+            if new_count < max_new:
+                _time.sleep(1.05)
+        if new_count:
+            self._save_address_cache(self.addr_cache)
+            print(f"  on-demand geocoding: {new_count} new addresses resolved")
 
     def search_jobs(self,
                     keyword: Optional[str] = None,
@@ -629,15 +948,16 @@ class UradPraceSearcher:
                             result.append(j)
                     else:
                         no_coords += 1
-                        # No coordinates — fallback to text match if location text provided
+                        # No coordinates — only include when location text matches.
+                        # Without location text (e.g. map picker only) we exclude
+                        # no-coord jobs entirely; they can't be verified against the
+                        # isochrone and would flood the results with off-area jobs.
                         if location:
                             loc = _normalize(location)
                             import re as _re
                             loc_pattern = _re.compile(r'(?<![a-z0-9])' + _re.escape(loc) + r'(?![a-z0-9])')
                             if loc_pattern.search(_normalize(j["location_search"] or j["location"])):
                                 result.append(j)
-                        else:
-                            result.append(j)
                 iso_status["jobs_with_coords"] = before - no_coords
                 iso_status["jobs_without_coords"] = no_coords
                 jobs = result
@@ -700,8 +1020,11 @@ class UradPraceSearcher:
             print(f"  after region filter:        {len(jobs):,}")
 
         jobs.sort(key=lambda j: _normalize(j.get("title", "")))
+        result = jobs[:limit]
+        # Apply cached address coords and geocode any uncached ones in the result set
+        self._geocode_result_addresses_sync(result)
         print(f"  => {len(jobs):,} results (returning up to {limit})")
-        return jobs[:limit], iso_status
+        return result, iso_status
 
     # ------------------------------------------------------------------
     # Filters

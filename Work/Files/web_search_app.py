@@ -111,7 +111,18 @@ def search():
             except ValueError:
                 max_minutes = None
 
-        if location and max_minutes:
+        # Use coordinates picked directly from the map (bypasses geocoding)
+        raw_lat = (request.args.get('lat', '') or request.form.get('lat', '')).strip()
+        raw_lon = (request.args.get('lon', '') or request.form.get('lon', '')).strip()
+        if raw_lat and raw_lon and max_minutes:
+            try:
+                lat_center = float(raw_lat)
+                lon_center = float(raw_lon)
+                logger.info(f"Using map-picked coordinates: ({lat_center}, {lon_center})")
+            except ValueError:
+                logger.warning("Invalid lat/lon params — ignoring")
+
+        if lat_center is None and location and max_minutes:
             logger.info(f"Geocoding address: {location!r}")
             lat_center, lon_center = geocode_address(location)
             if lat_center:
@@ -173,6 +184,11 @@ HTML_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Úřad práce ČR - Vyhledávač pracovních míst</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -257,7 +273,13 @@ HTML_TEMPLATE = """
             box-shadow: 0 5px 20px rgba(102,126,234,0.2);
             transform: translateY(-2px);
         }
+        .job-card-header { display: flex; justify-content: space-between; align-items: center; }
         .job-number { color: #999; font-size: 0.9em; }
+        .no-map-badge {
+            font-size: 0.75em; color: #999; background: #f4f4f4;
+            border: 1px solid #ddd; border-radius: 10px; padding: 2px 8px;
+            cursor: default; white-space: nowrap;
+        }
         .job-title  { font-size: 1.4em; margin: 10px 0; word-break: break-word; }
         .job-title a { color: #667eea; text-decoration: none; font-weight: 600; }
         .job-title a:hover { text-decoration: underline; }
@@ -290,6 +312,59 @@ HTML_TEMPLATE = """
             padding: 15px; background-color: #d4edda; border: 2px solid #c3e6cb;
             color: #155724; border-radius: 8px; margin-bottom: 20px;
         }
+        .map-modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 2000;
+            align-items: center; justify-content: center;
+        }
+        .map-modal-overlay.active { display: flex; }
+        .map-modal {
+            background: white; border-radius: 16px; padding: 24px;
+            width: 92%; max-width: 740px; max-height: 92vh;
+            display: flex; flex-direction: column; gap: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .map-modal h3 { margin: 0; font-size: 1.15em; color: #333; }
+        #map-picker { height: 430px; border-radius: 10px; border: 2px solid #e0e0e0; }
+        .map-coords-display {
+            background: #f5f7ff; border: 1px solid #d0d8f0; border-radius: 8px;
+            padding: 9px 14px; font-family: monospace; font-size: 0.88em; color: #444;
+        }
+        .map-btn-row { display: flex; gap: 10px; justify-content: flex-end; }
+        .map-btn { padding: 10px 22px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: opacity 0.2s; }
+        .map-btn:hover { opacity: 0.82; }
+        .map-btn-confirm { background: linear-gradient(135deg,#667eea,#764ba2); color: white; }
+        .map-btn-cancel  { background: #e0e0e0; color: #333; }
+        .picked-coords-bar {
+            display: none; background: #e8f4fd; border: 1px solid #b8d8f0;
+            border-radius: 8px; padding: 7px 14px; font-size: 0.84em;
+            color: #1a5276; margin-top: 6px; align-items: center; justify-content: space-between;
+        }
+        .picked-coords-bar.active { display: flex; }
+        .picked-coords-bar button { background: none; border: none; cursor: pointer; color: #888; font-size: 16px; padding: 0 2px; width: auto; }
+        /* ── Results view toggle ─────────────────────────────────────────── */
+        #view-toggle-bar {
+            display: none; gap: 8px; padding: 20px 40px 0; align-items: center;
+        }
+        .view-toggle-btn {
+            padding: 8px 20px; border: 2px solid #667eea; border-radius: 8px;
+            background: white; color: #667eea; font-size: 15px; font-weight: 600;
+            cursor: pointer; transition: background 0.2s, color 0.2s;
+        }
+        .view-toggle-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border-color: transparent;
+        }
+        .view-toggle-btn:hover:not(.active) { background: #f0f0ff; }
+        #results-map {
+            display: none; height: 520px; margin: 0 40px 40px;
+            border-radius: 12px; border: 2px solid #e0e0e0; overflow: hidden;
+        }
+        #map-no-coords-notice {
+            display: none; background: #fff3cd; border: 1px solid #ffc107;
+            border-radius: 8px; padding: 8px 14px; font-size: 0.85em;
+            color: #856404; margin: 8px 40px 0;
+        }
     </style>
 </head>
 <body>
@@ -312,7 +387,13 @@ HTML_TEMPLATE = """
                     <div style="display:grid; grid-template-columns: 1fr 160px 160px; gap: 10px; align-items: end;">
                         <div>
                             <label for="location" style="font-size:0.85em; color:#666; font-weight:400;">Adresa / město</label>
-                            <input type="text" id="location" placeholder="např. Příbram, Chodov Praha...">
+                            <div style="display:flex; gap:6px;">
+                                <input type="text" id="location" placeholder="např. Příbram, Chodov Praha..." style="flex:1; min-width:0;">
+                                <button type="button" onclick="openMapModal()" title="Vybrat polohu na mapě"
+                                    style="padding:10px 13px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; white-space:nowrap; font-weight:600;">
+                                    📍 Mapa
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label for="max_minutes" style="font-size:0.85em; color:#666; font-weight:400;">Max. dojezd</label>
@@ -334,6 +415,10 @@ HTML_TEMPLATE = """
                         </div>
                     </div>
                     <small style="color:#888; margin-top:6px; display:block;">Dojezdový čas vyžaduje API klíč OpenRouteService (viz ORS_API_KEY). Bez něj se použije textové hledání.</small>
+                    <div class="picked-coords-bar" id="pickedCoordsBar">
+                        <span id="pickedCoordsText"></span>
+                        <button type="button" onclick="clearPickedCoords()" title="Odebrat vybranou polohu z mapy">✕</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -442,7 +527,14 @@ HTML_TEMPLATE = """
             <p><strong>Hledám pracovní nabídky...</strong></p>
         </div>
 
+        <div id="view-toggle-bar">
+            <button id="toggle-list-btn" class="view-toggle-btn active" onclick="switchView('list')">📋 Seznam</button>
+            <button id="toggle-map-btn"  class="view-toggle-btn"        onclick="switchView('map')">🗺️ Mapa</button>
+        </div>
+
         <div class="results" id="results"></div>
+        <div id="map-no-coords-notice"></div>
+        <div id="results-map"></div>
     </div>
 
     <script>
@@ -465,11 +557,13 @@ HTML_TEMPLATE = """
 
             document.getElementById('loading').style.display = 'block';
             document.getElementById('results').innerHTML = '';
+            hideViewToggle();
 
             try {
                 const params = new URLSearchParams();
                 if (keyword)               params.append('keyword', keyword);
                 if (location)              params.append('location', location);
+                if (confirmedLat !== null) { params.append('lat', confirmedLat); params.append('lon', confirmedLon); }
                 if (maxMinutes && maxMinutes !== '0') params.append('max_minutes', maxMinutes);
                 if (travelMode)            params.append('travel_mode', travelMode);
                 if (minSalary)             params.append('min_salary', minSalary);
@@ -494,18 +588,21 @@ HTML_TEMPLATE = """
                 document.getElementById('loading').style.display = 'none';
 
                 if (data.success === false || data.error) {
+                    hideViewToggle();
                     document.getElementById('results').innerHTML =
                         `<div class="error">❌ Chyba: ${data.error || data.message}</div>`;
                 } else if (data.jobs && data.jobs.length > 0) {
                     const employerCount = data.employer_count ?? new Set(data.jobs.map(j => j.employer).filter(Boolean)).size;
                     displayResults(data.jobs, employerCount, data.isochrone_status);
                 } else {
+                    hideViewToggle();
                     const isoHtml = renderIsoStatus(data.isochrone_status);
                     document.getElementById('results').innerHTML =
                         isoHtml + '<div class="no-results"><h3>😔 Žádné výsledky</h3><p>Zkuste změnit kritéria vyhledávání.</p></div>';
                 }
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
+                hideViewToggle();
                 document.getElementById('results').innerHTML =
                     `<div class="error">❌ Chyba: ${error.message}</div>`;
             }
@@ -537,7 +634,15 @@ HTML_TEMPLATE = """
         }
 
         function displayResults(jobs, employerCount, isoStatus) {
+            currentJobs = jobs;
+            currentView = 'list';
+            document.getElementById('view-toggle-bar').style.display = 'flex';
+            document.getElementById('toggle-list-btn').classList.add('active');
+            document.getElementById('toggle-map-btn').classList.remove('active');
+            document.getElementById('results-map').style.display = 'none';
+            document.getElementById('map-no-coords-notice').style.display = 'none';
             const div = document.getElementById('results');
+            div.style.display = '';
             let html = renderIsoStatus(isoStatus);
             html += `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek od <strong>${employerCount}</strong> zaměstnavatelů</div>`;
             jobs.forEach((job, i) => {
@@ -546,9 +651,15 @@ HTML_TEMPLATE = """
                 const salary   = job.salary   || '';
                 const location = job.location || '';
                 const employer = job.employer || '';
+                const hasCoords = job.lat && job.lon && !(job.lat === 0 && job.lon === 0);
+                const noMapBadge = hasCoords ? '' :
+                    `<span class="no-map-badge" title="Tato nabídka nemá souřadnice a nebude zobrazena na mapě">📍 bez mapy</span>`;
                 html += `
                 <div class="job-card">
-                    <div class="job-number">#${i + 1}</div>
+                    <div class="job-card-header">
+                        <div class="job-number">#${i + 1}</div>
+                        ${noMapBadge}
+                    </div>
                     <div class="job-title">
                         <a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>
                     </div>
@@ -1579,7 +1690,177 @@ HTML_TEMPLATE = """
         function fillDefaultIsco() {
             document.getElementById('excludeIsco').value = DEFAULT_ISCO_CODES;
         }
+
+        // ── Results map ──────────────────────────────────────────────────────────
+        let resultsMapInstance = null, resultsMarkerCluster = null;
+        let currentJobs = null, currentView = 'list';
+
+        function hideViewToggle() {
+            document.getElementById('view-toggle-bar').style.display = 'none';
+            document.getElementById('results-map').style.display = 'none';
+            document.getElementById('map-no-coords-notice').style.display = 'none';
+            currentJobs = null;
+        }
+
+        function switchView(viewName) {
+            const resultsDiv = document.getElementById('results');
+            const mapDiv     = document.getElementById('results-map');
+            currentView = viewName;
+            if (viewName === 'list') {
+                document.getElementById('toggle-list-btn').classList.add('active');
+                document.getElementById('toggle-map-btn').classList.remove('active');
+                resultsDiv.style.display = '';
+                mapDiv.style.display = 'none';
+                document.getElementById('map-no-coords-notice').style.display = 'none';
+            } else {
+                document.getElementById('toggle-map-btn').classList.add('active');
+                document.getElementById('toggle-list-btn').classList.remove('active');
+                resultsDiv.style.display = 'none';
+                mapDiv.style.display = 'block';
+                if (currentJobs) initResultsMap(currentJobs);
+            }
+        }
+
+        function initResultsMap(jobs) {
+            const validJobs    = jobs.filter(j => j.lat && j.lon && !(j.lat === 0 && j.lon === 0));
+            const invalidCount = jobs.length - validJobs.length;
+            const notice = document.getElementById('map-no-coords-notice');
+            if (invalidCount > 0) {
+                notice.textContent = `ℹ️ ${invalidCount} nabídek bez souřadnic není zobrazeno na mapě.`;
+                notice.style.display = 'block';
+            } else {
+                notice.style.display = 'none';
+            }
+            if (!resultsMapInstance) {
+                resultsMapInstance = L.map('results-map').setView([49.8, 15.5], 7);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                }).addTo(resultsMapInstance);
+            }
+            if (resultsMarkerCluster) resultsMapInstance.removeLayer(resultsMarkerCluster);
+            resultsMarkerCluster = L.markerClusterGroup();
+            validJobs.forEach(job => {
+                const title    = escapeHtml(job.title    || 'Bez názvu');
+                const employer = escapeHtml(job.employer || '');
+                const salary   = escapeHtml(job.salary   || '');
+                const location = escapeHtml(job.location || '');
+                const url      = job.url || '#';
+                const popup = `
+                    <div style="min-width:200px;max-width:280px;font-size:14px;line-height:1.6;">
+                        <div style="font-weight:700;margin-bottom:4px;">
+                            <a href="${url}" target="_blank" rel="noopener noreferrer"
+                               style="color:#667eea;text-decoration:none;">${title}</a>
+                        </div>
+                        ${employer ? `<div>🏢 ${employer}</div>` : ''}
+                        ${salary   ? `<div>💰 ${salary}</div>`   : ''}
+                        ${location ? `<div>📍 ${location}</div>` : ''}
+                    </div>`;
+                resultsMarkerCluster.addLayer(L.marker([job.lat, job.lon]).bindPopup(popup));
+            });
+            resultsMapInstance.addLayer(resultsMarkerCluster);
+            if (validJobs.length > 0)
+                resultsMapInstance.fitBounds(resultsMarkerCluster.getBounds(), { padding: [30, 30] });
+            setTimeout(() => resultsMapInstance && resultsMapInstance.invalidateSize(), 120);
+        }
+
+        // ── Map picker ──────────────────────────────────────────────────────────
+        let mapInstance = null, mapMarker = null;
+        let tempPickedLat = null, tempPickedLon = null;
+        let confirmedLat = null, confirmedLon = null;
+
+        function openMapModal() {
+            document.getElementById('mapModalOverlay').classList.add('active');
+            tempPickedLat = confirmedLat;
+            tempPickedLon = confirmedLon;
+            if (!mapInstance) {
+                const lat0 = confirmedLat ?? 49.8, lon0 = confirmedLon ?? 15.5;
+                mapInstance = L.map('map-picker').setView([lat0, lon0], confirmedLat !== null ? 12 : 7);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                }).addTo(mapInstance);
+                mapInstance.on('click', onMapClick);
+            } else {
+                if (confirmedLat !== null) mapInstance.setView([confirmedLat, confirmedLon], mapInstance.getZoom());
+            }
+            if (confirmedLat !== null) {
+                if (!mapMarker) mapMarker = L.marker([confirmedLat, confirmedLon]).addTo(mapInstance);
+                else mapMarker.setLatLng([confirmedLat, confirmedLon]);
+                document.getElementById('mapCoordsDisplay').textContent =
+                    `Souřadnice: ${confirmedLat.toFixed(6)}, ${confirmedLon.toFixed(6)}`;
+            } else {
+                if (mapMarker) { mapInstance.removeLayer(mapMarker); mapMarker = null; }
+                document.getElementById('mapCoordsDisplay').textContent = 'Klikněte na mapu pro výběr polohy';
+            }
+            setTimeout(() => mapInstance && mapInstance.invalidateSize(), 120);
+        }
+
+        function onMapClick(e) {
+            tempPickedLat = e.latlng.lat;
+            tempPickedLon = e.latlng.lng;
+            if (!mapMarker) mapMarker = L.marker([tempPickedLat, tempPickedLon]).addTo(mapInstance);
+            else mapMarker.setLatLng([tempPickedLat, tempPickedLon]);
+            document.getElementById('mapCoordsDisplay').textContent =
+                `Souřadnice: ${tempPickedLat.toFixed(6)}, ${tempPickedLon.toFixed(6)}`;
+        }
+
+        function closeMapModal() {
+            document.getElementById('mapModalOverlay').classList.remove('active');
+        }
+
+        async function confirmMapSelection() {
+            if (tempPickedLat === null) { closeMapModal(); return; }
+            confirmedLat = tempPickedLat;
+            confirmedLon = tempPickedLon;
+            // Auto-fill location text with reverse-geocoded name if field is empty
+            const locInput = document.getElementById('location');
+            if (!locInput.value.trim()) {
+                try {
+                    const r = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${confirmedLat}&lon=${confirmedLon}&format=json&accept-language=cs`,
+                        { headers: { 'User-Agent': 'UradPraceJobSearch/1.0' } }
+                    );
+                    if (r.ok) {
+                        const d = await r.json();
+                        const name = d.address?.city || d.address?.town || d.address?.village ||
+                                     d.address?.municipality || d.display_name?.split(',')[0];
+                        if (name) locInput.value = name;
+                    }
+                } catch(e) {}
+            }
+            updatePickedCoordsBar();
+            closeMapModal();
+        }
+
+        function updatePickedCoordsBar() {
+            const bar = document.getElementById('pickedCoordsBar');
+            if (confirmedLat !== null) {
+                document.getElementById('pickedCoordsText').textContent =
+                    `📍 Poloha z mapy: ${confirmedLat.toFixed(5)}, ${confirmedLon.toFixed(5)}`;
+                bar.classList.add('active');
+            } else {
+                bar.classList.remove('active');
+            }
+        }
+
+        function clearPickedCoords() {
+            confirmedLat = null; confirmedLon = null;
+            if (mapMarker && mapInstance) { mapInstance.removeLayer(mapMarker); mapMarker = null; }
+            updatePickedCoordsBar();
+        }
     </script>
+    <div class="map-modal-overlay" id="mapModalOverlay">
+        <div class="map-modal">
+            <h3>📍 Vybrat polohu na mapě</h3>
+            <div class="map-coords-display" id="mapCoordsDisplay">Klikněte na mapu pro výběr polohy</div>
+            <div id="map-picker"></div>
+            <div class="map-btn-row">
+                <button type="button" class="map-btn map-btn-cancel" onclick="closeMapModal()">Zrušit</button>
+                <button type="button" class="map-btn map-btn-confirm" onclick="confirmMapSelection()">Potvrdit výběr</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 """
