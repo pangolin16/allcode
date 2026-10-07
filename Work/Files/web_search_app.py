@@ -66,6 +66,9 @@ def search():
         exclude_driver = (request.args.get('exclude_driver_license', 'false').lower() == 'true' or
                           request.form.get('exclude_driver_license', 'false').lower() == 'true')
 
+        exclude_ozp = (request.args.get('exclude_ozp', 'false').lower() == 'true' or
+                   request.form.get('exclude_ozp', 'false').lower() == 'true')
+
         try:
             min_salary = int(request.args.get('min_salary', 0) or request.form.get('min_salary', 0))
             min_salary = min_salary if min_salary > 0 else None
@@ -78,11 +81,33 @@ def search():
         except Exception:
             max_salary = None
 
+        try:
+            min_hourly_wage = float(request.args.get('min_hourly_wage', 0) or request.form.get('min_hourly_wage', 0))
+            min_hourly_wage = min_hourly_wage if min_hourly_wage > 0 else None
+        except Exception:
+            min_hourly_wage = None
+
+        try:
+            max_hourly_wage = float(request.args.get('max_hourly_wage', 0) or request.form.get('max_hourly_wage', 0))
+            max_hourly_wage = max_hourly_wage if max_hourly_wage > 0 else None
+        except Exception:
+            max_hourly_wage = None
+
+        include_missing_hourly_wage = (
+            request.args.get('include_missing_hourly_wage', 'false').lower() == 'true' or
+            request.form.get('include_missing_hourly_wage', 'false').lower() == 'true')
+
         education    = (request.args.get('education',    '') or request.form.get('education',    '')).strip() or None
         exclude_isco = (request.args.get('exclude_isco', '') or request.form.get('exclude_isco', '')).strip() or None
 
         full_time_only = (request.args.get('full_time_only', 'false').lower() == 'true' or
                           request.form.get('full_time_only', 'false').lower() == 'true')
+        non_full_time_only = (
+            request.args.get('non_full_time_only', 'false').lower() == 'true' or
+            request.form.get('non_full_time_only', 'false').lower() == 'true')
+        full_time_or_dpc_only = (
+            request.args.get('full_time_or_dpc_only', 'false').lower() == 'true' or
+            request.form.get('full_time_or_dpc_only', 'false').lower() == 'true')
 
         # exclude_shifts arrives as comma-separated slugs: "nocni,nepretrzity,turnus"
         raw_shifts     = (request.args.get('exclude_shifts', '') or request.form.get('exclude_shifts', '')).strip()
@@ -140,11 +165,14 @@ def search():
             location=location if location else None,
             limit=limit,
             exclude_driver_license=exclude_driver,
+            exclude_ozp=exclude_ozp,
             min_salary=min_salary,
             max_salary=max_salary,
             education=education,
             exclude_isco=exclude_isco,
             full_time_only=full_time_only,
+            non_full_time_only=non_full_time_only,
+            full_time_or_dpc_only=full_time_or_dpc_only,
             exclude_shifts=exclude_shifts,
             exclude_languages=exclude_languages,
             exclude_education=exclude_education,
@@ -154,6 +182,9 @@ def search():
             max_minutes=max_minutes,
             travel_mode=travel_mode,
             ors_api_key=ORS_API_KEY,
+            min_hourly_wage=min_hourly_wage,
+            max_hourly_wage=max_hourly_wage,
+            include_missing_hourly_wage=include_missing_hourly_wage,
         )
 
         employer_count = len({j.get('employer') for j in jobs if j.get('employer')})
@@ -360,6 +391,13 @@ HTML_TEMPLATE = """
             display: none; height: 520px; margin: 0 40px 40px;
             border-radius: 12px; border: 2px solid #e0e0e0; overflow: hidden;
         }
+        .copy-urls-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 20px; background: #667eea; color: white;
+            border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+            cursor: pointer; margin-bottom: 20px; transition: background 0.2s, transform 0.15s;
+        }
+        .copy-urls-btn:hover { background: #764ba2; transform: translateY(-1px); }
         #map-no-coords-notice {
             display: none; background: #fff3cd; border: 1px solid #ffc107;
             border-radius: 8px; padding: 8px 14px; font-size: 0.85em;
@@ -392,6 +430,10 @@ HTML_TEMPLATE = """
                                 <button type="button" onclick="openMapModal()" title="Vybrat polohu na mapě"
                                     style="padding:10px 13px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; white-space:nowrap; font-weight:600;">
                                     📍 Mapa
+                                </button>
+                                <button type="button" onclick="setHomeLocation()" title="Nastavit domácí polohu"
+                                    style="padding:10px 13px; background:#2f855a; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; white-space:nowrap; font-weight:600;">
+                                    🏠 Home
                                 </button>
                             </div>
                         </div>
@@ -453,9 +495,33 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="form-group">
+                    <label for="minHourlyWage">⏱️ Min. hodinová mzda (Kč/hod):</label>
+                    <input type="number" id="minHourlyWage" placeholder="0" min="0" step="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="maxHourlyWage">⏱️ Max. hodinová mzda (Kč/hod):</label>
+                    <input type="number" id="maxHourlyWage" placeholder="0" min="0" step="5">
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight:400;">
+                        <input type="checkbox" id="includeMissingHourlyWage" style="width:auto;padding:0;">
+                        &nbsp;bez CZK/H (zahrnout i nabídky bez vypočitatelné hodinové mzdy)
+                    </label>
+                </div>
+
+                <div class="form-group">
                     <label style="font-weight:400;">
                         <input type="checkbox" id="excludeDriver" style="width:auto;padding:0;">
                         &nbsp;🚗 Vyloučit nabídky vyžadující řidičský průkaz
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight:400;">
+                        <input type="checkbox" id="excludeOzp" style="width:auto;padding:0;">
+                        &nbsp;Vyloučit nabídky vyhrazené pro OZP
                     </label>
                 </div>
 
@@ -466,6 +532,18 @@ HTML_TEMPLATE = """
                     </label>
                 </div>
 
+                <div class="form-group">
+                    <label style="font-weight:400;">
+                        <input type="checkbox" id="nonFullTimeOnly" style="width:auto;padding:0;">
+                        &nbsp;🕒 Pouze zkrácené úvazky, DPP a DPČ (vyloučit plný úvazek a služební poměr)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight:400;">
+                        <input type="checkbox" id="fullTimeOrDpcOnly" style="width:auto;padding:0;">
+                        &nbsp;💼 Pouze plný úvazek a DPČ (vyloučit služební poměr a DPP)
+                    </label>
+                </div>
                 <div class="form-group">
                     <label>🕐 Vyloučit typy směn:</label>
                     <div class="shift-grid">
@@ -548,7 +626,10 @@ HTML_TEMPLATE = """
             const minSalary     = document.getElementById('minSalary').value.trim();
             const maxSalary     = document.getElementById('maxSalary').value.trim();
             const excludeDriver = document.getElementById('excludeDriver').checked;
-            const fullTimeOnly  = document.getElementById('fullTimeOnly').checked;
+            const excludeOzp    = document.getElementById('excludeOzp').checked;
+            const fullTimeOnly = document.getElementById('fullTimeOnly').checked;
+            const nonFullTimeOnly = document.getElementById('nonFullTimeOnly').checked;
+            const fullTimeOrDpcOnly = document.getElementById('fullTimeOrDpcOnly').checked;
             const excludeIsco   = document.getElementById('excludeIsco').value.trim();
             const checkedShifts = [...document.querySelectorAll('.shiftCheck:checked')].map(cb => cb.value);
             const checkedLangs  = [...document.querySelectorAll('.langCheck:checked')].map(cb => cb.value);
@@ -568,8 +649,17 @@ HTML_TEMPLATE = """
                 if (travelMode)            params.append('travel_mode', travelMode);
                 if (minSalary)             params.append('min_salary', minSalary);
                 if (maxSalary)             params.append('max_salary', maxSalary);
+                const minHourlyWage = document.getElementById('minHourlyWage').value.trim();
+                const maxHourlyWage = document.getElementById('maxHourlyWage').value.trim();
+                const includeMissingHourlyWage = document.getElementById('includeMissingHourlyWage').checked;
+                if (minHourlyWage)         params.append('min_hourly_wage', minHourlyWage);
+                if (maxHourlyWage)         params.append('max_hourly_wage', maxHourlyWage);
+                if (includeMissingHourlyWage) params.append('include_missing_hourly_wage', 'true');
                 if (excludeDriver)         params.append('exclude_driver_license', 'true');
+                if (excludeOzp)            params.append('exclude_ozp', 'true');
                 if (fullTimeOnly)          params.append('full_time_only', 'true');
+                if (nonFullTimeOnly)       params.append('non_full_time_only', 'true');
+                if (fullTimeOrDpcOnly)     params.append('full_time_or_dpc_only', 'true');
                 if (excludeIsco)           params.append('exclude_isco', excludeIsco);
                 if (checkedShifts.length)  params.append('exclude_shifts', checkedShifts.join(','));
                 if (checkedLangs.length)   params.append('exclude_languages', checkedLangs.join(','));
@@ -607,7 +697,31 @@ HTML_TEMPLATE = """
                     `<div class="error">❌ Chyba: ${error.message}</div>`;
             }
         });
+        const fullTimeOnly = document.getElementById('fullTimeOnly');
+        const nonFullTimeOnly = document.getElementById('nonFullTimeOnly');
+        const fullTimeOrDpcOnly = document.getElementById('fullTimeOrDpcOnly');
 
+        fullTimeOnly.addEventListener('change', () => {
+            if (fullTimeOnly.checked) {
+                nonFullTimeOnly.checked = false;
+                fullTimeOrDpcOnly.checked = false;
+            }
+        });
+
+        nonFullTimeOnly.addEventListener('change', () => {
+            if (nonFullTimeOnly.checked) {
+                fullTimeOnly.checked = false;
+                fullTimeOrDpcOnly.checked = false;
+            }
+        });
+
+        fullTimeOrDpcOnly.addEventListener('change', () => {
+            if (fullTimeOrDpcOnly.checked) {
+                fullTimeOnly.checked = false;
+                nonFullTimeOnly.checked = false;
+            }
+        });
+        
         function renderIsoStatus(iso) {
             if (!iso || !iso.requested) return '';
             const modeLabel = {car: '🚗 Auto', bike: '🚲 Kolo', walk: '🚶 Pěšky'}[iso.mode] || iso.mode;
@@ -645,6 +759,10 @@ HTML_TEMPLATE = """
             div.style.display = '';
             let html = renderIsoStatus(isoStatus);
             html += `<div class="success">✅ Nalezeno <strong>${jobs.length}</strong> pracovních nabídek od <strong>${employerCount}</strong> zaměstnavatelů</div>`;
+            html += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+                <button type="button" class="copy-urls-btn" onclick="copyResultUrls(this)">📋 Kopírovat URL (${jobs.length})</button>
+                <button type="button" class="copy-urls-btn" onclick="copyResultUrlsWithWages(this)">📋 Copy job details</button>
+            </div>`;
             jobs.forEach((job, i) => {
                 const title    = job.title    || 'Bez názvu';
                 const url      = job.url      || '#';
@@ -652,13 +770,17 @@ HTML_TEMPLATE = """
                 const location = job.location || '';
                 const employer = job.employer || '';
                 const hasCoords = job.lat && job.lon && !(job.lat === 0 && job.lon === 0);
-                const noMapBadge = hasCoords ? '' :
-                    `<span class="no-map-badge" title="Tato nabídka nemá souřadnice a nebude zobrazena na mapě">📍 bez mapy</span>`;
+                const hasSpecificLocation = job.has_specific_location === true;
+                const noMapBadge = (hasCoords && hasSpecificLocation) ? '' :
+                    `<span class="no-map-badge" title="Tato nabídka nemá přesnou adresu a nebude zobrazena na mapě">📍 bez mapy</span>`;
+                const impliedWageBadge = job.implied_wage === true
+                    ? `<span class="no-map-badge" title="Počet hodin týdně byl doplněn hodnotou 37,5 pro výpočet hodinové mzdy">impied wage</span>`
+                    : '';
                 html += `
                 <div class="job-card">
                     <div class="job-card-header">
                         <div class="job-number">#${i + 1}</div>
-                        ${noMapBadge}
+                        <div>${noMapBadge}${impliedWageBadge}</div>
                     </div>
                     <div class="job-title">
                         <a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>
@@ -1079,6 +1201,7 @@ HTML_TEMPLATE = """
 25110
 25120
 25130
+25140
 25210
 25220
 25230
@@ -1347,14 +1470,6 @@ HTML_TEMPLATE = """
 33312
 33313
 33320
-33331
-33332
-33333
-33334
-33335
-33336
-33337
-33339
 33340
 33391
 33392
@@ -1373,16 +1488,6 @@ HTML_TEMPLATE = """
 33417
 33419
 33420
-33431
-33432
-33433
-33434
-33435
-33436
-33437
-33438
-33439
-33440
 33511
 33512
 33513
@@ -1391,16 +1496,11 @@ HTML_TEMPLATE = """
 33516
 33517
 33518
-33519
-33520
-33530
-33540
 33551
 33552
 33553
 33554
 33555
-33590
 34111
 34112
 34113
@@ -1463,12 +1563,42 @@ HTML_TEMPLATE = """
 35227
 35228
 35229
+41312
+42121
 42123
 42124
+42130
+42140
+42211
 42220
 42230
+42270
+43111
+43112
+43113
+43114
+43115
+43119
+43130
+43231
 43232
+43233
+43234
+43235
+43236
+43237
+43238
+44126
 51111
+51112
+51121
+51122
+51123
+51129
+51131
+51132
+51133
+51139
 51201
 51202
 51203
@@ -1479,8 +1609,14 @@ HTML_TEMPLATE = """
 51410
 51421
 51422
+51423
 51429
+51511
+51512
+51513
+51519
 51522
+51610
 51641
 51642
 51643
@@ -1513,10 +1649,61 @@ HTML_TEMPLATE = """
 52440
 52450
 52460
+53293
+53294
 53296
+54111
+54112
+54113
+54114
+54115
+54116
+54134
+54135
+54136
+54137
+54138
 54141
+54142
+54143
+54144
+54149
+54191
+54192
+54193
+54194
+54199
+61110
+61120
+61131
+61132
+61133
+61134
+61135
+61136
+61139
+61140
+61211
+61212
+61213
+61214
+61219
+61220
+61230
+61290
+61300
+62101
+62102
+62109
+62210
 62220
 62230
+62240
+63100
+63200
+63300
+63400
+71110
 71121
 71122
 71123
@@ -1526,6 +1713,7 @@ HTML_TEMPLATE = """
 71151
 71152
 71191
+71192
 71193
 71194
 71195
@@ -1554,7 +1742,9 @@ HTML_TEMPLATE = """
 71323
 71324
 71329
+71331
 71332
+71339
 72111
 72112
 72113
@@ -1563,10 +1753,26 @@ HTML_TEMPLATE = """
 72123
 72131
 72132
+72133
+72139
+72140
+72150
 72210
+72221
+72222
 72223
+72224
 72225
 72226
+72229
+72231
+72232
+72233
+72234
+72235
+72236
+72237
+72239
 72241
 72242
 72243
@@ -1597,6 +1803,9 @@ HTML_TEMPLATE = """
 73149
 73151
 73152
+73153
+73154
+73155
 73161
 73162
 73163
@@ -1604,9 +1813,15 @@ HTML_TEMPLATE = """
 73171
 73172
 73173
+73179
+73180
+73191
 73192
 73193
 73199
+73210
+73220
+73230
 74110
 74121
 74122
@@ -1615,13 +1830,25 @@ HTML_TEMPLATE = """
 74132
 74210
 74220
+75111
+75112
+75119
 75121
 75122
 75123
+75131
+75132
+75139
+75140
+75151
+75152
 75153
 75154
 75160
+75210
 75220
+75231
+75232
 75311
 75312
 75313
@@ -1632,10 +1859,15 @@ HTML_TEMPLATE = """
 75330
 75341
 75342
+75343
+75349
+75350
 75361
 75362
 75363
+75369
 75410
+75420
 75491
 75492
 75499
@@ -1646,6 +1878,7 @@ HTML_TEMPLATE = """
 81115
 81116
 81117
+81118
 81119
 81121
 81122
@@ -1653,12 +1886,99 @@ HTML_TEMPLATE = """
 81132
 81133
 81139
+81141
+81142
+81149
+81211
+81212
+81213
+81214
+81215
+81216
+81219
+81221
+81222
+81311
+81312
+81313
+81314
+81315
+81316
+81317
+81319
+81321
+81322
+81410
+81420
+81430
+81510
+81521
+81522
+81530
+81540
+81550
+81561
+81562
+81569
+81570
+81591
+81592
+81599
+81601
+81602
+81603
+81604
+81605
+81606
+81607
+81608
+81609
+81710
+81720
+81811
+81812
+81813
+81814
+81821
+81822
+81823
+81824
+81825
+81829
+81830
+81891
+81892
+81893
+81894
+81895
+81896
+81897
+81899
+82110
+82121
+82122
+82191
+82192
+82193
+82194
+82195
+82196
+82197
+82199
 83111
 83112
 83113
 83114
 83119
 83121
+83122
+83123
+83124
+83125
+83126
+83127
+83128
+83129
 83210
 83221
 83222
@@ -1676,16 +1996,32 @@ HTML_TEMPLATE = """
 83329
 83411
 83412
+83421
+83422
 83431
+83432
+83433
+83434
+83439
+83441
+83442
+83443
 83449
 83501
 83502
 83509
+93122
 93123
 93130
+93310
 93320
+93331
+94112
+94119
 94120
-95200`;
+95200
+96220
+`;
 
         function fillDefaultIsco() {
             document.getElementById('excludeIsco').value = DEFAULT_ISCO_CODES;
@@ -1721,6 +2057,16 @@ HTML_TEMPLATE = """
             }
         }
 
+        function getMarkerColor(hourlyWage) {
+            if (hourlyWage === null || hourlyWage === undefined) return '#999999'; // gray
+            if (hourlyWage >= 130 && hourlyWage < 150) return '#e74c3c'; // red
+            if (hourlyWage >= 150 && hourlyWage < 175) return '#e67e22'; // orange
+            if (hourlyWage >= 175 && hourlyWage < 200) return '#f1c40f'; // yellow
+            if (hourlyWage >= 200 && hourlyWage < 300) return '#2ecc71'; // green
+            if (hourlyWage >= 300) return '#3498db'; // blue
+            return '#999999'; // gray for any other case
+        }
+
         function initResultsMap(jobs) {
             const validJobs    = jobs.filter(j => j.lat && j.lon && !(j.lat === 0 && j.lon === 0));
             const invalidCount = jobs.length - validJobs.length;
@@ -1737,6 +2083,28 @@ HTML_TEMPLATE = """
                     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     maxZoom: 19
                 }).addTo(resultsMapInstance);
+                // Add legend
+                const legend = L.control({position: 'bottomright'});
+                legend.onAdd = function(map) {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    div.style.background = 'white';
+                    div.style.padding = '10px 14px';
+                    div.style.borderRadius = '8px';
+                    div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+                    div.style.fontSize = '13px';
+                    div.style.lineHeight = '1.7';
+                    div.innerHTML = `
+                        <div style="font-weight:700;margin-bottom:4px;">⏱️ Hodinová mzda</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#e74c3c;margin-right:6px;vertical-align:middle;"></span> 130-150 Kč</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#e67e22;margin-right:6px;vertical-align:middle;"></span> 150-175 Kč</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#f1c40f;margin-right:6px;vertical-align:middle;"></span> 175-200 Kč</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#2ecc71;margin-right:6px;vertical-align:middle;"></span> 200-300 Kč</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#3498db;margin-right:6px;vertical-align:middle;"></span> 300+ Kč</div>
+                        <div><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#999;margin-right:6px;vertical-align:middle;"></span> Neznámá</div>
+                    `;
+                    return div;
+                };
+                legend.addTo(resultsMapInstance);
             }
             if (resultsMarkerCluster) resultsMapInstance.removeLayer(resultsMarkerCluster);
             resultsMarkerCluster = L.markerClusterGroup();
@@ -1746,22 +2114,113 @@ HTML_TEMPLATE = """
                 const salary   = escapeHtml(job.salary   || '');
                 const location = escapeHtml(job.location || '');
                 const url      = job.url || '#';
+                const hourlyWage = job.hourly_wage;
+                const color = getMarkerColor(hourlyWage);
+                const hourlyText = (hourlyWage !== null && hourlyWage !== undefined)
+                    ? `<div>⏱️ ${hourlyWage} Kč/hod</div>` : '';
                 const popup = `
                     <div style="min-width:200px;max-width:280px;font-size:14px;line-height:1.6;">
                         <div style="font-weight:700;margin-bottom:4px;">
                             <a href="${url}" target="_blank" rel="noopener noreferrer"
                                style="color:#667eea;text-decoration:none;">${title}</a>
                         </div>
-                        ${employer ? `<div>🏢 ${employer}</div>` : ''}
-                        ${salary   ? `<div>💰 ${salary}</div>`   : ''}
-                        ${location ? `<div>📍 ${location}</div>` : ''}
+                        ${employer     ? `<div>🏢 ${employer}</div>` : ''}
+                        ${salary       ? `<div>💰 ${salary}</div>`   : ''}
+                        ${hourlyText}
+                        ${location     ? `<div>📍 ${location}</div>` : ''}
                     </div>`;
-                resultsMarkerCluster.addLayer(L.marker([job.lat, job.lon]).bindPopup(popup));
+                const markerIcon = L.divIcon({
+                    className: 'custom-marker-icon',
+                    html: `<div style="
+                        width: 24px; height: 24px;
+                        background: ${color};
+                        border: 3px solid #fff;
+                        border-radius: 50% 50% 50% 0;
+                        transform: rotate(-45deg);
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                    "><div style="
+                        width: 10px; height: 10px;
+                        background: #fff;
+                        border-radius: 50%;
+                        position: absolute;
+                        top: 50%; left: 50%;
+                        transform: translate(-50%, -50%) rotate(45deg);
+                    "></div></div>`,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 24],
+                    popupAnchor: [0, -28],
+                });
+                const marker = L.marker([job.lat, job.lon], {icon: markerIcon}).bindPopup(popup);
+                resultsMarkerCluster.addLayer(marker);
             });
             resultsMapInstance.addLayer(resultsMarkerCluster);
             if (validJobs.length > 0)
                 resultsMapInstance.fitBounds(resultsMarkerCluster.getBounds(), { padding: [30, 30] });
             setTimeout(() => resultsMapInstance && resultsMapInstance.invalidateSize(), 120);
+        }
+
+        async function copyResultUrls(button) {
+            if (!currentJobs || currentJobs.length === 0) return;
+            const urls = currentJobs
+                .map(j => j.url)
+                .filter(u => u && u !== '#')
+                .join('\\n');
+            try {
+                await navigator.clipboard.writeText(urls);
+                if (button) {
+                    const orig = button.innerHTML;
+                    button.innerHTML = '✅ Zkopírováno!';
+                    setTimeout(() => { button.innerHTML = orig; }, 2000);
+                }
+            } catch(e) {
+                alert('Kopírování selhalo: ' + e.message);
+            }
+        }
+
+        function formatCopiedHourlyWage(value) {
+                if (value === undefined || value === null || value === '') return '';
+                const parsed = Number(String(value).replace(',', '.'));
+                return Number.isFinite(parsed)
+                ? parsed.toLocaleString('cs-CZ', {maximumFractionDigits: 2}).replace(/\u00a0/g, ' ')
+                : String(value).replace('.', ',');
+            }
+
+        async function copyResultUrlsWithWages(button) {
+            if (!currentJobs || currentJobs.length === 0) return;
+            const lines = currentJobs
+                .map(job => {
+                    const url = job.url && job.url !== '#' ? job.url.trim() : '';
+                    if (!url) return null;
+                    const title = String(job.title || '').trim();
+                    const employer = String(job.employer || '').trim();
+                    const workplace = String(job.workplace_address || '').trim();
+                    const relationships = Array.isArray(job.employment_relationships)
+                        ? job.employment_relationships
+                            .filter(Boolean)
+                            .map(value => String(value).replace(/^PracovnepravniVztah[/]/, ''))
+                            .join(', ')
+                        : String(job.type || '').replace(/^PracovnepravniVztah[/]/, '').trim();
+                    const hourlyWage = formatCopiedHourlyWage(job.hourly_wage);
+                    const monthlyWage = job.monthly_wage_from === undefined || job.monthly_wage_from === null
+                        ? ''
+                        : String(job.monthly_wage_from);
+                    const weeklyHours = job.weekly_hours !== undefined && job.weekly_hours !== null && job.weekly_hours !== ''
+                        ? String(job.weekly_hours)
+                        : '';
+                    return [title, employer, workplace, url, relationships, hourlyWage, monthlyWage, weeklyHours].join('\\t');
+                })
+                .filter(Boolean)
+                .join('\\n');
+            try {
+                await navigator.clipboard.writeText(lines);
+                if (button) {
+                    const orig = button.innerHTML;
+                    button.innerHTML = '✅ Zkopírováno!';
+                    setTimeout(() => { button.innerHTML = orig; }, 2000);
+                }
+            } catch(e) {
+                alert('Kopírování selhalo: ' + e.message);
+            }
         }
 
         // ── Map picker ──────────────────────────────────────────────────────────
@@ -1847,6 +2306,17 @@ HTML_TEMPLATE = """
         function clearPickedCoords() {
             confirmedLat = null; confirmedLon = null;
             if (mapMarker && mapInstance) { mapInstance.removeLayer(mapMarker); mapMarker = null; }
+            updatePickedCoordsBar();
+        }
+
+        function setHomeLocation() {
+            confirmedLat = 50.06808;
+            confirmedLon = 14.34676;
+            if (mapInstance) {
+                mapInstance.setView([confirmedLat, confirmedLon], 13);
+                if (!mapMarker) mapMarker = L.marker([confirmedLat, confirmedLon]).addTo(mapInstance);
+                else mapMarker.setLatLng([confirmedLat, confirmedLon]);
+            }
             updatePickedCoordsBar();
         }
     </script>

@@ -88,6 +88,11 @@
   }
   .calendar .month .prev,
   .calendar .month .next {
+	border: 0;
+	padding: 8px;
+	color: inherit;
+	background: transparent;
+	font: inherit;
 	cursor: pointer;
   }
   .calendar .month .prev:hover,

@@ -49,8 +49,6 @@
       <div class="main-menu">
         <ul>
           <li><a href="${p}index.html"><i class="fa-solid fa-house"></i></a></li>
-          <li><a href="${p}calc.html"><i class="fa-solid fa-calculator"></i></a></li>
-          <li><a href="${p}QR/frontaV3.html"><i class="fa-solid fa-list"></i></a></li>
           <li><a href="${p}Calendar/calendar.html"><i class="fa-solid fa-calendar-days"></i></a></li>
           <li><button class="auth-btn"><i class="fa-solid fa-user"></i></button></li>
         </ul>
@@ -63,8 +61,6 @@
       <div class="mobile-menu">
         <ul>
           <li><a href="${p}index.html"><i class="fa-solid fa-house"></i></a></li>
-          <li><a href="${p}calc.html"><i class="fa-solid fa-calculator"></i></a></li>
-          <li><a href="${p}QR/frontaV3.html"><i class="fa-solid fa-list"></i></a></li>
           <li><a href="${p}Calendar/calendar.html"><i class="fa-solid fa-calendar-days"></i></a></li>
           <li><button class="auth-btn"><i class="fa-solid fa-user"></i></button></li>
         </ul>

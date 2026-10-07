@@ -655,14 +655,92 @@ class UradPraceSearcher:
         salary_from = _to_int(item.get("mesicniMzdaOd") or item.get("mzdaOd"))
         salary_to   = _to_int(item.get("mesicniMzdaDo") or item.get("mzdaDo"))
 
-        if salary_from and salary_to:
-            salary_text = f"{salary_from} - {salary_to} Kc/mesic"
-        elif salary_from:
-            salary_text = f"Od {salary_from} Kc/mesic"
-        elif salary_to:
-            salary_text = f"Do {salary_to} Kc/mesic"
+        # Determine salary type (monthly vs hourly) from typMzdy
+        typ_mzdy_raw = item.get("typMzdy") or {}
+        typ_mzdy = ""
+        if isinstance(typ_mzdy_raw, dict):
+            typ_mzdy = (typ_mzdy_raw.get("id") or "").replace("TypMzdy/", "")
+        elif isinstance(typ_mzdy_raw, str):
+            typ_mzdy = typ_mzdy_raw.replace("TypMzdy/", "")
+
+        relationship_values = item.get("pracovnePravniVztahy") or []
+        if not isinstance(relationship_values, list):
+            relationship_values = [relationship_values]
+        relationship_ids_for_hours = [
+            relationship.get("id", "").replace("PracovnepravniVztah/", "").strip()
+            for relationship in relationship_values
+            if isinstance(relationship, dict) and relationship.get("id")
+        ]
+        implied_wage = relationship_ids_for_hours == ["plny"]
+
+        # Get weekly hours (pocetHodinTydne) — may be int, float, None, or empty string
+        weekly_hours_raw = item.get("pocetHodinTydne")
+        weekly_hours = 0
+        if weekly_hours_raw is not None:
+            try:
+                weekly_hours = float(str(weekly_hours_raw).strip())
+            except (ValueError, TypeError):
+                pass
+        if implied_wage and weekly_hours <= 0:
+            weekly_hours = 37.5
+            implied_wage = True
         else:
-            salary_text = ""
+            implied_wage = False
+
+        # Compute hourly_wage for map marker coloring
+        # Standard: 166.67 monthly hours for 40h/week
+        # Monthly hours for N hours/week = (166.67 / 40) * N
+        hourly_wage = None
+        if typ_mzdy == "hod":
+            # Already hourly — use the lowest value directly
+            hourly_wage = salary_from if salary_from else (salary_to if salary_to else None)
+        elif weekly_hours > 0:
+            # Monthly wage with known weekly hours → compute hourly
+            monthly_hours = (166.67 / 40.0) * weekly_hours
+            if monthly_hours > 0 and salary_from:
+                hourly_wage = round(salary_from / monthly_hours, 2)
+            elif monthly_hours > 0 and salary_to:
+                hourly_wage = round(salary_to / monthly_hours, 2)
+
+        monthly_wage_from = None
+        if typ_mzdy == "hod" and weekly_hours > 0:
+            # Hourly wage with known weekly hours → convert to monthly
+            # Average working hours in a month for 40h/week = 173.92
+            # Monthly hours for N hours/week = (173.92 / 40) * N
+            factor = (173.92 / 40.0) * weekly_hours
+            monthly_from = round(salary_from * factor) if salary_from else 0
+            monthly_to   = round(salary_to * factor)   if salary_to   else 0
+            monthly_wage_from = monthly_from or None
+
+            if monthly_from and monthly_to:
+                salary_text = f"{monthly_from} - {monthly_to} Kc/mesic"
+            elif monthly_from:
+                salary_text = f"Od {monthly_from} Kc/mesic"
+            elif monthly_to:
+                salary_text = f"Do {monthly_to} Kc/mesic"
+            else:
+                salary_text = ""
+        elif typ_mzdy == "hod":
+            # Hourly wage without weekly hours → keep as hourly
+            if salary_from and salary_to:
+                salary_text = f"{salary_from} - {salary_to} Kc/hod"
+            elif salary_from:
+                salary_text = f"Od {salary_from} Kc/hod"
+            elif salary_to:
+                salary_text = f"Do {salary_to} Kc/hod"
+            else:
+                salary_text = ""
+        else:
+            # Monthly (or unknown type) — keep original behavior
+            monthly_wage_from = salary_from or None
+            if salary_from and salary_to:
+                salary_text = f"{salary_from} - {salary_to} Kc/mesic"
+            elif salary_from:
+                salary_text = f"Od {salary_from} Kc/mesic"
+            elif salary_to:
+                salary_text = f"Do {salary_to} Kc/mesic"
+            else:
+                salary_text = ""
 
         education = _extract(item.get("minPozadovaneVzdelani") or item.get("pozadovaneVzdelani") or item.get("vzdelani"))
 
@@ -682,6 +760,11 @@ class UradPraceSearcher:
         if not isinstance(ppr, list):
             ppr = [ppr]
         job_type = _extract(ppr[0] if ppr else {})
+        employment_relationships = [
+            _extract(relationship).replace("PracovnepravniVztah/", "", 1)
+            for relationship in ppr
+            if _extract(relationship)
+        ]
         # All contract type IDs as a list (JSON-serializable)
         # e.g. ["plny", "sluzebni"]
         ppr_ids  = [
@@ -801,21 +884,70 @@ class UradPraceSearcher:
                             _addr_str = f"{_ulice_name} {_cislo}, {_city}, Česko"
             break
 
+        # Determine if this job has a specific street-level address
+        # (as opposed to only city/PSC-level info)
+        has_specific_address = False
+        for _p in (misto_raw.get("pracoviste") or []):
+            _adresa = _p.get("adresa") or {}
+            # Check for street name + house number (specific address)
+            ulice_raw = _adresa.get("ulice")
+            ulice_name = ""
+            if isinstance(ulice_raw, dict):
+                ulice_name = (ulice_raw.get("nazev") or "").strip()
+            elif isinstance(ulice_raw, str):
+                ulice_name = ulice_raw.strip()
+            cislo_dom = _adresa.get("cisloDomovni")
+            if ulice_name and cislo_dom:
+                has_specific_address = True
+                break
+            # Check for directly embedded WGS84 coordinates (street level from source)
+            wgs = _adresa.get("wgs84") or {}
+            if isinstance(wgs, dict):
+                try:
+                    _alat = float(wgs.get("lat") or wgs.get("latitude") or wgs.get("zemepisnaSirka") or 0)
+                    _alon = float(wgs.get("lon") or wgs.get("lng") or wgs.get("longitude") or wgs.get("zemepisnaDelka") or 0)
+                    if _alat and _alon:
+                        has_specific_address = True
+                        break
+                except (TypeError, ValueError):
+                    pass
+            # Check for geometrie / vysledek_ruian style: [lon, lat] array
+            for coord_key in ("geometrie", "vysledek_ruian", "souradnice"):
+                coords = _adresa.get(coord_key) or _p.get(coord_key)
+                if isinstance(coords, list) and len(coords) >= 2:
+                    try:
+                        _alon, _alat = float(coords[0]), float(coords[1])
+                        if _alat and _alon:
+                            has_specific_address = True
+                            break
+                    except (TypeError, ValueError):
+                        pass
+            if has_specific_address:
+                break
+
         return {
             "id":          job_id,
+            "has_specific_location": has_specific_address,
             "title":       title,
             "employer":    employer,
             "location":    location,
+            "workplace_address": _addr_str or "",
             "location_search": location_search,
             "lat":         lat,
             "lon":         lon,
             "_addr_key":   _addr_key,
             "_addr_str":   _addr_str,
             "salary":      salary_text,
+            "monthly_wage": salary_text if typ_mzdy != "hod" or weekly_hours > 0 else "",
+            "monthly_wage_from": monthly_wage_from,
             "salary_from": salary_from,
             "salary_to":   salary_to,
+            "hourly_wage": hourly_wage,
+            "weekly_hours": weekly_hours if weekly_hours > 0 else None,
+            "implied_wage": implied_wage,
             "type":        job_type,
             "ppr_ids":     ppr_ids,
+            "employment_relationships": employment_relationships,
             "shift_ids":   shift_ids,
             "kraj_id":     kraj_id,
             "posted":      posted,
@@ -883,11 +1015,14 @@ class UradPraceSearcher:
                     location: Optional[str] = None,
                     limit: int = 20,
                     exclude_driver_license: bool = False,
+                    exclude_ozp: bool = False,
                     min_salary: Optional[int] = None,
                     max_salary: Optional[int] = None,
                     education: Optional[str] = None,
                     exclude_isco: Optional[str] = None,
                     full_time_only: bool = False,
+                    non_full_time_only: bool = False,
+                    full_time_or_dpc_only: bool = False,
                     exclude_shifts: Optional[list] = None,
                     exclude_languages: Optional[list] = None,
                     exclude_education: Optional[list] = None,
@@ -896,11 +1031,15 @@ class UradPraceSearcher:
                     lon_center: Optional[float] = None,
                     max_minutes: Optional[int] = None,
                     travel_mode: str = 'car',
-                    ors_api_key: str = "") -> List[Dict]:
+                    ors_api_key: str = "",
+                    min_hourly_wage: Optional[float] = None,
+                    max_hourly_wage: Optional[float] = None,
+                    include_missing_hourly_wage: bool = False) -> List[Dict]:
 
         print(f"\nSearch: kw={keyword!r} loc={location!r} sal={min_salary}-{max_salary} "
               f"driver_excl={exclude_driver_license} edu={education!r} langs={exclude_languages} edus_excl={exclude_education} "
-              f"isochrone=({lat_center},{lon_center},{max_minutes}min,{travel_mode})")
+              f"isochrone=({lat_center},{lon_center},{max_minutes}min,{travel_mode}) "
+              f"hourly_wage={min_hourly_wage}-{max_hourly_wage}")
 
         if not self.all_jobs:
             print("No jobs cached - reloading...")
@@ -991,6 +1130,10 @@ class UradPraceSearcher:
             jobs = self._filter_driver_license(jobs)
             print(f"  after driver filter:        {len(jobs):,}")
 
+        if exclude_ozp:
+            jobs = self._filter_ozp(jobs)
+            print(f"  after OZP exclusion:        {len(jobs):,}")
+
         if education:
             jobs = self._filter_education(jobs, education)
             print(f"  after education:            {len(jobs):,}")
@@ -999,9 +1142,21 @@ class UradPraceSearcher:
             jobs = self._filter_isco(jobs, exclude_isco)
             print(f"  after ISCO exclusion:       {len(jobs):,}")
 
+
+        if non_full_time_only:
+            jobs = [j for j in jobs if not any(x in j.get("ppr_ids", []) for x in ("plny", "sluzebni"))]
+            print(f"  after non-full-time filter: {len(jobs):,}")
+
+
+
+
         if full_time_only:
             jobs = self._filter_full_time_only(jobs)
             print(f"  after full-time filter:     {len(jobs):,}")
+
+        if full_time_or_dpc_only:
+            jobs = self._filter_full_time_or_dpc_only(jobs)
+            print(f"  after full-time or DPČ filter: {len(jobs):,}")
 
         if exclude_shifts:
             jobs = self._filter_shifts(jobs, exclude_shifts)
@@ -1014,6 +1169,11 @@ class UradPraceSearcher:
         if exclude_education:
             jobs = self._filter_exclude_education(jobs, exclude_education)
             print(f"  after education exclusion:  {len(jobs):,}")
+
+        if min_hourly_wage is not None or max_hourly_wage is not None:
+            jobs = self._filter_hourly_wage(
+                jobs, min_hourly_wage, max_hourly_wage, include_missing_hourly_wage)
+            print(f"  after hourly wage filter:   {len(jobs):,}")
 
         if regions:
             jobs = self._filter_regions(jobs, regions)
@@ -1050,6 +1210,22 @@ class UradPraceSearcher:
     def _filter_driver_license(jobs):
         bad = ["ridic", "ridicka", "ridicsky", "prukaz", "vozidlo", "kamion", "autobus"]
         return [j for j in jobs if not any(kw in _normalize(j["title"]) for kw in bad)]
+
+    @staticmethod
+    def _filter_ozp(jobs):
+        """Exclude only offers containing one of the requested exact phrases."""
+        excluded_phrases = (
+            "pouze pro ozp",
+            "misto vyhrazeno zamestnavatelem pro osoby se zdravotnim postizenim",
+            "pracovni misto vyhrazeno zamestnavatelem pro osoby s invalidnim duchodem",
+        )
+        return [
+            job for job in jobs
+            if not any(
+                phrase in _normalize(job.get("description", ""))
+                for phrase in excluded_phrases
+            )
+        ]
 
     @staticmethod
     def _filter_education(jobs, education):
@@ -1163,6 +1339,18 @@ class UradPraceSearcher:
             if not ppr_ids:
                 result.append(job)
             elif ppr_ids & KEEP:
+                result.append(job)
+        return result
+
+    @staticmethod
+    def _filter_full_time_or_dpc_only(jobs):
+        """Keep full-time or DPČ jobs, excluding služební poměr and DPP."""
+        allowed = {"plny", "dpc"}
+        excluded = {"sluzebni", "dpp"}
+        result = []
+        for job in jobs:
+            ppr_ids = set(job.get("ppr_ids") or [])
+            if ppr_ids & allowed and not ppr_ids & excluded:
                 result.append(job)
         return result
 
@@ -1321,6 +1509,27 @@ class UradPraceSearcher:
         'Kraj/132': 'Moravskoslezský kraj',
         'Kraj/141': 'Zlínský kraj',
     }
+
+    @staticmethod
+    def _filter_hourly_wage(jobs, min_hourly_wage=None, max_hourly_wage=None,
+                            include_missing_hourly_wage=False):
+        """
+        Filter jobs by computed hourly wage (hourly_wage field).
+        Jobs with no hourly_wage (None) are included only when explicitly requested.
+        """
+        result = []
+        for job in jobs:
+            hw = job.get("hourly_wage")
+            if hw is None:
+                if include_missing_hourly_wage:
+                    result.append(job)
+                continue
+            if min_hourly_wage is not None and hw < min_hourly_wage:
+                continue
+            if max_hourly_wage is not None and hw > max_hourly_wage:
+                continue
+            result.append(job)
+        return result
 
     @staticmethod
     def _filter_regions(jobs, regions):

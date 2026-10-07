@@ -123,6 +123,26 @@ function nextMonth() {
 prev.addEventListener("click", prevMonth);
 next.addEventListener("click", nextMonth);
 
+document.addEventListener("keydown", (event) => {
+  if (
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.target.isContentEditable ||
+    event.target.closest("input, textarea, select")
+  ) {
+    return;
+  }
+
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    prevMonth();
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    nextMonth();
+  }
+});
+
 initCalendar();
 
 //function to add active on day

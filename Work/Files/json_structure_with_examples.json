@@ -1,0 +1,158 @@
+{
+    "polozky": [
+        {
+            "portalId": 67216801,
+            "id": "VolneMisto/67216801",
+            "referencniCislo": "32369800743",
+            "azylant": false,
+            "cizinecMimoEu": true,
+            "datumVlozeni": "2025-12-18T00:00:00.000Z",
+            "datumZmeny": "2026-05-29T01:21:48.000Z",
+            "mesicniMzdaDo": 160,
+            "mesicniMzdaOd": 150,
+            "modraKarta": false,
+            "pocetHodinTydne": 40,
+            "pocetMist": 2,
+            "pozadovanaProfese": {
+                "cs": "Pracovník v rostlinné výrobě"
+            },
+            "statniSpravaSamosprava": false,
+            "terminUkonceniPracovnihoPomeru": null,
+            "terminZahajeniPracovnihoPomeru": "2026-03-01",
+            "souhlasAgenturyAgentura": false,
+            "souhlasAgenturyUzivatel": false,
+            "upresnujiciInformace": {
+                "cs": "Pracovní doba 7:00 - 15:30\nPracovník se zkušenostmi se zavlažováním rostlin a obsluhou čerpadel.\n"
+            },
+            "urlAdresa": null,
+            "zamestnaneckaKarta": true,
+            "expirace": null,
+            "minPozadovaneVzdelani": {
+                "id": "VzdelaniDetailniKategorie/zaklPraktSkol"
+            },
+            "smennost": {
+                "id": "Smennost/jednoSm"
+            },
+            "typMzdy": {
+                "id": "TypMzdy/hod"
+            },
+            "zverejnovat": {
+                "id": "ZverejnovatVpm/ano"
+            },
+            "mistoVykonuPrace": {
+                "typMistaVykonuPrace": {
+                    "id": "TypMistaVykonuPrace/adrprov"
+                },
+                "obec": null,
+                "okresy": null,
+                "adresaText": null,
+                "pracoviste": [
+                    {
+                        "email": null,
+                        "nazev": "AGROWALD - školka Červený Dvůr s.r.o.",
+                        "telefon": null,
+                        "adresa": {
+                            "cisloDomovni": 91,
+                            "cisloOrientacni": null,
+                            "dodatekAdresy": null,
+                            "kodAdresnihoMista": 8700681,
+                            "psc": "38101",
+                            "typCislaDomovniho": {
+                                "id": "TypStavebnihoObjektu/1"
+                            },
+                            "kraj": {
+                                "id": "Kraj/35"
+                            },
+                            "okres": {
+                                "id": "Okres/3302"
+                            },
+                            "obec": {
+                                "id": "Obec/545554"
+                            },
+                            "mestskyObvodMestskaCast": null,
+                            "mestskyObvodVPraze": null,
+                            "castObce": {
+                                "id": "CastObce/62049"
+                            },
+                            "ulice": null
+                        }
+                    }
+                ]
+            },
+            "zamestnavatel": {
+                "ico": "28114281",
+                "nazev": "AGROWALD - školka Červený Dvůr s.r.o."
+            },
+            "profeseCzIsco": {
+                "id": "CzIsco/611"
+            },
+            "pracovnePravniVztahy": [
+                {
+                    "id": "PracovnepravniVztah/plny"
+                }
+            ],
+            "vhodnostiPracovnihoMista": [
+                {
+                    "id": "VhodnostProTypZamestnance/zdravi"
+                }
+            ],
+            "kontaktniPracoviste": {
+                "id": "KontaktniPracoviste/CKA"
+            },
+            "vyhodyVolnehoMista": [
+                {
+                    "vyhoda": {
+                        "id": "VyhodyVolnehoMista/strav"
+                    },
+                    "popis": null
+                }
+            ],
+            "pozadovanaDovednost": null,
+            "pozadovanaJazykovaZnalost": null,
+            "pozadovanePovolani": null,
+            "pozadovaneVzdelani": null,
+            "prvniKontaktSeZamestnavatelem": {
+                "komuSeHlasit": {
+                    "email": "skolkacdvur@agrowald.com",
+                    "telefon": "606 774 669",
+                    "jmeno": "Oldřich",
+                    "prijmeni": "Dvořák",
+                    "titulPredJmenem": "Ing.",
+                    "titulZaJmenem": null,
+                    "poziceVeSpolecnosti": "jednatel"
+                },
+                "kdeSeHlasit": {
+                    "email": null,
+                    "telefon": null,
+                    "mistoKontaktu": "AGROWALD - školka Červený Dvůr s.r.o.",
+                    "adresa": {
+                        "cisloDomovni": 91,
+                        "cisloOrientacni": null,
+                        "dodatekAdresy": null,
+                        "kodAdresnihoMista": 8700681,
+                        "psc": "38101",
+                        "typCislaDomovniho": {
+                            "id": "TypStavebnihoObjektu/1"
+                        },
+                        "kraj": {
+                            "id": "Kraj/35"
+                        },
+                        "okres": {
+                            "id": "Okres/3302"
+                        },
+                        "obec": {
+                            "id": "Obec/545554"
+                        },
+                        "mestskyObvodMestskaCast": null,
+                        "mestskyObvodVPraze": null,
+                        "castObce": {
+                            "id": "CastObce/62049"
+                        },
+                        "nazevCastiObce": null,
+                        "ulice": null
+                    }
+                }
+            }
+        }
+    ]
+}
