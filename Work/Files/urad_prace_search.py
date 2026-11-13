@@ -387,24 +387,34 @@ class UradPraceSearcher:
         print(f"  Geocoding {len(missing):,} new PSC codes via Nominatim...")
         headers = {"User-Agent": "UradPraceJobSearch/1.0 (psc-geocoder)"}
         ok = 0
+        import time
+
         for i, psc in enumerate(missing):
-            try:
-                url = "https://nominatim.openstreetmap.org/search"
-                params = {"postalcode": psc, "country": "cz", "format": "json", "limit": 1}
-                r = requests.get(url, params=params, headers=headers, timeout=8)
-                results = r.json()
-                if results:
-                    cache[psc] = [float(results[0]["lat"]), float(results[0]["lon"])]
-                    ok += 1
-                else:
-                    cache[psc] = None  # mark as "tried but not found"
-            except Exception as e:
-                print(f"    PSC {psc} geocode error: {e}")
-                cache[psc] = None
+            for attempt in range(3):
+                try:
+                    url = "https://nominatim.openstreetmap.org/search"
+                    params = {"postalcode": psc, "country": "cz", "format": "json", "limit": 1}
+                    r = requests.get(url, params=params, headers=headers, timeout=8)
+                    results = r.json()
+                    if results:
+                        cache[psc] = [float(results[0]["lat"]), float(results[0]["lon"])]
+                        ok += 1
+                    else:
+                        cache[psc] = None  # mark as "tried but not found"
+                    break
+                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+                    if attempt < 2:
+                        print(f"    PSC {psc} request failed; retrying ({attempt + 1}/2): {e}")
+                        time.sleep(1.05)
+                    else:
+                        print(f"    PSC {psc} geocode failed after 3 attempts: {e}")
+                except Exception as e:
+                    print(f"    PSC {psc} geocode error: {e}")
+                    cache[psc] = None
+                    break
             # Nominatim rate limit: max 1 req/s
             if i % 50 == 49:
                 print(f"    ... {i+1}/{len(missing)} ({ok} found so far)")
-            import time
             time.sleep(1.05)
 
         print(f"  Geocoded {ok}/{len(missing)} PSC codes successfully.")

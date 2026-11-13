@@ -4,135 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="calendar.css">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-        rel="stylesheet"
-    />
-    <style>
-        #login-gate {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            gap: 16px;
-            font-family: 'Poppins', sans-serif;
-        }
-        #login-gate p {
-            color: #555;
-            font-size: 1rem;
-        }
-        #google-signin-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            background: #fff;
-            color: #333;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: box-shadow 0.2s;
-        }
-        #google-signin-btn:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <div id="login-gate">
+  <div id="login-gate" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 16px;">
     <p>Sign in to access the calendar</p>
-    <button id="google-signin-btn">
+    <button id="google-signin-btn" style="display: flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
       <i class="fa-brands fa-google"></i> Sign in with Google
     </button>
   </div>
 
   <div id="content" style="display: none;">
     <div class="container">
-        <div class="left">
+        <div class="header-tabs">
+            <div class="tab active" data-view="calendar">Calendar</div>
+            <div class="tab" data-view="reminders">Reminders</div>
+        </div>
+
+        <div id="calendar-view">
             <div class="calendar">
                 <div class="month">
-                    <button type="button" class="prev" aria-label="Previous month">
-                        <i class="fas fa-angle-left" aria-hidden="true"></i>
-                    </button>
-                    <div class="date">December 2015</div>
-                    <button type="button" class="next" aria-label="Next month">
-                        <i class="fas fa-angle-right" aria-hidden="true"></i>
-                    </button>
+                    <i class="fas fa-angle-left prev"></i>
+                    <div class="date"></div>
+                    <i class="fas fa-angle-right next"></i>
                 </div>
                 <div class="weekdays">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
                 <div class="days"></div>
-                <div class="goto-today">
-                    <div class="goto">
-                        <input type="text" placeholder="mm/yyyy" class="date-input" />
-                        <button class="goto-btn">Go</button>
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <button class="today-btn">Today</button>
-                    <button id="saveBtn" onclick="saveToFirestore()">Save</button>
-                    <a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i></a>
+                    <button id="saveBtn" onclick="saveToFirestore()" style="background: var(--primary-clr); color: #fff; border: none; padding: 6px 15px; border-radius: 20px; cursor: pointer;">Save</button>
+                    <a href="../index.html" style="color: var(--primary-clr);"><i class="fa fa-home"></i></a>
                 </div>
+            </div>
+            <div class="right">
+                <div class="today-date">
+                    <div class="event-day"></div>
+                    <div class="event-date"></div>
+                </div>
+                <div class="events"></div>
             </div>
         </div>
-        <div class="right">
-            <div class="today-date">
-                <div class="event-day">Wed</div>
-                <div class="event-date">12th December 2022</div>
-            </div>
-            <div class="events"></div>
-            <div class="add-event-wrapper">
-                <div class="add-event-header">
-                    <div class="title">Add Event</div>
-                    <i class="fas fa-times close"></i>
-                </div>
-                <div class="add-event-body">
-                    <div class="add-event-input">
-                        <input type="text" placeholder="Event Name" class="event-name" />
-                    </div>
-                    <div class="add-event-input">
-                        <input type="text" placeholder="Event Time From" class="event-time-from" />
-                    </div>
-                    <div class="add-event-input">
-                        <input type="text" placeholder="Event Time To" class="event-time-to" />
-                    </div>
-                </div>
-                <div class="add-event-footer">
-                    <button class="add-event-btn">Add Event</button>
-                </div>
+
+        <div id="reminders-view" style="display: none;">
+            <div class="reminders-list">
+                <!-- Grouped reminders will be injected here -->
             </div>
         </div>
-        <button class="add-event">
-            <i class="fas fa-plus"></i>
-        </button>
+        <button class="add-event"><i class="fas fa-plus"></i></button>
+
+        <div class="add-event-wrapper">
+            <div class="add-event-header">
+                <div class="title" style="font-weight: 700; font-size: 1.2rem;">New Event</div>
+                <i class="fas fa-times close" style="cursor: pointer;"></i>
+            </div>
+            <div class="recur-mode-toggle">
+                <button class="recur-mode-btn active" data-mode="single">Single day</button>
+                <button class="recur-mode-btn" data-mode="recurring">Recurring</button>
+            </div>
+            <div class="add-event-body">
+                <input type="text" placeholder="Event Name" class="event-name" />
+                <div style="display: flex; gap: 10px;">
+                    <input type="time" placeholder="From" class="event-time-from" style="flex: 1;"/>
+                    <input type="time" placeholder="To" class="event-time-to" style="flex: 1;"/>
+                </div>
+                <label class="discretionary-option">
+                    <input type="checkbox" id="event-discretionary" />
+                    Discretionary event
+                </label>
+                <div id="recurring-fields" style="display:none;">
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <input type="date" id="recur-start" style="flex:1;" />
+                        <input type="date" id="recur-end" style="flex:1;" />
+                    </div>
+                    <div class="weekday-picker">
+                        <span class="wd-label-header">Repeat on:</span>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="1" /> Mon</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="2" /> Tue</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="3" /> Wed</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="4" /> Thu</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="5" /> Fri</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="6" /> Sat</label>
+                        <label class="wd-label"><input type="checkbox" class="wd-check" value="0" /> Sun</label>
+                    </div>
+                </div>
+            </div>
+            <div class="add-event-footer">
+                <button class="add-event-btn">Add Event</button>
+            </div>
+        </div>
     </div>
-    <div class="credits"></div>
   </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
     import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCkKS79ztaGyEDS29mKAgo_3-fnXTfmyro",
@@ -140,8 +110,7 @@
         projectId: "pangolin-f37fa",
         storageBucket: "pangolin-f37fa.firebasestorage.app",
         messagingSenderId: "880099895366",
-        appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247",
-        measurementId: "G-M31Q6C45FX"
+        appId: "1:880099895366:web:edcf2fbdbdc2decbb0c247"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -149,13 +118,22 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // Auth gate
+    getRedirectResult(auth).catch(console.error);
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-gate').style.display = 'none';
             document.getElementById('content').style.display = 'block';
             await loadFromFirestore();
-            scheduleNotifications();
+            // Refresh calendar after data is loaded from Firestore
+            if (typeof window.getEvents === 'function') {
+                window.getEvents();
+                console.log("Events refreshed from Firestore/localStorage");
+            }
+            if (typeof window.initCalendar === 'function') {
+                window.initCalendar();
+                console.log("Calendar re-initialized");
+            }
         } else {
             document.getElementById('login-gate').style.display = 'flex';
             document.getElementById('content').style.display = 'none';
@@ -163,92 +141,58 @@
     });
 
     document.getElementById('google-signin-btn').addEventListener('click', () => {
-        signInWithPopup(auth, provider).catch(console.error);
+        signInWithRedirect(auth, provider).catch(console.error);
     });
 
-    // Save events to Firestore
     window.saveToFirestore = async function() {
-        const data0 = localStorage.getItem("events");
-        if (!data0) {
-            console.error("No events found in local storage.");
-            return;
-        }
-
-        const eventsArray = JSON.parse(data0);
+        const eventsArray = JSON.parse(localStorage.getItem("events") || "[]");
         const eventsObject = {};
-
         eventsArray.forEach(item => {
-            if (item.year && item.month && item.day && item.events) {
-                const dateKey = `${item.year}-${String(item.month).padStart(2, '0')}-${String(item.day).padStart(2, '0')}`;
-                eventsObject[dateKey] = item.events;
-            } else {
-                console.warn("Skipping item due to missing fields:", item);
-            }
+            const dateKey = `${item.year}-${String(item.month).padStart(2, '0')}-${String(item.day).padStart(2, '0')}`;
+            eventsObject[dateKey] = item.events;
         });
-
-        if (Object.keys(eventsObject).length === 0) {
-            console.error("No valid events to save.");
-            return;
-        }
-
         try {
             await setDoc(doc(db, "calendar0", "calDec"), eventsObject);
-            console.log("Saved to Firestore.");
-        } catch (error) {
-            console.error("Error writing document: ", error);
-        }
+            alert("Saved successfully!");
+        } catch (error) { console.error(error); }
     };
 
-    // Load events from Firestore into localStorage
     async function loadFromFirestore() {
+        console.log("Attempting to fetch from Firestore collection: 'calendar0'");
         try {
             const querySnapshot = await getDocs(collection(db, "calendar0"));
-            const eventsArray = [];
+            console.log("Firestore response received. Empty:", querySnapshot.empty);
 
-            querySnapshot.forEach((document) => {
-                const data = document.data();
-                for (const dateKey in data) {
-                    const [year, month, day] = dateKey.split('-').map(Number);
-                    eventsArray.push({ day, month, year, events: data[dateKey] });
+            const eventsArray = [];
+            if (querySnapshot.empty) {
+                console.warn("No documents found in 'calendar0' collection.");
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                console.log("Processing document:", doc.id, "Data keys count:", Object.keys(data).length);
+                for (const key in data) {
+                    const parts = key.split('-');
+                    if (parts.length === 3) {
+                        const [y, m, d] = parts.map(Number);
+                        eventsArray.push({ day: d, month: m, year: y, events: data[key] });
+                    }
                 }
             });
 
-            localStorage.setItem("events", JSON.stringify(eventsArray));
-            console.log("Data loaded from Firestore.");
+            if (eventsArray.length > 0) {
+                localStorage.setItem("events", JSON.stringify(eventsArray));
+                console.log("Success: Saved", eventsArray.length, "days of events to local storage.");
+            } else {
+                console.log("No valid events found inside the documents.");
+            }
         } catch (error) {
-            console.error("Error loading documents: ", error);
-        }
-    }
-
-    function scheduleNotifications() {
-        const calendarEntries = JSON.parse(localStorage.getItem("events") || "[]");
-
-        function checkCalendarEntries() {
-            const today = new Date();
-            const dateString = today.toISOString().split('T')[0];
-            const entry = calendarEntries.find(e =>
-                `${e.year}-${String(e.month).padStart(2,'0')}-${String(e.day).padStart(2,'0')}` === dateString
-            );
-            if (entry) showNotification(JSON.stringify(entry.events));
-        }
-
-        function showNotification(body) {
-            if (Notification.permission === "granted") {
-                new Notification("Today's Entry", { body });
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") new Notification("Today's Entry", { body });
-                });
+            console.error("CRITICAL Firestore load error:", error.code, error.message);
+            if (error.code === 'permission-denied') {
+                alert("Firestore Error: Permission Denied. Please ensure your Firestore security rules allow 'read' for the 'calendar0' collection.");
             }
         }
-
-        const now = new Date();
-        const nextMidnight = new Date();
-        nextMidnight.setHours(24, 0, 0, 0);
-        setTimeout(() => {
-            checkCalendarEntries();
-            setInterval(checkCalendarEntries, 24 * 60 * 60 * 1000);
-        }, nextMidnight - now);
     }
 </script>
 <script src="calendar.js"></script>

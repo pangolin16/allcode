@@ -1,0 +1,1246 @@
+[
+  {
+    "authors": "John Schember",
+    "id": 1,
+    "series": "Psychology",
+    "title": "Quick Start Guide"
+  },
+  {
+    "authors": "Harper Lee",
+    "id": 2,
+    "series": "novel",
+    "title": "To Kill a Mockingbird (Abridged Version).doc"
+  },
+  {
+    "authors": "Andrew Conley",
+    "id": 3,
+    "series": "Sci-Fi",
+    "title": "Microsoft Word - Document1"
+  },
+  {
+    "authors": "Frank Herbert",
+    "id": 4,
+    "series": "Sci-Fi",
+    "title": "Dune"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 5,
+    "series": "Sci-Fi",
+    "title": "Ani sami bohov\u00e9"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 6,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-a-zrodi-se-nadace-2"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 7,
+    "series": "Sci-Fi",
+    "title": "Asimov Isaac - Azazel"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 8,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-dite casu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 9,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-druha-nadace-5"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 10,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-fantasticka cesta 2"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 11,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-hvezdy-jako-prach"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 12,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-ja-robot"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 13,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-kaliban"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 14,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-konec-vecnosti"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 15,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-kosmicke proudy"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 16,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 1 david starr tulak po hvezdach"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 17,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 2 lucky starr a pirati z asteroidu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 18,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 3 lucky starr a oceany venuse"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 19,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 4 lucky starr a velke slunce merkuru"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 20,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 5 lucky starr a mesice jupiterovy"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 21,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nadace-3"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 22,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-lucky starr 6 lucky starr a prstence saturnu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 23,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nadace-a-rise-4"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 24,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nadace-a-zeme-7"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 25,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nadace-na-hranicich-6"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 26,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nahe-slunce-2"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 27,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-ocelove-jeskyne"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 28,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-nemesis"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 29,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-pohadka-o-trech-princich"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 30,
+    "series": "Sci-Fi",
+    "title": "Pov\u00eddky"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 31,
+    "series": "Sci-Fi",
+    "title": "Asimov, Isaac; Silverberg, Robert - Pozitronov\u00fd mu\u017e"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 32,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-predehra-k-nadaci-1"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 33,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-roboti-a-imperium-4"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 34,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-roboti"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 35,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-roboti-usvitu-3"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 36,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-robouniversum 1"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 37,
+    "series": "Sci-Fi",
+    "title": "Robouniversum 03 - Kyborg"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 38,
+    "series": "Sci-Fi",
+    "title": "Robouniversum 03 - Vize robot\u016f"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 39,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-robouniversum 5"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 40,
+    "series": "Sci-Fi",
+    "title": "Robouniversum 08 - Sny robotu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 41,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-sbohem-zeme"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 42,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-sny-robotu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 43,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-vize-robotu"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 44,
+    "series": "Sci-Fi",
+    "title": "asimov-isaac-vtipalek"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 45,
+    "series": "Sci-Fi",
+    "title": "asimov-isac-fantasticka-cesta-ii"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 46,
+    "series": "Sci-Fi",
+    "title": "asimov-issac-princ-a-drak"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 47,
+    "series": "Sci-Fi",
+    "title": "Microsoft Word - Isaac Asimov - Imp.rium -3- Obl.zek na obloze.doc"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 48,
+    "series": "Sci-Fi",
+    "title": "Z\u00e1klad\u0148a"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 49,
+    "series": "Sci-Fi",
+    "title": "Arthur Clarke - 2010 Druh\u00e1 vesm\u00edrn\u00e1 odyssea"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 50,
+    "series": "Sci-Fi",
+    "title": "2061 T\u0159et\u00ed vesm\u00edrn\u00e1 odyssea"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 51,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - 3001 Posledni Vesmirna Odyssea"
+  },
+  {
+    "authors": "Unknown",
+    "id": 52,
+    "series": "Sci-Fi",
+    "title": "clarke-a-c-bezpecnostni-opatreni-povidka"
+  },
+  {
+    "authors": "Unknown",
+    "id": 53,
+    "series": "Sci-Fi",
+    "title": "clarke-a-c-desaty-stupen"
+  },
+  {
+    "authors": "Unknown",
+    "id": 54,
+    "series": "Sci-Fi",
+    "title": "clarke-a-c-imperium"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 55,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Navrat Ramy"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 56,
+    "series": "Sci-Fi",
+    "title": "Baxter S.; Clarke A. - Prvorozen\u00ed"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 57,
+    "series": "Sci-Fi",
+    "title": "Baxter S.; Clarke A. - Svit vzd\u00e1len\u00fdch dn\u00ed"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 58,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - 2001 Vesmirna Odysea - Rajske Fontany"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 59,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Setkani S Ramou"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 60,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Devet Miliard Bozich Jmen"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 61,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Duch Z Grand Banks"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 62,
+    "series": "Sci-Fi",
+    "title": "Clarke A.; Doyle A.; Tenn W.; Vyhl\u00eddka \u2026 - Exalticon 1992-01"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 63,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Hlidka"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 64,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Hluboke Pastviny"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 65,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Imperium"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 66,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Kladivo Bozi"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 67,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Kolebka"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 68,
+    "series": "Sci-Fi",
+    "title": "Clarke, Arthur Charles - Konec d\u011btstv\u00ed"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 69,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Rama Tajemstvi Zbaveny"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 70,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Zahrada Ramova"
+  },
+  {
+    "authors": "Unknown",
+    "id": 71,
+    "series": "Sci-Fi",
+    "title": "clarke-lev-z-commare"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 72,
+    "series": "Sci-Fi",
+    "title": "Mar\u0165ansk\u00e9 p\u00edsky"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 73,
+    "series": "Sci-Fi",
+    "title": "M\u011bs\u00ed\u010dn\u00ed prach"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 74,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Mesto A Hvezdy"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 75,
+    "series": "Sci-Fi",
+    "title": "Clarke A.C. - Oce\u00e1nem hv\u011bzd"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 76,
+    "series": "Sci-Fi",
+    "title": "Clarke A.; Baxter S. - Oko \u010dasu"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 77,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Ostrov Delfinu"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 78,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Frederic Pohl -- Posledn\u00ed teor\u00e9m"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 79,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Povidky"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 80,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Zlaty Vek Venuse - Napeti Zlomu"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 81,
+    "series": "Sci-Fi",
+    "title": "(Microsoft Word - 2 Clarke, Preuss - 2 Malstr\\366m)"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 82,
+    "series": "Sci-Fi",
+    "title": "(Microsoft Word - 5 Clarke, Preuss - 5 Diamantov\\375 m\\354s\\355c)"
+  },
+  {
+    "authors": "Unknown",
+    "id": 83,
+    "series": "Sci-Fi",
+    "title": "clarke-preuss-hvezdy-z-hlubin"
+  },
+  {
+    "authors": "Unknown",
+    "id": 84,
+    "series": "Sci-Fi",
+    "title": "clarke-preuss-smrt-na-phobosu"
+  },
+  {
+    "authors": "Unknown",
+    "id": 85,
+    "series": "Sci-Fi",
+    "title": "clarke-preuss-stretnuti-s-meduzou"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 86,
+    "series": "Sci-Fi",
+    "title": "(Microsoft Word - Arthur Clarke - Rajsk\\351 Font\\341ny)"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 87,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Sestupova Draha"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 88,
+    "series": "Sci-Fi",
+    "title": "Clarke A.; Baxter S. - Slune\u010dn\u00ed bou\u0159e"
+  },
+  {
+    "authors": "Unknown",
+    "id": 89,
+    "series": "Sci-Fi",
+    "title": "clarke-spoust"
+  },
+  {
+    "authors": "Plazma",
+    "id": 90,
+    "series": "Sci-Fi",
+    "title": "Clarke, Stephen - Merde! Rok v Pa\u0159\u00ed\u017ei"
+  },
+  {
+    "authors": "Plazma",
+    "id": 91,
+    "series": "Sci-Fi",
+    "title": "Clarke, Stephen - U\u017e zase sk\u00e1\u010du p\u0159es Merde!"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 92,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Xenostellar"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 93,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Zkazky Z Planety Zeme"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 94,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Zpev Vzdalene Zeme"
+  },
+  {
+    "authors": "Arthur C. Clarke",
+    "id": 95,
+    "series": "Sci-Fi",
+    "title": "Arthur C. Clarke - Zprava O Treti Planete"
+  },
+  {
+    "authors": "Unknown",
+    "id": 96,
+    "series": "Sci-Fi",
+    "title": "clarkeova-susanna-jonathan-strange-a-pan-norrell"
+  },
+  {
+    "authors": "Sacha Lucas",
+    "id": 97,
+    "series": "Psychology",
+    "title": "Detox Our Brain: 10 Strategies for Brain Health and Wellness"
+  },
+  {
+    "authors": "Investing & Common Sense",
+    "id": 98,
+    "series": "Finance",
+    "title": "Article5"
+  },
+  {
+    "authors": "Uzel",
+    "id": 99,
+    "series": "Psychology",
+    "title": "Abeceda sexu"
+  },
+  {
+    "authors": "Unknown",
+    "id": 100,
+    "series": "Finance,Article",
+    "title": "Article"
+  },
+  {
+    "authors": "user",
+    "id": 101,
+    "series": "Psychology",
+    "title": "Psychopathology of Everyday Life"
+  },
+  {
+    "authors": "user",
+    "id": 102,
+    "series": "Psychology",
+    "title": "www"
+  },
+  {
+    "authors": "Unknown",
+    "id": 103,
+    "series": "Finance",
+    "title": "analysis"
+  },
+  {
+    "authors": "Dan Ariely",
+    "id": 104,
+    "series": "Psychology",
+    "title": "Predictably Irrational: The Hidden Forces That Shape Our Decisions (Harper; 2008)"
+  },
+  {
+    "authors": "Paul Vigna",
+    "id": 105,
+    "series": "Finance",
+    "title": "The age of cryptocurrency: how bitcoin and digital money are challenging the global economic order - PDFDrive.com"
+  },
+  {
+    "authors": "Morgan Housel",
+    "id": 106,
+    "series": "Psychology",
+    "title": "Same as Ever: A Guide to What Never Changes"
+  },
+  {
+    "authors": "Taleb, Nassim Nicholas",
+    "id": 107,
+    "series": "Psychology",
+    "title": "Antifragile: Things That Gain from Disorder"
+  },
+  {
+    "authors": "Unknown",
+    "id": 108,
+    "series": "Finance",
+    "title": "Article 3"
+  },
+  {
+    "authors": "Donnela",
+    "id": 109,
+    "series": "Psychology",
+    "title": "Thinking in systems"
+  },
+  {
+    "authors": "Unknown",
+    "id": 110,
+    "series": "Finance",
+    "title": "Artickle4"
+  },
+  {
+    "authors": "Mihaly Csikszentmihalyi",
+    "id": 112,
+    "series": "Psychology",
+    "title": "Flow"
+  },
+  {
+    "authors": "Carol Dweck",
+    "id": 113,
+    "series": "Psychology",
+    "title": "Mindset - Updated Edition: Changing The Way You think To Fulfil Your Potential"
+  },
+  {
+    "authors": "C. Thi Nguyen;",
+    "id": 114,
+    "series": "Psychology",
+    "title": "The Score: How to Stop Playing Somebody Else's Game"
+  },
+  {
+    "authors": "Brown, Brene",
+    "id": 115,
+    "series": "Psychology",
+    "title": "Daring Greatly: How the Courage to Be Vulnerable Transforms the Way We Live, Love, Parent, and Lead"
+  },
+  {
+    "authors": "John Gottman, PhD",
+    "id": 116,
+    "series": "Psychology",
+    "title": "The Relationship Cure"
+  },
+  {
+    "authors": "Gary Chapman",
+    "id": 120,
+    "series": "Psychology",
+    "title": "The 5 Love Languages: The Secret to Love That Lasts"
+  },
+  {
+    "authors": "Amir Levine",
+    "id": 121,
+    "series": "Psychology",
+    "title": "Attached: The New Science of Adult Attachment and How It Can Help You Find \u2013 and Keep \u2013 Love"
+  },
+  {
+    "authors": "John Gottman",
+    "id": 122,
+    "series": "Psychology",
+    "title": "Eight Dates - PDFDrive.com"
+  },
+  {
+    "authors": "Jeffrey Bryan",
+    "id": 124,
+    "series": "Psychology",
+    "title": "His Needs Her Needs [Compatibility Mode]"
+  },
+  {
+    "authors": "Peter Boghossian & James Lindsay",
+    "id": 125,
+    "series": "Psychology",
+    "title": "How to Have Impossible Conversations"
+  },
+  {
+    "authors": "Henry Cloud & John Townsend",
+    "id": 126,
+    "series": "Psychology",
+    "title": "Boundaries: When to Say Yes, How to Say No to Take Control of Your Life"
+  },
+  {
+    "authors": "Mark Manson",
+    "id": 127,
+    "series": "Psychology",
+    "title": "Models"
+  },
+  {
+    "authors": "Steve",
+    "id": 128,
+    "series": "Psychology",
+    "title": "Article"
+  },
+  {
+    "authors": "David Brooks",
+    "id": 131,
+    "series": "Psychology",
+    "title": "How to Know a Person: The Art of Seeing Others Deeply and Being Deeply Seen"
+  },
+  {
+    "authors": "Caroline Fleck, PhD",
+    "id": 133,
+    "series": "Psychology",
+    "title": "Validation: How the Skill Set That Revolutionized Psychology Will Transform Your Relationships, Increase Your Influence, and Change Your Life"
+  },
+  {
+    "authors": "Seneca;James S. Romm;",
+    "id": 134,
+    "series": "Psychology",
+    "title": "How to Have a Life"
+  },
+  {
+    "authors": "The Moth",
+    "id": 135,
+    "series": "Psychology",
+    "title": "How to Tell a Story"
+  },
+  {
+    "authors": "David J. Lieberman & PhD",
+    "id": 136,
+    "series": "Psychology",
+    "title": "Mindreader"
+  },
+  {
+    "authors": "Jim VandeHei;Mike Allen;Roy Schwartz;",
+    "id": 137,
+    "series": "Psychology",
+    "title": "Smart Brevity"
+  },
+  {
+    "authors": "Joe Tucker",
+    "id": 138,
+    "series": "Psychology",
+    "title": "How to Talk to Anyone: The Introvert\u2019s Guide to Starting Conversations With Anyone at Anytime, Effortlessly Continue Conversations and Turn Strangers Into ... Confident and Purpose Driven Book 1)"
+  },
+  {
+    "authors": "Stan Tatkin",
+    "id": 139,
+    "series": "Psychology",
+    "title": "Wired for Love"
+  },
+  {
+    "authors": "Gregory Peart",
+    "id": 142,
+    "series": "Psychology",
+    "title": "The Conversation Code: How to Upgrade Your Social Skills and Your Life"
+  },
+  {
+    "authors": "Jessie Inchauspe;",
+    "id": 143,
+    "series": "Psychology",
+    "title": "Glucose Revolution: The Life-Changing Power of Balancing Your Blood Sugar"
+  },
+  {
+    "authors": "Dale Carnegie",
+    "id": 144,
+    "series": "Psychology",
+    "title": "How To Win Friends and Influence People"
+  },
+  {
+    "authors": "Johann Hari",
+    "id": 145,
+    "series": "Psychology",
+    "title": "Lost Connections"
+  },
+  {
+    "authors": "O'Connor, Richard",
+    "id": 146,
+    "series": "Psychology",
+    "title": "Undoing Depression: What Therapy Doesn't Teach You and Medication Can't Give You"
+  },
+  {
+    "authors": "Ahmed Siddiqui",
+    "id": 149,
+    "series": "Psychology",
+    "title": "The Anatomy of the Swipe"
+  },
+  {
+    "authors": "Anna Lembke",
+    "id": 151,
+    "series": "Psychology",
+    "title": "Dopamine Nation: Finding Balance in the Age of Indulgence"
+  },
+  {
+    "authors": "Daniel Z. Lieberman & Michael E. Long",
+    "id": 152,
+    "series": "Psychology",
+    "title": "The Molecule of More: How a Single Chemical in Your Brain Drives Love, Sex, and Creativity\u2014and Will Determine the Fate of the Human Race"
+  },
+  {
+    "authors": "meurisse, thibaut",
+    "id": 153,
+    "series": "Psychology",
+    "title": "Dopamine Detox: A Short Guide to Eliminate Distractions and Train Your Brain to Do Hard Things"
+  },
+  {
+    "authors": "Catherine M. Pittman",
+    "id": 154,
+    "series": "Psychology",
+    "title": "Rewire Your Anxious Brain"
+  },
+  {
+    "authors": "user",
+    "id": 155,
+    "series": "Psychology",
+    "title": "www"
+  },
+  {
+    "authors": "Unknown",
+    "id": 156,
+    "series": "Finance",
+    "title": "What Gollum and Frodo can teach you about investing"
+  },
+  {
+    "authors": "Unknown",
+    "id": 157,
+    "series": "Finance,Article",
+    "title": "Newsletter\u2192 Watchlist of 22 IT stocks with momentum"
+  },
+  {
+    "authors": "Alex Shahidi",
+    "id": 158,
+    "series": "Finance",
+    "title": "Balanced Asset Allocation"
+  },
+  {
+    "authors": "William Green",
+    "id": 159,
+    "series": "Finance",
+    "title": "Richer, Wiser, Happier"
+  },
+  {
+    "authors": "Philip A. Fisher",
+    "id": 160,
+    "series": "Finance",
+    "title": "Common Stocks and Uncommon Profits and Other Writings"
+  },
+  {
+    "authors": "Morgan Housel",
+    "id": 161,
+    "series": "Finance",
+    "title": "The Psychology of Money: Timeless Lessons on Wealth, Greed, and Happiness"
+  },
+  {
+    "authors": "Joel Greenblatt",
+    "id": 162,
+    "series": "Finance",
+    "title": "little-book-that-still-beats-the-market-the-joel-greenblatt"
+  },
+  {
+    "authors": "Paul R. Krugman",
+    "id": 163,
+    "series": "Finance",
+    "title": "International Finance, 11e"
+  },
+  {
+    "authors": "Mary Buffett",
+    "id": 164,
+    "series": "Finance",
+    "title": "Warren-Buffett-and-the-Interpretation-of-Financial-Statements"
+  },
+  {
+    "authors": "James Allen",
+    "id": 165,
+    "series": "Finance",
+    "title": "From Poverty To Power"
+  },
+  {
+    "authors": "Peter Lynch",
+    "id": 166,
+    "series": "Finance",
+    "title": "One Up on Wall Street"
+  },
+  {
+    "authors": "Rosenbaum, Joshua.; Pearl, Joshua",
+    "id": 167,
+    "series": "Finance",
+    "title": "Investment Banking"
+  },
+  {
+    "authors": "Aswath Damodaran",
+    "id": 168,
+    "series": "Finance",
+    "title": "The Little Book of Valuation"
+  },
+  {
+    "authors": "PDF Room",
+    "id": 171,
+    "series": "Finance",
+    "title": "The Dhandho Investor - PDF Room"
+  },
+  {
+    "authors": "Pat Dorsey, Joe Mansueto",
+    "id": 172,
+    "series": "Finance",
+    "title": "The Five Rules for Successful Stock Investing: Morningstar's Guide to Building Wealth and Winning in the Market"
+  },
+  {
+    "authors": "W. Chan Kim & Ren\u00e9e A. Mauborgne",
+    "id": 173,
+    "series": "Finance",
+    "title": "Blue Ocean Strategy, Expanded Edition: How to Create Uncontested Market Space and Make the Competition Irrelevant - PDFDrive.com"
+  },
+  {
+    "authors": "Unknown",
+    "id": 174,
+    "series": "Finance,Article",
+    "title": "qualityvalueinvestments.com-Bolet\u00edn del Inversor Quality Value-fpscreenshot"
+  },
+  {
+    "authors": "Unknown",
+    "id": 175,
+    "series": "Finance",
+    "title": "Documents and%___"
+  },
+  {
+    "authors": "GUYQUITY-fpscreenshot",
+    "id": 176,
+    "series": "Finance",
+    "title": "guyquity.substack.com- Q FY Portfolio Review - by Guybrush"
+  },
+  {
+    "authors": "Burton G. Malkiel",
+    "id": 177,
+    "series": "Finance",
+    "title": "A Random Walk Down Wall Street: The Time-Tested Strategy for Successful Investing \\(Eleventh Edition\\) - PDFDrive.com"
+  },
+  {
+    "authors": "Mary Buffett",
+    "id": 178,
+    "series": "Finance",
+    "title": "Buffettology"
+  },
+  {
+    "authors": "Unknown",
+    "id": 179,
+    "series": "Finance",
+    "title": "mark16284_book.indb"
+  },
+  {
+    "authors": "Agustin Rubini",
+    "id": 180,
+    "series": "Finance",
+    "title": "Fintech in a Flash"
+  },
+  {
+    "authors": "Unknown",
+    "id": 181,
+    "series": "Finance",
+    "title": "The Sunk Cost Fallacy"
+  },
+  {
+    "authors": "Hermit Investor",
+    "id": 182,
+    "series": "Finance",
+    "title": "Portfolio Composition"
+  },
+  {
+    "authors": "Brent Donnelly",
+    "id": 183,
+    "series": "Finance",
+    "title": "The Art of Currency Trading: A Professional\u2019s Guide to the Foreign Exchange Market"
+  },
+  {
+    "authors": "Train, John",
+    "id": 184,
+    "series": "Finance",
+    "title": "Money masters of our time"
+  },
+  {
+    "authors": "Investing & Common Sense",
+    "id": 185,
+    "series": "Finance",
+    "title": "2025 Annual Charter"
+  },
+  {
+    "authors": "Malcolm Gladwell",
+    "id": 187,
+    "series": "Finance",
+    "title": "Outliers: The Story of Success (Little, Brown & Co; 2008)"
+  },
+  {
+    "authors": "mapset",
+    "id": 188,
+    "series": "Finance",
+    "title": "TIS final pgs"
+  },
+  {
+    "authors": "Chng, Victor, Ang, Rusmin & Victor Chng",
+    "id": 189,
+    "series": "Finance",
+    "title": "Value Investing in Growth Companies: How to Spot High Growth Businesses and Generate 40% to 400% Investment Returns - PDFDrive.com"
+  },
+  {
+    "authors": "Pat Dorsey, Joe Mansueto",
+    "id": 190,
+    "series": "Finance",
+    "title": "Little-Book-That-Builds-Wealth"
+  },
+  {
+    "authors": "Vanessa Van Edwards",
+    "id": 194,
+    "series": "Psychology",
+    "title": "Captivate"
+  },
+  {
+    "authors": "Unknown",
+    "id": 195,
+    "series": "Finance",
+    "title": "Competition Demystified"
+  },
+  {
+    "authors": "Philip K. Dick",
+    "id": 196,
+    "series": "Sci-Fi",
+    "title": "Do Androids Dream of Electric Sheep"
+  },
+  {
+    "authors": "Cabane, Olivia Fox",
+    "id": 197,
+    "series": "Psychology",
+    "title": "The Charisma Myth: How Anyone Can Master the Art and Science of Personal Magnetism"
+  },
+  {
+    "authors": "Dan Simmons",
+    "id": 198,
+    "series": "Sci-Fi",
+    "title": "Dan-Simmons-Hyperion"
+  },
+  {
+    "authors": "Andrew Conley",
+    "id": 199,
+    "series": "Finance",
+    "title": "Enders game"
+  },
+  {
+    "authors": "Leil Lowndes",
+    "id": 200,
+    "series": "Psychology",
+    "title": "How to Talk to Anyone"
+  },
+  {
+    "authors": "Isaac Asimov",
+    "id": 202,
+    "series": "Sci-Fi",
+    "title": "I, Robot"
+  },
+  {
+    "authors": "Don Gabor",
+    "id": 205,
+    "series": "Psychology",
+    "title": "How to Start a Conversation and Make Friends"
+  },
+  {
+    "authors": "Robert A. Glover",
+    "id": 208,
+    "series": "Psychology",
+    "title": "No More Mr. Nice Guy!"
+  },
+  {
+    "authors": "Jerome Niemi",
+    "id": 209,
+    "series": "Psychology",
+    "title": "50 Things to Know When Talking to Strangers : Chat with Anyone"
+  },
+  {
+    "authors": "Jefferson Fisher",
+    "id": 211,
+    "series": "Psychology",
+    "title": "The Next Conversation: Argue Less, Talk More"
+  },
+  {
+    "authors": "Marshall B. Rosenberg",
+    "id": 212,
+    "series": "Psychology",
+    "title": "Nonviolent Communication: A Language of Life: Life-Changing Tools for Healthy Relationships - PDFDrive.com"
+  },
+  {
+    "authors": "Debra Fine",
+    "id": 213,
+    "series": "Psychology",
+    "title": "The Fine Art of Small Talk"
+  },
+  {
+    "authors": "Alex Edmans;",
+    "id": 214,
+    "series": "Psychology",
+    "title": "May Contain Lies"
+  },
+  {
+    "authors": "Stan Tatkin",
+    "id": 216,
+    "series": "Psychology",
+    "title": "wired-for-love-stan-tatkin-pdf-free"
+  },
+  {
+    "authors": "Schafer, Jack; Karlins, Marvin",
+    "id": 218,
+    "series": "Psychology",
+    "title": "Like Switch : An Ex-fbi Agent's Guide to Influencing, Attracting, and Winning People over (9781476754505)"
+  },
+  {
+    "authors": "Trish Hall",
+    "id": 220,
+    "series": "Psychology",
+    "title": "Writing to Persuade"
+  },
+  {
+    "authors": "Why men don't listen & women can't read maps",
+    "id": 222,
+    "series": "Psychology",
+    "title": "Pease, Allan and Barbara - Why men don't listen and women can't read maps"
+  },
+  {
+    "authors": "Alex Korb",
+    "id": 223,
+    "series": "Psychology",
+    "title": "The Upward Spiral"
+  },
+  {
+    "authors": "Charles Duhigg",
+    "id": 232,
+    "series": "Psychology",
+    "title": "Supercommunicators: How to Unlock the Secret Language of Connection"
+  },
+  {
+    "authors": "GUYQUITY-fpscreenshot",
+    "id": 236,
+    "series": "Finance",
+    "title": "guyquity.substack.com- Q FY Portfolio Review - by Guybrush"
+  },
+  {
+    "authors": "convert-jpg-to-pdf.net",
+    "id": 238,
+    "series": "Finance",
+    "title": "Convert JPG to PDF online - convert-jpg-to-pdf.net"
+  },
+  {
+    "authors": "Chng, Victor, Ang, Rusmin & Victor Chng",
+    "id": 239,
+    "series": "Finance",
+    "title": "Value Investing in Growth Companies: How to Spot High Growth Businesses and Generate 40% to 400% Investment Returns - PDFDrive.com"
+  },
+  {
+    "authors": "user",
+    "id": 240,
+    "series": "Psychology",
+    "title": "www"
+  },
+  {
+    "authors": "Jesse James",
+    "id": 241,
+    "title": "Psychology of Seduction: Seduce Women Using Evolutionary and Social Psychology"
+  },
+  {
+    "authors": "Mina K. Dulcan, M.D.",
+    "id": 242,
+    "title": "Dulcan\u2019s Textbook of Child and Adolescent Psychiatry, Third Edition"
+  },
+  {
+    "authors": "Lucy Lidell",
+    "id": 245,
+    "title": "The Book of Massage"
+  },
+  {
+    "authors": "Andrew E. Skodol & M.D. & John M. Oldham",
+    "id": 246,
+    "title": "The American Psychiatric Association Publishing Textbook of Personality Disorders"
+  },
+  {
+    "authors": "Levine, Amir & Heller, Rachel",
+    "id": 248,
+    "title": "Attached: The New Science of Adult Attachment and How It Can Help You Find\u2014and Keep\u2014Love"
+  },
+  {
+    "authors": "Nedra Glover Tawwab",
+    "id": 249,
+    "title": "Set Boundaries, Find Peace: A Guide to Reclaiming Yourself: A Guide to Reclaiming Yourself"
+  },
+  {
+    "authors": "Esther Perel",
+    "id": 250,
+    "title": "Mating in Captivity"
+  },
+  {
+    "authors": "Julie Schwartz Gottman, PhD & John Gottman, PhD",
+    "id": 251,
+    "title": "Fight Right: How Successful Couples Turn Conflict into Connection"
+  },
+  {
+    "authors": "M.D. Louann Brizendine",
+    "id": 252,
+    "title": "The Female Brain"
+  },
+  {
+    "authors": "For the Practical Man By Joseph South",
+    "id": 253,
+    "title": "Practical Female Psychology"
+  }
+]
