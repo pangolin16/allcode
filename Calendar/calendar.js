@@ -341,6 +341,23 @@ const recurringFields = document.getElementById('recurring-fields');
 const recurrenceFrequency = document.getElementById('recur-frequency');
 const weekdayPicker = document.querySelector('.weekday-picker');
 
+function formatDateInputValue(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function setRecurringDateRange() {
+  const selectedDate = new Date(year, month, activeDay);
+  const rangeStart = new Date(selectedDate);
+  rangeStart.setDate(rangeStart.getDate() + 1);
+
+  const endYear = selectedDate.getFullYear() + 1;
+  const lastDayOfEndMonth = new Date(endYear, selectedDate.getMonth() + 1, 0).getDate();
+  const rangeEnd = new Date(endYear, selectedDate.getMonth(), Math.min(selectedDate.getDate(), lastDayOfEndMonth));
+
+  document.getElementById('recur-start').value = formatDateInputValue(rangeStart);
+  document.getElementById('recur-end').value = formatDateInputValue(rangeEnd);
+}
+
 recurrenceFrequency.addEventListener('change', () => {
   weekdayPicker.style.display = recurrenceFrequency.value === 'weekly' ? 'flex' : 'none';
 });
@@ -350,14 +367,7 @@ recurModebtns.forEach(btn => {
     eventMode = btn.dataset.mode;
     recurModebtns.forEach(b => b.classList.toggle('active', b === btn));
     recurringFields.style.display = eventMode === 'recurring' ? 'block' : 'none';
-    if (eventMode === 'recurring' && !document.getElementById('recur-start').value) {
-      const selectedDate = new Date(year, month, activeDay);
-      document.getElementById('recur-start').value = [
-        selectedDate.getFullYear(),
-        String(selectedDate.getMonth() + 1).padStart(2, '0'),
-        String(selectedDate.getDate()).padStart(2, '0')
-      ].join('-');
-    }
+    if (eventMode === 'recurring') setRecurringDateRange();
   });
 });
 
@@ -435,11 +445,10 @@ function addRecurringEvents(title, from, to, startDateStr, endDateStr, weekdays,
   const intervalDays = frequency === 'biweekly' ? 14 : frequency === 'monthly' ? 28 : null;
   let count  = 0;
 
-  if (intervalDays) cur.setDate(cur.getDate() + intervalDays);
+  if (intervalDays) cur.setDate(cur.getDate() + intervalDays - 1);
 
   while (cur <= end) {
-    if ((intervalDays && frequency !== 'weekly') ||
-        (!intervalDays && cur.getTime() > start.getTime() && weekdays.includes(cur.getDay()))) {
+    if (intervalDays || weekdays.includes(cur.getDay())) {
       const d = cur.getDate();
       const m = cur.getMonth() + 1;
       const y = cur.getFullYear();

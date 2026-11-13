@@ -76,10 +76,8 @@
                     Discretionary event
                 </label>
                 <div id="recurring-fields" style="display:none;">
-                    <div style="display:flex;gap:8px;margin-top:10px;">
-                        <input type="date" id="recur-start" style="flex:1;" />
-                        <input type="date" id="recur-end" style="flex:1;" />
-                    </div>
+                    <input type="hidden" id="recur-start" />
+                    <input type="hidden" id="recur-end" />
                     <label class="recurrence-frequency-label" for="recur-frequency">Repeat</label>
                     <select id="recur-frequency" class="recurrence-frequency">
                         <option value="weekly" selected>Weekly</option>
