@@ -46,7 +46,7 @@ tabs.forEach(tab => {
     tabs.forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
     if (tab.dataset.view === "calendar") {
-      calendarView.style.display = "block";
+      calendarView.style.display = "grid";
       remindersView.style.display = "none";
       addEventBtn.style.display = "flex";
     } else {

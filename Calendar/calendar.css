@@ -379,3 +379,151 @@ body {
   margin-left: 6px;
   vertical-align: middle;
 }
+
+#calendar-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  body {
+    align-items: stretch;
+  }
+
+  #content {
+    width: 100%;
+  }
+
+  .container {
+    width: min(100%, 1440px);
+    max-width: none;
+    min-height: 100vh;
+    margin: 0 auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .header-tabs {
+    padding-left: 32px;
+  }
+
+  .tab {
+    flex: 0 0 160px;
+    padding: 18px 0;
+  }
+
+  #calendar-view {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    flex: 1;
+    min-height: calc(100vh - 58px);
+  }
+
+  .calendar {
+    padding: 32px;
+    border-right: 1px solid #eee;
+    border-bottom: 0;
+  }
+
+  .calendar .month {
+    margin-bottom: 26px;
+  }
+
+  .calendar .month .date {
+    font-size: 1.65rem;
+  }
+
+  .weekdays,
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .weekdays {
+    margin-bottom: 0;
+    border-top: 1px solid #e8eaed;
+  }
+
+  .weekdays div {
+    width: auto;
+    padding: 12px 0;
+    border-left: 1px solid #e8eaed;
+  }
+
+  .days {
+    border-left: 1px solid #e8eaed;
+  }
+
+  .day {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 88px;
+    padding: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-right: 1px solid #e8eaed;
+    border-bottom: 1px solid #e8eaed;
+    font-size: 0.9rem;
+  }
+
+  .day:hover,
+  .day.active {
+    border-radius: 0;
+  }
+
+  .day-event-dots {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    justify-content: flex-start;
+  }
+
+  .event-dot {
+    width: 6px;
+    height: 6px;
+    flex-basis: 6px;
+  }
+
+  .right {
+    min-width: 0;
+    padding: 32px;
+  }
+
+  .today-date {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .events .event {
+    align-items: center;
+    padding: 16px;
+  }
+
+  .event-title {
+    overflow-wrap: anywhere;
+  }
+
+  .event-time {
+    white-space: nowrap;
+  }
+
+  .add-event-wrapper {
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    width: min(440px, calc(100vw - 32px));
+    border-radius: 12px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, calc(-50% + 16px));
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  }
+
+  .add-event-wrapper.active {
+    bottom: auto;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+  }
+}
