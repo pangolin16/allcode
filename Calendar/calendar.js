@@ -46,7 +46,7 @@ tabs.forEach(tab => {
     tabs.forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
     if (tab.dataset.view === "calendar") {
-      calendarView.style.display = "grid";
+      calendarView.style.display = "block";
       remindersView.style.display = "none";
       addEventBtn.style.display = "flex";
     } else {
@@ -338,12 +338,26 @@ let eventMode = 'single'; // 'single' | 'recurring'
 
 const recurModebtns = document.querySelectorAll('.recur-mode-btn');
 const recurringFields = document.getElementById('recurring-fields');
+const recurrenceFrequency = document.getElementById('recur-frequency');
+const weekdayPicker = document.querySelector('.weekday-picker');
+
+recurrenceFrequency.addEventListener('change', () => {
+  weekdayPicker.style.display = recurrenceFrequency.value === 'weekly' ? 'flex' : 'none';
+});
 
 recurModebtns.forEach(btn => {
   btn.addEventListener('click', () => {
     eventMode = btn.dataset.mode;
     recurModebtns.forEach(b => b.classList.toggle('active', b === btn));
     recurringFields.style.display = eventMode === 'recurring' ? 'block' : 'none';
+    if (eventMode === 'recurring' && !document.getElementById('recur-start').value) {
+      const selectedDate = new Date(year, month, activeDay);
+      document.getElementById('recur-start').value = [
+        selectedDate.getFullYear(),
+        String(selectedDate.getMonth() + 1).padStart(2, '0'),
+        String(selectedDate.getDate()).padStart(2, '0')
+      ].join('-');
+    }
   });
 });
 
@@ -361,10 +375,15 @@ addEventSubmit.addEventListener("click", () => {
   if (!title || !from || !to) return alert("Please fill all fields");
 
   if (eventMode === 'recurring') {
+    const startVal = document.getElementById('recur-start').value;
+    const endVal   = document.getElementById('recur-end').value;
     const checked  = [...document.querySelectorAll('.wd-check:checked')].map(c => Number(c.value));
-    if (!checked.length) return alert("Please select at least one day of the week");
+    const frequency = recurrenceFrequency.value;
+    if (!startVal || !endVal) return alert("Please set start and end dates");
+    if (frequency === 'weekly' && !checked.length) return alert("Please select at least one day of the week");
+    if (startVal > endVal) return alert("Start date must be before end date");
 
-    const count = addRecurringEvents(title, from, to, checked, discretionary);
+    const count = addRecurringEvents(title, from, to, startVal, endVal, checked, discretionary, frequency);
     if (window.Android && typeof window.Android.showNotification === 'function') {
       window.Android.showNotification("Recurring events added", `${count} events created for "${title}"`);
     }
@@ -395,23 +414,32 @@ addEventSubmit.addEventListener("click", () => {
 function resetAddForm() {
   addEventTitle.value = addEventFrom.value = addEventTo.value = '';
   document.getElementById('event-discretionary').checked = false;
+  const rs = document.getElementById('recur-start');
+  const re = document.getElementById('recur-end');
+  if (rs) rs.value = '';
+  if (re) re.value = '';
   document.querySelectorAll('.wd-check').forEach(c => c.checked = false);
+  recurrenceFrequency.value = 'weekly';
+  weekdayPicker.style.display = 'flex';
   eventMode = 'single';
   recurModebtns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'single'));
   if (recurringFields) recurringFields.style.display = 'none';
 }
 
 // ── Recurring event creation ──────────────────────────────────
-function addRecurringEvents(title, from, to, weekdays, discretionary) {
+function addRecurringEvents(title, from, to, startDateStr, endDateStr, weekdays, discretionary, frequency = 'weekly') {
   const recurringId = `rec_${Date.now()}`;
-  const cur = new Date();
-  cur.setHours(0, 0, 0, 0);
-  const end = new Date(cur);
-  end.setFullYear(end.getFullYear() + 2);
+  const start = new Date(startDateStr + 'T00:00:00');
+  const cur = new Date(start);
+  const end = new Date(endDateStr + 'T00:00:00');
+  const intervalDays = frequency === 'biweekly' ? 14 : frequency === 'monthly' ? 28 : null;
   let count  = 0;
 
+  if (intervalDays) cur.setDate(cur.getDate() + intervalDays);
+
   while (cur <= end) {
-    if (weekdays.includes(cur.getDay())) {
+    if ((intervalDays && frequency !== 'weekly') ||
+        (!intervalDays && cur.getTime() > start.getTime() && weekdays.includes(cur.getDay()))) {
       const d = cur.getDate();
       const m = cur.getMonth() + 1;
       const y = cur.getFullYear();
@@ -427,7 +455,7 @@ function addRecurringEvents(title, from, to, weekdays, discretionary) {
       });
       count++;
     }
-    cur.setDate(cur.getDate() + 1);
+    cur.setDate(cur.getDate() + (intervalDays || 1));
   }
   saveEvents();
   return count;
