@@ -361,14 +361,10 @@ addEventSubmit.addEventListener("click", () => {
   if (!title || !from || !to) return alert("Please fill all fields");
 
   if (eventMode === 'recurring') {
-    const startVal = document.getElementById('recur-start').value;
-    const endVal   = document.getElementById('recur-end').value;
     const checked  = [...document.querySelectorAll('.wd-check:checked')].map(c => Number(c.value));
-    if (!startVal || !endVal) return alert("Please set start and end dates");
     if (!checked.length) return alert("Please select at least one day of the week");
-    if (startVal > endVal) return alert("Start date must be before end date");
 
-    const count = addRecurringEvents(title, from, to, startVal, endVal, checked, discretionary);
+    const count = addRecurringEvents(title, from, to, checked, discretionary);
     if (window.Android && typeof window.Android.showNotification === 'function') {
       window.Android.showNotification("Recurring events added", `${count} events created for "${title}"`);
     }
@@ -399,10 +395,6 @@ addEventSubmit.addEventListener("click", () => {
 function resetAddForm() {
   addEventTitle.value = addEventFrom.value = addEventTo.value = '';
   document.getElementById('event-discretionary').checked = false;
-  const rs = document.getElementById('recur-start');
-  const re = document.getElementById('recur-end');
-  if (rs) rs.value = '';
-  if (re) re.value = '';
   document.querySelectorAll('.wd-check').forEach(c => c.checked = false);
   eventMode = 'single';
   recurModebtns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'single'));
@@ -410,10 +402,12 @@ function resetAddForm() {
 }
 
 // ── Recurring event creation ──────────────────────────────────
-function addRecurringEvents(title, from, to, startDateStr, endDateStr, weekdays, discretionary) {
+function addRecurringEvents(title, from, to, weekdays, discretionary) {
   const recurringId = `rec_${Date.now()}`;
-  const cur  = new Date(startDateStr + 'T00:00:00');
-  const end  = new Date(endDateStr   + 'T00:00:00');
+  const cur = new Date();
+  cur.setHours(0, 0, 0, 0);
+  const end = new Date(cur);
+  end.setFullYear(end.getFullYear() + 2);
   let count  = 0;
 
   while (cur <= end) {
