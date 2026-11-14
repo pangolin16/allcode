@@ -37,7 +37,6 @@ window.initCalendar = initCalendar;
 window.renderReminders = renderReminders;
 window.updateEvents = updateEvents;
 window.deleteEvent = deleteEvent;
-window.toggleEventCompletion = toggleEventCompletion;
 window.toggleEventDiscretionary = toggleEventDiscretionary;
 
 // Tab Switcher
@@ -192,6 +191,20 @@ function getActiveDay(date) {
   eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
+function getEventStartMinutes(event) {
+  if (typeof event.startTime === 'string' && /^\d{1,2}:\d{2}$/.test(event.startTime)) {
+    const [hours, minutes] = event.startTime.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  const match = typeof event.time === 'string' && event.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!match) return Number.POSITIVE_INFINITY;
+
+  let hours = Number(match[1]) % 12;
+  if (match[3].toUpperCase() === 'PM') hours += 12;
+  return hours * 60 + Number(match[2]);
+}
+
 function updateEvents(date) {
   let eventsHtml = "";
   const holidays = getCzechHolidays(year);
@@ -206,14 +219,18 @@ function updateEvents(date) {
 
   eventsArr.forEach((event) => {
     if (date === event.day && month + 1 === event.month && year === event.year) {
-      event.events.forEach((e, index) => {
+      const sortedEvents = event.events
+        .map((item, index) => ({ item, index }))
+        .sort((a, b) => getEventStartMinutes(a.item) - getEventStartMinutes(b.item) || a.index - b.index);
+
+      sortedEvents.forEach(({ item: e, index }) => {
         const recurBadge = e.recurringId
           ? `<span class="recurring-badge">↻ recurring</span>`
           : '';
         const recurIdAttr = e.recurringId ? `'${e.recurringId}'` : "''";
-        eventsHtml += `<div class="event ${e.completed ? 'completed' : ''}" onclick="toggleEventCompletion(${event.day}, ${event.month}, ${event.year}, ${index})">
+        eventsHtml += `<div class="event">
             <div class="title">
-              <i class="fas ${e.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+              <i class="fas fa-circle"></i>
               <h3 class="event-title">${e.title}${recurBadge}</h3>
             </div>
             <div class="event-time"><span>${e.time}</span></div>
@@ -232,16 +249,6 @@ function updateEvents(date) {
   eventsContainer.innerHTML = eventsHtml || `<div class="no-event"><h3>No Events</h3></div>`;
   getActiveDay(date);
   saveEvents();
-}
-
-function toggleEventCompletion(d, m, y, index) {
-  const dayEntry = eventsArr.find(e => e.day === d && e.month === m && e.year === y);
-  if (dayEntry && dayEntry.events[index]) {
-    dayEntry.events[index].completed = !dayEntry.events[index].completed;
-    updateEvents(activeDay);
-    renderReminders();
-    saveEvents();
-  }
 }
 
 function toggleEventDiscretionary(d, m, y, index) {
@@ -263,8 +270,7 @@ function renderReminders() {
 
   const groups = {
     today: [],
-    upcoming: [],
-    completed: []
+    upcoming: []
   };
 
   // Add regular events
@@ -274,9 +280,7 @@ function renderReminders() {
 
     dayEntry.events.forEach((e, index) => {
       const item = { ...e, day: dayEntry.day, month: dayEntry.month, year: dayEntry.year, index };
-      if (e.completed) {
-        groups.completed.push(item);
-      } else if (entryDate.getTime() === now.getTime()) {
+      if (entryDate.getTime() === now.getTime()) {
         groups.today.push(item);
       } else if (entryDate.getTime() > now.getTime()) {
         groups.upcoming.push(item);
@@ -292,32 +296,28 @@ function renderReminders() {
     holidayDate.setHours(0, 0, 0, 0);
 
     if (holidayDate.getTime() === now.getTime()) {
-      groups.today.push({ title: holidays[dateStr], time: "All Day", holiday: true });
+      groups.today.push({ title: holidays[dateStr], time: "All Day", day: d, month: m, year, holiday: true });
     } else if (holidayDate.getTime() > now.getTime()) {
-      groups.upcoming.push({ title: holidays[dateStr], time: "All Day", holiday: true });
+      groups.upcoming.push({ title: holidays[dateStr], time: "All Day", day: d, month: m, year, holiday: true });
     }
   }
 
-  // Sort groups by date
-  const sortByDate = (a, b) => new Date(a.year, a.month - 1, a.day) - new Date(b.year, b.month - 1, b.day);
-  groups.upcoming.sort(sortByDate);
-  groups.completed.sort((a, b) => sortByDate(b, a)); // Newest completed first
+  const sortByDateAndTime = (a, b) =>
+    new Date(a.year, a.month - 1, a.day) - new Date(b.year, b.month - 1, b.day) ||
+    getEventStartMinutes(a) - getEventStartMinutes(b);
+  groups.today.sort(sortByDateAndTime);
+  groups.upcoming.sort(sortByDateAndTime);
 
   let html = "";
   if (groups.today.length > 0) html += renderGroup("Today", groups.today);
   if (groups.upcoming.length > 0) html += renderGroup("Upcoming", groups.upcoming);
-  if (groups.completed.length > 0) html += renderGroup("Completed", groups.completed);
 
   remindersList.innerHTML = html || `<div class="no-event"><h3>No reminders</h3></div>`;
 }
 
 function renderGroup(title, items) {
   let itemsHtml = items.map(item => `
-    <div class="reminder-item ${item.completed ? 'completed' : ''} ${item.holiday ? 'holiday-item' : ''}"
-         onclick="${item.holiday ? '' : `toggleEventCompletion(${item.day}, ${item.month}, ${item.year}, ${item.index})`}">
-      <div class="reminder-checkbox ${item.completed ? 'checked' : ''}">
-        <i class="fas fa-check"></i>
-      </div>
+    <div class="reminder-item ${item.holiday ? 'holiday-item' : ''}">
       <div class="reminder-content">
         <div class="reminder-title">${item.title}</div>
         <div class="reminder-time">${item.holiday ? '' : `${item.day} ${months[item.month - 1]} • `}${item.time}</div>
@@ -403,7 +403,6 @@ addEventSubmit.addEventListener("click", () => {
       title,
       time: `${convertTime(from)} - ${convertTime(to)}`,
       startTime: from,
-      completed: false,
       discretionary
     };
     let dayEntry = eventsArr.find(e => e.day === activeDay && e.month === month + 1 && e.year === year);
@@ -458,7 +457,6 @@ function addRecurringEvents(title, from, to, startDateStr, endDateStr, weekdays,
         title,
         time: `${convertTime(from)} - ${convertTime(to)}`,
         startTime: from,
-        completed: false,
         discretionary,
         recurringId
       });
@@ -544,7 +542,7 @@ setInterval(() => {
   const dayEntry = eventsArr.find(e => e.day === d && e.month === m && e.year === y);
   if (dayEntry) {
     dayEntry.events.forEach(event => {
-      if (event.completed || !event.startTime) return;
+      if (!event.startTime) return;
 
       const [h, min] = event.startTime.split(':').map(Number);
       const eventTotalMins = h * 60 + min;
